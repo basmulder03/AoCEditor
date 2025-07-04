@@ -1,0 +1,57 @@
+﻿.calendar-page {
+    display: block;
+    height: 100%;
+    background-color: pink;
+}
+
+.calendar-grid {
+    height: 100%;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    padding: 16px;
+    background-color: #001919;
+    box-sizing: border-box;
+}
+
+.calendar-day {
+    background-color: #003333;
+    color: floralwhite;
+    font-size: 1.5rem;
+    border: none;
+    height: 100%;
+    transition: background-color 0.2s;
+    cursor: pointer;
+}
+
+.calendar-day.is-available {
+    background-color: #005555;
+}
+
+.calendar-day.is-not-available {
+    background-color: #002222;
+}
+
+.calendar-day.is-available:hover {
+    background-color: #005555;
+}
+
+.year-picker {
+    padding: 16px;
+    background-color: #001919;
+}
+
+.year-picker select {
+    background-color: #003333;
+    color: floralwhite;
+    font-size: 1rem;
+    border: 1px solid #005555;
+    padding: 8px 12px;
+    border-radius: 4px;
+    outline: none;
+}
+
+.year-picker select:focus {
+    border-color: #00aaaa;
+    box-shadow: 0 0 4px #00aaaa;
+}
