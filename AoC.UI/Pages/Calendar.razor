@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using AoC.Shared
+@using AoC.Shared.Models
 @using AoC.Shared.Services
 @inject ICalendarService CalendarService
 
@@ -36,12 +37,21 @@
 </div>
 
 <div class="calendar">
-    <h1>test</h1>
+    <div class="calendar-grid">
+        @foreach (var day in _calendarDays)
+        {
+            <div class="calendar-day @(day.IsLocked ? "locked" : "unlocked")" @onclick="() => OnCalendarDayClick(day)">
+                @day.Day
+            </div>
+        }
+    </div>
 </div>
 
 @code {
 
     private int _selectedYear;
+    private List<CalendarDay> _calendarDays = [];
+    
     private bool ShowFirstYearButton => _selectedYear > Constants.FirstPuzzleYear;
     private bool ShowPreviousYearButton => _selectedYear > Constants.FirstPuzzleYear;
     private bool ShowNextYearButton => _selectedYear < CalendarService.GetLatestPuzzleYear();
@@ -50,31 +60,45 @@
     protected override void OnInitialized()
     {
         _selectedYear = CalendarService.GetLatestPuzzleYear();
+        LoadCalendar();
+    }
+
+    private void LoadCalendar()
+    {
+        _calendarDays = CalendarService.GetAvailablePuzzleDays(_selectedYear);
     }
 
     private void PreviousYear()
     {
-        if (_selectedYear > Constants.FirstPuzzleYear)
-        {
-            _selectedYear--;
-        }
+        if (_selectedYear <= Constants.FirstPuzzleYear) return;
+        _selectedYear--;
+        LoadCalendar();
     }
     
     private void FirstYear()
     {
         _selectedYear = Constants.FirstPuzzleYear;
+        LoadCalendar();
     }
     
     private void NextYear()
     {
-        if (_selectedYear < CalendarService.GetLatestPuzzleYear())
-        {
-            _selectedYear++;
-        }
+        if (_selectedYear >= CalendarService.GetLatestPuzzleYear()) return;
+        _selectedYear++;
+        LoadCalendar();
     }
     
     private void LastYear()
     {
         _selectedYear = CalendarService.GetLatestPuzzleYear();
+        LoadCalendar();
+    }
+    
+    private void OnCalendarDayClick(CalendarDay day)
+    {
+        if (day.IsLocked) return;
+        // Navigate to the selected day's puzzle
+        // Navigation logic can be added here
+        Console.WriteLine($"Selected Day: {day.Day} of Year: {_selectedYear}");
     }
 }

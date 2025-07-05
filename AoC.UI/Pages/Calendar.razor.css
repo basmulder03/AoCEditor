@@ -1,5 +1,6 @@
 ﻿.title {
     text-align: center;
+    padding-top: 1rem;
 }
 
 .year-picker {
@@ -22,6 +23,10 @@
     gap: 0.5rem;
 }
 
+.year-buttons > div {
+    color: var(--aoc-link);
+}
+
 .year-buttons > div:hover {
     cursor: pointer;
     text-decoration: underline;
@@ -31,4 +36,48 @@
     font-weight: bold;
     min-width: 3rem;
     text-align: center;
+    color: var(--aoc-accent-yellow);
+}
+
+.calendar {
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* required to allow children to fill vertically */
+}
+
+.calendar-grid {
+    flex: 1 1 auto; /* let it grow inside flex column */
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    gap: 0.5rem;
+    padding: var(--aoc-padding);
+    justify-content: center;
+    align-content: start;
+    box-sizing: border-box;
+}
+
+
+/* Style for individual days */
+.calendar-day {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 1.25rem;
+    border: 2px solid var(--aoc-accent-grey);
+    border-radius: 0.3rem;
+    box-sizing: border-box;
+    color: var(--aoc-fg);
+}
+
+/* Color coding based on lock state */
+.calendar-day.unlocked {
+    background-color: var(--aoc-accent-green);
+    color: var(--aoc-bg);
+}
+
+.calendar-day.locked {
+    background-color: var(--aoc-bg);
+    color: var(--aoc-accent-grey);
 }
