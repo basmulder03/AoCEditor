@@ -56,13 +56,4 @@
       <ProjectReference Include="..\AoC.Shared\AoC.Shared.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Components\" />
-      <Folder Include="Services\" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <AdditionalFiles Include="Layout\MainLayout.razor" />
-    </ItemGroup>
-
 </Project>
