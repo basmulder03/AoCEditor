@@ -1,3 +1,80 @@
 ﻿@page "/"
+@using AoC.Shared
+@using AoC.Shared.Services
+@inject ICalendarService CalendarService
 
-<h1>Advent Of Code</h1>
+<h1 class="title">Advent Of Code Editor</h1>
+
+<div class="year-picker">
+    <div class="year-inner">
+        <div class="year-buttons left">
+            @if (ShowFirstYearButton)
+            {
+                <div @onclick="FirstYear">&lt;&lt;&lt;</div>
+            }
+            @if (ShowPreviousYearButton)
+            {
+                <div @onclick="PreviousYear">&lt;</div>
+            }
+        </div>
+
+        <div class="year-label">
+            <div>@_selectedYear</div>
+        </div>
+
+        <div class="year-buttons right">
+            @if (ShowNextYearButton)
+            {
+                <div @onclick="NextYear">&gt;</div>
+            }
+            @if (ShowLastYearButton)
+            {
+                <div @onclick="LastYear">&gt;&gt;&gt;</div>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="calendar">
+    <h1>test</h1>
+</div>
+
+@code {
+
+    private int _selectedYear;
+    private bool ShowFirstYearButton => _selectedYear > Constants.FirstPuzzleYear;
+    private bool ShowPreviousYearButton => _selectedYear > Constants.FirstPuzzleYear;
+    private bool ShowNextYearButton => _selectedYear < CalendarService.GetLatestPuzzleYear();
+    private bool ShowLastYearButton => _selectedYear < CalendarService.GetLatestPuzzleYear();
+    
+    protected override void OnInitialized()
+    {
+        _selectedYear = CalendarService.GetLatestPuzzleYear();
+    }
+
+    private void PreviousYear()
+    {
+        if (_selectedYear > Constants.FirstPuzzleYear)
+        {
+            _selectedYear--;
+        }
+    }
+    
+    private void FirstYear()
+    {
+        _selectedYear = Constants.FirstPuzzleYear;
+    }
+    
+    private void NextYear()
+    {
+        if (_selectedYear < CalendarService.GetLatestPuzzleYear())
+        {
+            _selectedYear++;
+        }
+    }
+    
+    private void LastYear()
+    {
+        _selectedYear = CalendarService.GetLatestPuzzleYear();
+    }
+}

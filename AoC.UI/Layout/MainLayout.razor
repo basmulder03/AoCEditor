@@ -1,7 +1,9 @@
 ﻿@inherits LayoutComponentBase
 <ErrorBoundary>
     <ChildContent>
-        @Body
+        <div class="main-layout">
+            @Body
+        </div>
     </ChildContent>
     <ErrorContent Context="Exception">
         <div>@Exception.Message</div>

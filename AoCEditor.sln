@@ -18,6 +18,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aoc.Plugin.Contracts", "Aoc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AoC.TypeScriptRunner", "AoC.TypeScriptRunner\AoC.TypeScriptRunner.csproj", "{30D6B040-D33D-4D46-9066-371D5F5C6E55}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AoC.Shared.UnitTest", "AoC.Shared.UnitTest\AoC.Shared.UnitTest.csproj", "{13F70E6A-9B14-4F48-B18E-10D55F7099F8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,5 +50,9 @@ Global
 		{30D6B040-D33D-4D46-9066-371D5F5C6E55}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{30D6B040-D33D-4D46-9066-371D5F5C6E55}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{30D6B040-D33D-4D46-9066-371D5F5C6E55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13F70E6A-9B14-4F48-B18E-10D55F7099F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13F70E6A-9B14-4F48-B18E-10D55F7099F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13F70E6A-9B14-4F48-B18E-10D55F7099F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13F70E6A-9B14-4F48-B18E-10D55F7099F8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

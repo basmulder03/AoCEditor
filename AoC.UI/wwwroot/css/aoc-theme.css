@@ -12,7 +12,6 @@
     --aoc-font-size: 16px;
     --aoc-line-height: 1.5;
     --aoc-padding: 1rem;
-    --aoc-max-width: 800px;
 }
 
 body {
@@ -21,8 +20,6 @@ body {
     font-family: var(--aoc-font-family), serif;
     font-size: var(--aoc-font-size);
     line-height: var(--aoc-line-height);
-    padding: var(--aoc-padding);
-    max-width: var(--aoc-max-width);
     margin: 0 auto;
 }
 
@@ -38,7 +35,6 @@ a:hover {
 h1, h2, h3 {
     color: var(--aoc-accent-yellow);
     font-weight: bold;
-    margin-top: 2rem;
 }
 
 em {
