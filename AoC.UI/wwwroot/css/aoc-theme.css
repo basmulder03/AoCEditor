@@ -1,0 +1,69 @@
+﻿:root {
+    /* Colors */
+    --aoc-bg: #0f0f23;
+    --aoc-fg: #fdfdfd;
+    --aoc-accent-yellow: #ffff66;
+    --aoc-accent-green: #00ff00;
+    --aoc-accent-grey: #999999;
+    --aoc-link: #009900;
+
+    /* Typography */
+    --aoc-font-family: 'Courier New', Courier, monospace;
+    --aoc-font-size: 16px;
+    --aoc-line-height: 1.5;
+    --aoc-padding: 1rem;
+    --aoc-max-width: 800px;
+}
+
+body {
+    background-color: var(--aoc-bg);
+    color: var(--aoc-fg);
+    font-family: var(--aoc-font-family), serif;
+    font-size: var(--aoc-font-size);
+    line-height: var(--aoc-line-height);
+    padding: var(--aoc-padding);
+    max-width: var(--aoc-max-width);
+    margin: 0 auto;
+}
+
+a {
+    color: var(--aoc-link);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+h1, h2, h3 {
+    color: var(--aoc-accent-yellow);
+    font-weight: bold;
+    margin-top: 2rem;
+}
+
+em {
+    color: var(--aoc-accent-yellow);
+    font-style: normal;
+}
+
+code, pre {
+    color: var(--aoc-accent-green);
+    background: none;
+    font-family: var(--aoc-font-family), serif;
+    white-space: pre;
+}
+
+pre {
+    margin: 1rem 0;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid var(--aoc-accent-grey);
+    margin: 2rem 0;
+}
+
+::selection {
+    background-color: var(--aoc-accent-yellow);
+    color: var(--aoc-bg);
+}
