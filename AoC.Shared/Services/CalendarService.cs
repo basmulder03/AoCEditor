@@ -1,4 +1,5 @@
 ﻿using System.Reflection.Metadata;
+using AoC.Shared.Extensions;
 using AoC.Shared.Models;
 
 namespace AoC.Shared.Services;
@@ -14,10 +15,11 @@ public class CalendarService(TimeProvider timeProvider) : ICalendarService
         // To determine the latest year, we check if midnight EST of december 1st has passed for the current year.
         // If it has, we return the current year. If not, we return the previous year.
         var currentDate = timeProvider.GetUtcNow().ToOffset(TimeSpan.FromHours(-5)); // Convert to EST
-        if (currentDate < Constants.FirstPuzzleDate)
+        var firstPuzzleDateThisYear = Constants.FirstPuzzleDate.SetYear(currentDate.Year);
+        if (currentDate < firstPuzzleDateThisYear)
         {
             // If the current date is before the first puzzle date, return the year before the first puzzle date.
-            return Constants.FirstPuzzleDate.Year - 1;
+            return currentDate.Year - 1;
         }
         return currentDate.Year;
     }

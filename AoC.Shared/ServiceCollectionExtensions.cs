@@ -8,7 +8,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddSharedServices(this IServiceCollection services)
     {
         // Register the TimeProvider as a singleton
-        services.AddSingleton<TimeProvider>();
+        services.AddSingleton(TimeProvider.System);
         
         // Register the CalendarService as a singleton
         services.AddSingleton<ICalendarService, CalendarService>();
