@@ -10,3 +10,4 @@ Local AoT desktop editor for Advent of Code (.NET 10, Avalonia). Orchestrate; de
 - Unclear requirement or better idea: stop and ask the owner. No assumptions.
 - Always apply best practices by default. Before reporting done, run the `validate-practices` skill (it runs `scripts/check-practices.sh`; CI runs it too).
 - Tests: Shouldly only, Reqnroll per `tests/README.md`.
+- Wrap test and build commands in `timeout` (e.g. `timeout 600 dotnet test ...`) so a hung test host cannot linger in the background.

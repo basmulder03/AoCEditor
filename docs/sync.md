@@ -21,10 +21,10 @@ Each year's stars are saved on their own (`ISyncStateStore`, table `sync_state`)
 
 ## Markup facts
 
-Verified on 2026-10-28 (signed-out `/events` and `/2024`):
-- `/events` lists years as `<div class="eventlist-event"><a href="/2024">[2024]</a></div>`; the newest event links to `/`, so its year is derived from the clock (December means the current year, otherwise the previous one).
-- `/2024` has one `<a aria-label="Day N" href="/2024/day/N" class="calendar-dayN">` per day, containing `calendar-mark-complete` and `calendar-mark-verycomplete` spans.
+Verified on 2026-10-28 against the owner's signed-in account (`/events` and `/2025`, one request each):
+- `/events` lists years as `<div class="eventlist-event"><a href="/2024">[2024]</a> <span class="star-count">50*</span> ...</div>`; signed in, each entry carries a star count (not parsed). The newest event links to `/`, so its year is derived from the clock (December means the current year, otherwise the previous one). The parser read 2025 down to 2015 correctly.
+- Calendar pages have one `<a aria-label="Day N, two stars" href="/2025/day/N" class="calendar-dayN calendar-verycomplete">` per day, also containing `calendar-mark-complete` and `calendar-mark-verycomplete` spans. 2025 has 12 day links; all were parsed as 2 stars, matching the 24* on `/events`.
 
-Inferred (not seen signed in; from CSS rules and open-source clients such as scarvalhojr/aoc-cli and apexatoll/aoc-cli): a day link gets the class `calendar-complete` for one star and `calendar-verycomplete` for two. Unverified: whether locked days of the running year have a link, and the exact signed-in `aria-label` text (the parser ignores it).
+Inferred, not seen (no such day in the checked year): one star is class `calendar-complete` with an aria-label ending in "one star"; zero stars has neither class. Based on CSS rules and open-source clients (scarvalhojr/aoc-cli, apexatoll/aoc-cli). Unverified: whether locked days of the running year have a link. The parser ignores the aria-label.
 
 Anything else (no day links, a day outside 1-25, a duplicate day, no event years) is a parse failure for that year, not an exception. Test fixtures are synthetic and contain only the day links.
