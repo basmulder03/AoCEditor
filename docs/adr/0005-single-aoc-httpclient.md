@@ -9,11 +9,11 @@ Advent of Code asks automated tools to be considerate: identify yourself, avoid 
 ## Decision
 - All AoC traffic goes through exactly one `HttpClient` wrapper (the AoC gateway). Nothing else may construct an HTTP client for adventofcode.com; an architecture test enforces this.
 - The gateway enforces:
-  - an identifying User-Agent containing the repo URL (github.com/basmulder03/AoCEditor) and a contact;
-  - throttling with a minimum interval between requests and a low concurrency cap;
+  - an identifying User-Agent with the maintainer contact and repo URL: `AoCEditor/<version> (+https://github.com/basmulder03/AoCEditor; maintainer github.com/basmulder03)`;
+  - throttling with one request in flight and two request classes: Interactive (puzzle, input, submit; at least 5 s apart) and Statistics (events list and calendar pages; at least 3 minutes apart, a floor that configuration cannot lower), following AoC's community guidance to throttle statistics scraping to once every few minutes;
   - no automated polling or background refresh; every request is caused by a user action;
   - cooldown-aware submits: a submit is refused locally while a known cooldown is active (see 0015);
-  - cache first: puzzle text and input are fetched once per day (see 0007, 0008) and never refetched unless the user asks;
+  - cache first: puzzle text and input are fetched once per day (see 0007, 0008) and never refetched unless the user asks; a manual re-download obeys the same throttle;
   - the session cookie is attached only here (see 0006).
 - Failed or 4xx/5xx responses are not retried automatically.
 - The MCP server never reaches AoC except via this gateway through app actions (see 0021).
@@ -24,4 +24,4 @@ Advent of Code asks automated tools to be considerate: identify yourself, avoid 
 - Tests use a fake handler; no test touches the live site.
 
 ## Open questions
-- Exact interval and cap values are not decided.
+- The community guidance is quoted in the `aoc-tos` skill. The maintainer contact is the GitHub handle, not an email (owner decision); AoC may ask for more.

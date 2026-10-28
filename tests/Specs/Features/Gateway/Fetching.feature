@@ -23,6 +23,12 @@ Feature: Considerate fetching from Advent of Code
     Then it is held back
     And it goes ahead after the minimum spacing has passed
 
+  Scenario: Statistics requests are spaced further apart
+    Given I have just made a request for my statistics
+    When I make another request for my statistics straight away
+    Then it is held back
+    And it goes ahead after the statistics spacing has passed
+
   Scenario: Failed responses are not saved
     Given Advent of Code reports that the page does not exist
     When I open that page

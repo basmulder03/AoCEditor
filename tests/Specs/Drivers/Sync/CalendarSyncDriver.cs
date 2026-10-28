@@ -25,6 +25,8 @@ public sealed class CalendarSyncDriver
 
     public SyncSummary? Summary { get; private set; }
 
+    public void MarkSynced(int year) => _stored[year] = [];
+
     public void SignOut() => _signedIn = false;
 
     public void SetToday(int year, int month, int day) => _time.SetUtcNow(new DateTimeOffset(year, month, day, 12, 0, 0, TimeSpan.Zero));
@@ -46,7 +48,7 @@ public sealed class CalendarSyncDriver
     {
         var events = string.Concat(_years.OrderDescending().Select(y => $"<div class=\"eventlist-event\"><a href=\"/{y}\">[{y}]</a></div>"));
         _pages["/events"] = new GatewayResult.Ok(events);
-        Summary = await new SyncService(_gateway, _store, _time).SyncAsync(new Progress<SyncProgress>(), CancellationToken.None);
+        Summary = await new SyncService(_gateway, _store, _time).SyncAllAsync([], new Progress<SyncProgress>(), CancellationToken.None);
     }
 
     public DayState StateOf(int year, int day) =>
@@ -66,13 +68,15 @@ public sealed class CalendarSyncDriver
 
     private sealed class Gateway(CalendarSyncDriver owner) : IAocGateway
     {
-        public Task<GatewayResult> GetAsync(string path, FetchPolicy policy, CancellationToken cancellationToken)
+        public Task<GatewayResult> GetAsync(string path, RequestKind kind, FetchPolicy policy, CancellationToken cancellationToken)
         {
             owner.Requests.Add(path);
             GatewayResult result = !owner._signedIn ? new GatewayResult.NotSignedIn()
                 : owner._pages.GetValueOrDefault(path) ?? new GatewayResult.NotFound();
             return Task.FromResult(result);
         }
+
+        public DateTimeOffset NextAllowedAt(RequestKind kind) => owner._time.GetUtcNow();
 
         public Task<GatewayResult> PostFormAsync(string path, IReadOnlyDictionary<string, string> form, CancellationToken cancellationToken) =>
             throw new NotSupportedException();

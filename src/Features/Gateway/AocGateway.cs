@@ -14,7 +14,7 @@ public sealed class AocGateway : IAocGateway, IDisposable
     private readonly GatewayOptions _options;
     private readonly TimeProvider _time;
     private readonly SemaphoreSlim _gate = new(1, 1);
-    private long? _lastRequest;
+    private readonly Dictionary<RequestKind, long> _lastRequest = [];
 
     public AocGateway(ISessionTokenProvider tokens, IResponseCache cache, GatewayOptions? options = null, TimeProvider? time = null)
         : this(new SocketsHttpHandler { AllowAutoRedirect = false, UseCookies = false }, tokens, cache, options, time)
@@ -30,14 +30,14 @@ public sealed class AocGateway : IAocGateway, IDisposable
         _http = new HttpClient(handler) { BaseAddress = _options.BaseAddress, Timeout = _options.Timeout };
     }
 
-    public async Task<GatewayResult> GetAsync(string path, FetchPolicy policy, CancellationToken cancellationToken)
+    public async Task<GatewayResult> GetAsync(string path, RequestKind kind, FetchPolicy policy, CancellationToken cancellationToken)
     {
         if (policy == FetchPolicy.CacheFirst && await _cache.TryGetAsync(path, cancellationToken) is { } cached)
         {
             return new GatewayResult.Ok(cached);
         }
 
-        var result = await SendAsync(HttpMethod.Get, path, null, cancellationToken);
+        var result = await SendAsync(HttpMethod.Get, kind, path, null, cancellationToken);
         if (result is GatewayResult.Ok ok)
         {
             await _cache.SetAsync(path, ok.Content, cancellationToken);
@@ -47,7 +47,7 @@ public sealed class AocGateway : IAocGateway, IDisposable
     }
 
     public Task<GatewayResult> PostFormAsync(string path, IReadOnlyDictionary<string, string> form, CancellationToken cancellationToken) =>
-        SendAsync(HttpMethod.Post, path, form, cancellationToken);
+        SendAsync(HttpMethod.Post, RequestKind.Interactive, path, form, cancellationToken);
 
     public void Dispose()
     {
@@ -55,7 +55,7 @@ public sealed class AocGateway : IAocGateway, IDisposable
         _gate.Dispose();
     }
 
-    private async Task<GatewayResult> SendAsync(HttpMethod method, string path, IReadOnlyDictionary<string, string>? form, CancellationToken cancellationToken)
+    private async Task<GatewayResult> SendAsync(HttpMethod method, RequestKind kind, string path, IReadOnlyDictionary<string, string>? form, CancellationToken cancellationToken)
     {
         var token = await _tokens.GetAsync(cancellationToken);
         if (string.IsNullOrEmpty(token))
@@ -63,13 +63,12 @@ public sealed class AocGateway : IAocGateway, IDisposable
             return new GatewayResult.NotSignedIn();
         }
 
-        await _gate.WaitAsync(cancellationToken);
+        await AcquireAsync(kind, cancellationToken);
         try
         {
-            await WaitForSpacingAsync(cancellationToken);
             using var request = new HttpRequestMessage(method, path.TrimStart('/'));
             request.Headers.UserAgent.Add(new ProductInfoHeaderValue("AoCEditor", AppInfo.Version));
-            request.Headers.UserAgent.Add(new ProductInfoHeaderValue($"(+{_options.RepositoryUrl})"));
+            request.Headers.UserAgent.Add(new ProductInfoHeaderValue($"(+{_options.RepositoryUrl}; maintainer {_options.Maintainer})"));
             request.Headers.TryAddWithoutValidation("Cookie", $"session={token}");
             if (form is not null)
             {
@@ -91,7 +90,10 @@ public sealed class AocGateway : IAocGateway, IDisposable
             }
             finally
             {
-                _lastRequest = _time.GetTimestamp();
+                lock (_lastRequest)
+                {
+                    _lastRequest[kind] = _time.GetTimestamp();
+                }
             }
         }
         finally
@@ -100,19 +102,43 @@ public sealed class AocGateway : IAocGateway, IDisposable
         }
     }
 
-    private async Task WaitForSpacingAsync(CancellationToken cancellationToken)
-    {
-        if (_lastRequest is not { } last)
-        {
-            return;
-        }
+    public DateTimeOffset NextAllowedAt(RequestKind kind) => _time.GetUtcNow() + Remaining(kind);
 
-        var remaining = _options.MinInterval - _time.GetElapsedTime(last);
-        if (remaining > TimeSpan.Zero)
+    // Waits outside the gate so a long statistics wait never blocks an interactive request.
+    private async Task AcquireAsync(RequestKind kind, CancellationToken cancellationToken)
+    {
+        while (true)
         {
+            await _gate.WaitAsync(cancellationToken);
+            var remaining = Remaining(kind);
+            if (remaining <= TimeSpan.Zero)
+            {
+                return;
+            }
+
+            _gate.Release();
             await Task.Delay(remaining, _time, cancellationToken);
         }
     }
+
+    private TimeSpan Remaining(RequestKind kind)
+    {
+        long last;
+        lock (_lastRequest)
+        {
+            if (!_lastRequest.TryGetValue(kind, out last))
+            {
+                return TimeSpan.Zero;
+            }
+        }
+
+        var interval = kind == RequestKind.Statistics
+            ? Max(_options.StatisticsInterval, GatewayOptions.StatisticsFloor)
+            : Max(_options.InteractiveInterval, GatewayOptions.InteractiveFloor);
+        return interval - _time.GetElapsedTime(last);
+    }
+
+    private static TimeSpan Max(TimeSpan a, TimeSpan b) => a > b ? a : b;
 
     private static async Task<GatewayResult> MapAsync(HttpResponseMessage response, CancellationToken cancellationToken)
     {

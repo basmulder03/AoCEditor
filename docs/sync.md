@@ -1,10 +1,19 @@
 # Calendar sync
 
-`SyncService.SyncAsync` (`src/Features/Sync`) runs only when the user presses Sync; nothing triggers it automatically. It fetches `/events` once, then `/{year}` for each listed year, one after another, all with `FetchPolicy.Refresh` through `IAocGateway` (the gateway spaces the requests). Each year's stars are saved on their own (`ISyncStateStore`, table `sync_state`), so a later failure keeps earlier years.
+`SyncService` (`src/Features/Sync`) runs only on user action; nothing triggers it automatically and nothing polls. All its requests are `RequestKind.Statistics` with `FetchPolicy.Refresh`. The owner's reading of the AoC community guidelines: "Please throttle your requests to at least once every few minutes" for tools scraping statistics. The gateway therefore spaces these requests at least 3 minutes apart (see `docs/gateway.md`), so waiting is expected.
+
+- `SyncYearAsync(year, refresh, progress, ct)`: used when the user opens a year. Fetches only `/{year}`. A year already synced is skipped unless `refresh` is true.
+- `SyncAllAsync(refreshYears, progress, ct)`: fetches `/events`, then queues the listed years not yet synced one after another. Years in `refreshYears` are fetched again; no other synced year is refreshed, so past years only refresh on explicit request.
+
+Each year's stars are saved on their own (`ISyncStateStore`, table `sync_state`), so a later failure keeps earlier years. Cancelling works while waiting for the throttle (an `OperationCanceledException` propagates; saved years stay).
+
+## Progress
+
+`SyncProgress(Year, YearsRemaining, SecondsUntilNextRequest)` is reported just before each year's request: the year in progress, the years queued after it and the wait from `IAocGateway.NextAllowedAt(RequestKind.Statistics)`. A UI can keep counting down from that value or query the gateway again.
 
 ## Result
 
-`SyncSummary`: `Outcome` (`Completed`, `NotSignedIn`, `RateLimited`, `EventsUnavailable`), `YearsSynced`, `DaysUpdated` (days whose stars differ from the stored value) and `Errors` per year (`ParseError`, `NotFound`, `NetworkError`). A year with an error keeps its previously stored stars. `NotSignedIn` and `RateLimited` stop the sync at once.
+`SyncSummary`: `Outcome` (`Completed`, `NotSignedIn`, `RateLimited`, `EventsUnavailable`), `YearsSynced`, `DaysUpdated` (days whose stars differ from the stored value) and `YearsSkipped` (already synced, not fetched) and `Errors` per year (`ParseError`, `NotFound`, `NetworkError`). A year with an error keeps its previously stored stars. `NotSignedIn` and `RateLimited` stop the sync at once.
 
 ## Day states
 

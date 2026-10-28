@@ -18,6 +18,19 @@ public sealed class FetchingSteps(FetchingDriver driver)
     [Given("I have just made a request")]
     public Task GivenIHaveJustMadeARequest() => driver.RequestFirstAsync();
 
+    [Given("I have just made a request for my statistics")]
+    public Task GivenStatisticsRequest() => driver.RequestFirstStatisticsAsync();
+
+    [When("I make another request for my statistics straight away")]
+    public Task WhenAnotherStatisticsRequest() => driver.StartSecondStatisticsRequestAsync();
+
+    [Then("it goes ahead after the statistics spacing has passed")]
+    public async Task ThenStatisticsGoesAhead()
+    {
+        await driver.WaitStatisticsSpacingAsync();
+        driver.Requests.ShouldBe(["/first", "/second"]);
+    }
+
     [When("I open that page")]
     public Task WhenIOpenThatPage() => driver.OpenPageAsync(FetchPolicy.CacheFirst);
 

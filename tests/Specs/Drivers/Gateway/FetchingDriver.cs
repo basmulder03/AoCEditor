@@ -18,7 +18,7 @@ public sealed class FetchingDriver : IDisposable
     public FetchingDriver()
     {
         _cache = new FileResponseCache(_dir);
-        _gateway = new AocGateway(new Handler(this), new Token(), _cache, new GatewayOptions { MinInterval = TimeSpan.FromSeconds(5) }, _time);
+        _gateway = new AocGateway(new Handler(this), new Token(), _cache, new GatewayOptions { InteractiveInterval = TimeSpan.FromSeconds(5) }, _time);
     }
 
     public List<string> Requests { get; } = [];
@@ -38,13 +38,27 @@ public sealed class FetchingDriver : IDisposable
 
     public void ReportPageMissing() => _status = HttpStatusCode.NotFound;
 
-    public async Task RequestFirstAsync() => await _gateway.GetAsync("/first", FetchPolicy.Refresh, CancellationToken.None);
+    public async Task RequestFirstAsync() => await _gateway.GetAsync("/first", RequestKind.Interactive, FetchPolicy.Refresh, CancellationToken.None);
 
-    public async Task OpenPageAsync(FetchPolicy policy) => Result = await _gateway.GetAsync(Page, policy, CancellationToken.None);
+    public async Task RequestFirstStatisticsAsync() => await _gateway.GetAsync("/first", RequestKind.Statistics, FetchPolicy.Refresh, CancellationToken.None);
+
+    public async Task StartSecondStatisticsRequestAsync()
+    {
+        _pending = _gateway.GetAsync("/second", RequestKind.Statistics, FetchPolicy.Refresh, CancellationToken.None);
+        await Task.Yield();
+    }
+
+    public async Task WaitStatisticsSpacingAsync()
+    {
+        _time.Advance(TimeSpan.FromMinutes(3));
+        await _pending!;
+    }
+
+    public async Task OpenPageAsync(FetchPolicy policy) => Result = await _gateway.GetAsync(Page, RequestKind.Interactive, policy, CancellationToken.None);
 
     public async Task StartSecondRequestAsync()
     {
-        _pending = _gateway.GetAsync("/second", FetchPolicy.Refresh, CancellationToken.None);
+        _pending = _gateway.GetAsync("/second", RequestKind.Interactive, FetchPolicy.Refresh, CancellationToken.None);
         await Task.Yield();
     }
 

@@ -28,6 +28,13 @@ Feature: Manual calendar sync
     Then the event list was requested once
     And each year was requested once
 
+  Scenario: Years I already synced are not fetched again
+    Given the event ran in 2023 and 2024
+    And I already synced 2023 earlier
+    When I sync my calendar
+    Then 1 year was synced
+    And 2023 was not requested again
+
   Scenario: A year that cannot be read does not stop the others
     Given the event ran in 2023 and 2024
     And Advent of Code shows an unexpected page for 2024

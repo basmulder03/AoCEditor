@@ -24,6 +24,9 @@ public sealed class CalendarSyncSteps(CalendarSyncDriver driver)
     [Given("I have two stars on day {int} and one star on day {int} of {int}")]
     public void GivenStars(int complete, int half, int year) => driver.SetStars(year, (complete, 2), (half, 1));
 
+    [Given("I already synced {int} earlier")]
+    public void GivenSyncedEarlier(int year) => driver.MarkSynced(year);
+
     [Given("I have no stars in {int}")]
     public void GivenNoStars(int year) => driver.SetStars(year);
 
@@ -53,6 +56,9 @@ public sealed class CalendarSyncSteps(CalendarSyncDriver driver)
 
     [Then("each year was requested once")]
     public void ThenEachYearOnce() => driver.Requests.Where(r => r != "/events").ShouldBe(["/2024", "/2023"], ignoreOrder: true);
+
+    [Then("{int} was not requested again")]
+    public void ThenNotRequested(int year) => driver.Requests.ShouldNotContain($"/{year}");
 
     [Then("{int} is reported as unreadable")]
     public void ThenUnreadable(int year) => driver.Summary!.Errors.ShouldContain(new YearError(year, SyncError.ParseError));

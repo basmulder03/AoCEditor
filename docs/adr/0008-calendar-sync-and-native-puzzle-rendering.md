@@ -7,7 +7,7 @@ Proposed
 The home view shows a calendar per year the event has run, 25 days each, with stars and locked days. Day pages show the puzzle next to the editor. Background refresh would violate 0005.
 
 ## Decision
-- Initial sync is manual: a user-pressed "Sync" fetches star counts per year through the gateway (0005). No automatic refresh.
+- Sync is manual and per year: opening a year syncs that year; "Sync all years" queues the remaining years one by one. Calendar and events requests use the Statistics class of the gateway (at least 3 minutes apart, see 0005), so a first sync of all years takes about half an hour, with a visible countdown, and can be cancelled. Past years are cached and refreshed only on explicit request. No automatic refresh.
 - Locked days (not yet unlocked by date, 00:00 UTC-5) are computed locally and are never requested.
 - Puzzle text and input are downloaded the first time a day is opened, then served from the cache (0007). Part 2 text is re-fetched only after part 1 is answered correctly, or on explicit user refresh.
 - Puzzle HTML is parsed into a small document model (paragraph, heading, list, code block, inline code/emphasis/link) and rendered with native Avalonia controls, one tab per part plus an input tab.

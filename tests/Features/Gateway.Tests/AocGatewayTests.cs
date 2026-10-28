@@ -1,5 +1,6 @@
 using System.Net;
 using Microsoft.Extensions.Time.Testing;
+using Shared;
 using Shared.Contracts;
 using Shouldly;
 using Xunit;
@@ -15,18 +16,17 @@ public sealed class AocGatewayTests : IDisposable
 
     public void Dispose() => _handler.Dispose();
 
-    private AocGateway Create(string? token = "secret") => new(_handler, new FakeTokens(token), _cache, new GatewayOptions { MinInterval = TimeSpan.FromSeconds(5) }, _time);
+    private AocGateway Create(string? token = "secret") => new(_handler, new FakeTokens(token), _cache, new GatewayOptions { InteractiveInterval = TimeSpan.FromSeconds(5) }, _time);
 
     [Fact]
     public async Task RequestIdentifiesTheAppAndCarriesTheSessionCookie()
     {
         using var gateway = Create();
 
-        await gateway.GetAsync("/2024/day/1/input", FetchPolicy.CacheFirst, Ct);
+        await gateway.GetAsync("/2024/day/1/input", RequestKind.Interactive, FetchPolicy.CacheFirst, Ct);
 
         var request = _handler.Requests.Single();
-        request.Headers.UserAgent.ToString().ShouldContain("github.com/basmulder03/AoCEditor");
-        request.Headers.UserAgent.ToString().ShouldStartWith("AoCEditor/");
+        request.Headers.UserAgent.ToString().ShouldBe($"AoCEditor/{AppInfo.Version} (+https://github.com/basmulder03/AoCEditor; maintainer github.com/basmulder03)");
         request.Headers.GetValues("Cookie").Single().ShouldBe("session=secret");
         request.RequestUri!.AbsoluteUri.ShouldBe("https://adventofcode.com/2024/day/1/input");
     }
@@ -37,7 +37,7 @@ public sealed class AocGatewayTests : IDisposable
         _cache.Items["/p"] = "cached";
         using var gateway = Create();
 
-        var result = await gateway.GetAsync("/p", FetchPolicy.CacheFirst, Ct);
+        var result = await gateway.GetAsync("/p", RequestKind.Interactive, FetchPolicy.CacheFirst, Ct);
 
         result.ShouldBe(new GatewayResult.Ok("cached"));
         _handler.Requests.ShouldBeEmpty();
@@ -49,7 +49,7 @@ public sealed class AocGatewayTests : IDisposable
         _cache.Items["/p"] = "old";
         using var gateway = Create();
 
-        var result = await gateway.GetAsync("/p", FetchPolicy.Refresh, Ct);
+        var result = await gateway.GetAsync("/p", RequestKind.Interactive, FetchPolicy.Refresh, Ct);
 
         result.ShouldBe(new GatewayResult.Ok("body"));
         _cache.Items["/p"].ShouldBe("body");
@@ -66,7 +66,7 @@ public sealed class AocGatewayTests : IDisposable
         _handler.Respond = _ => new HttpResponseMessage(status);
         using var gateway = Create();
 
-        var result = await gateway.GetAsync("/p", FetchPolicy.CacheFirst, Ct);
+        var result = await gateway.GetAsync("/p", RequestKind.Interactive, FetchPolicy.CacheFirst, Ct);
 
         result.ShouldBeOfType(expected);
         _cache.Items.ShouldBeEmpty();
@@ -79,7 +79,7 @@ public sealed class AocGatewayTests : IDisposable
         _handler.Respond = _ => throw new HttpRequestException("down");
         using var gateway = Create();
 
-        var result = await gateway.GetAsync("/p", FetchPolicy.CacheFirst, Ct);
+        var result = await gateway.GetAsync("/p", RequestKind.Interactive, FetchPolicy.CacheFirst, Ct);
 
         result.ShouldBeOfType<GatewayResult.NetworkError>();
     }
@@ -89,7 +89,7 @@ public sealed class AocGatewayTests : IDisposable
     {
         using var gateway = Create(token: null);
 
-        var result = await gateway.GetAsync("/p", FetchPolicy.CacheFirst, Ct);
+        var result = await gateway.GetAsync("/p", RequestKind.Interactive, FetchPolicy.CacheFirst, Ct);
 
         result.ShouldBeOfType<GatewayResult.NotSignedIn>();
         _handler.Requests.ShouldBeEmpty();
@@ -117,9 +117,9 @@ public sealed class AocGatewayTests : IDisposable
     public async Task SecondRequestWaitsForTheMinimumInterval()
     {
         using var gateway = Create();
-        await gateway.GetAsync("/a", FetchPolicy.Refresh, Ct);
+        await gateway.GetAsync("/a", RequestKind.Interactive, FetchPolicy.Refresh, Ct);
 
-        var second = gateway.GetAsync("/b", FetchPolicy.Refresh, Ct);
+        var second = gateway.GetAsync("/b", RequestKind.Interactive, FetchPolicy.Refresh, Ct);
         await Task.Yield();
         _handler.Requests.Count.ShouldBe(1);
 
@@ -132,10 +132,10 @@ public sealed class AocGatewayTests : IDisposable
     public async Task WaitingForTheIntervalCanBeCancelled()
     {
         using var gateway = Create();
-        await gateway.GetAsync("/a", FetchPolicy.Refresh, Ct);
+        await gateway.GetAsync("/a", RequestKind.Interactive, FetchPolicy.Refresh, Ct);
         using var cts = new CancellationTokenSource();
 
-        var second = gateway.GetAsync("/b", FetchPolicy.Refresh, cts.Token);
+        var second = gateway.GetAsync("/b", RequestKind.Interactive, FetchPolicy.Refresh, cts.Token);
         await cts.CancelAsync();
 
         await Should.ThrowAsync<OperationCanceledException>(() => second);
@@ -155,7 +155,7 @@ public sealed class AocGatewayTests : IDisposable
         };
         using var gateway = Create();
 
-        var all = Task.WhenAll(gateway.GetAsync("/a", FetchPolicy.Refresh, Ct), gateway.GetAsync("/b", FetchPolicy.Refresh, Ct));
+        var all = Task.WhenAll(gateway.GetAsync("/a", RequestKind.Interactive, FetchPolicy.Refresh, Ct), gateway.GetAsync("/b", RequestKind.Interactive, FetchPolicy.Refresh, Ct));
         while (!all.IsCompleted)
         {
             _time.Advance(TimeSpan.FromSeconds(5));
@@ -165,5 +165,104 @@ public sealed class AocGatewayTests : IDisposable
         await all;
         max.ShouldBe(1);
         _handler.Requests.Count.ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task StatisticsRequestsWaitThreeMinutesButInteractiveOnesOnlyFiveSeconds()
+    {
+        using var gateway = Create();
+        await gateway.GetAsync("/events", RequestKind.Statistics, FetchPolicy.Refresh, Ct);
+
+        var second = gateway.GetAsync("/2024", RequestKind.Statistics, FetchPolicy.Refresh, Ct);
+        _time.Advance(TimeSpan.FromSeconds(179));
+        await Task.Yield();
+        _handler.Requests.Count.ShouldBe(1);
+
+        _time.Advance(TimeSpan.FromSeconds(1));
+        await second;
+        _handler.Requests.Count.ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task EachKindHasItsOwnClock()
+    {
+        using var gateway = Create();
+        await gateway.GetAsync("/events", RequestKind.Statistics, FetchPolicy.Refresh, Ct);
+
+        await gateway.GetAsync("/2024/day/1", RequestKind.Interactive, FetchPolicy.Refresh, Ct);
+
+        _handler.Requests.Count.ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task AWaitingStatisticsRequestDoesNotBlockAnInteractiveOne()
+    {
+        using var gateway = Create();
+        await gateway.GetAsync("/events", RequestKind.Statistics, FetchPolicy.Refresh, Ct);
+        var waiting = gateway.GetAsync("/2024", RequestKind.Statistics, FetchPolicy.Refresh, Ct);
+        await Task.Yield();
+
+        await gateway.GetAsync("/2024/day/1", RequestKind.Interactive, FetchPolicy.Refresh, Ct);
+
+        _handler.Requests.Count.ShouldBe(2);
+        waiting.IsCompleted.ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task ALowerConfiguredStatisticsSpacingIsRaisedToThreeMinutes()
+    {
+        using var gateway = new AocGateway(_handler, new FakeTokens("secret"), _cache, new GatewayOptions { StatisticsInterval = TimeSpan.FromSeconds(10) }, _time);
+        await gateway.GetAsync("/events", RequestKind.Statistics, FetchPolicy.Refresh, Ct);
+
+        var second = gateway.GetAsync("/2024", RequestKind.Statistics, FetchPolicy.Refresh, Ct);
+        _time.Advance(TimeSpan.FromSeconds(10));
+        await Task.Yield();
+
+        _handler.Requests.Count.ShouldBe(1);
+        _time.Advance(TimeSpan.FromMinutes(3));
+        await second;
+    }
+
+    [Fact]
+    public async Task ALowerConfiguredInteractiveSpacingIsRaisedToOneSecond()
+    {
+        using var gateway = new AocGateway(_handler, new FakeTokens("secret"), _cache, new GatewayOptions { InteractiveInterval = TimeSpan.Zero }, _time);
+        await gateway.GetAsync("/a", RequestKind.Interactive, FetchPolicy.Refresh, Ct);
+
+        var second = gateway.GetAsync("/b", RequestKind.Interactive, FetchPolicy.Refresh, Ct);
+        await Task.Yield();
+
+        _handler.Requests.Count.ShouldBe(1);
+        _time.Advance(TimeSpan.FromSeconds(1));
+        await second;
+    }
+
+    [Fact]
+    public async Task NextAllowedAtCountsDownToTheEndOfTheSpacing()
+    {
+        using var gateway = Create();
+        gateway.NextAllowedAt(RequestKind.Statistics).ShouldBe(_time.GetUtcNow());
+        await gateway.GetAsync("/events", RequestKind.Statistics, FetchPolicy.Refresh, Ct);
+        _time.Advance(TimeSpan.FromSeconds(60));
+
+        var remaining = gateway.NextAllowedAt(RequestKind.Statistics) - _time.GetUtcNow();
+
+        remaining.ShouldBe(TimeSpan.FromSeconds(120));
+        gateway.NextAllowedAt(RequestKind.Interactive).ShouldBe(_time.GetUtcNow());
+    }
+
+    [Fact]
+    public async Task WaitingForTheStatisticsSpacingCanBeCancelled()
+    {
+        using var gateway = Create();
+        await gateway.GetAsync("/events", RequestKind.Statistics, FetchPolicy.Refresh, Ct);
+        using var cts = new CancellationTokenSource();
+
+        var second = gateway.GetAsync("/2024", RequestKind.Statistics, FetchPolicy.Refresh, cts.Token);
+        _time.Advance(TimeSpan.FromSeconds(30));
+        await cts.CancelAsync();
+
+        await Should.ThrowAsync<OperationCanceledException>(() => second);
+        _handler.Requests.Count.ShouldBe(1);
     }
 }
