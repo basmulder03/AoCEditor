@@ -6,7 +6,7 @@ using Xunit;
 
 namespace AoCEditor.Infrastructure.Tests.Storage;
 
-public class MigrationTests
+public class MigratorTests
 {
     private static async Task<long> ScalarAsync(SqliteConnection c, string sql)
     {

@@ -5,7 +5,7 @@ using Xunit;
 
 namespace AoCEditor.Infrastructure.Tests.Storage;
 
-public class KeyValueStoreTests
+public class SqliteKeyValueStoreTests
 {
     private static CancellationToken Ct => TestContext.Current.CancellationToken;
 

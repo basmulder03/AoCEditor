@@ -7,7 +7,7 @@ using Xunit;
 
 namespace AoCEditor.Core.Tests.Diagnostics;
 
-public sealed class ReportTests
+public sealed class DiagnosticsReportTests
 {
     private static readonly Redactor Home = new("/home/alice");
 

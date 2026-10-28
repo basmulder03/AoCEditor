@@ -5,7 +5,7 @@ using Xunit;
 
 namespace AoCEditor.Infrastructure.Tests.Storage;
 
-public class MigrationLoggingTests
+public class MigratorLoggingTests
 {
     private sealed class Capture : Microsoft.Extensions.Logging.ILogger<SqliteConnectionFactory>
     {

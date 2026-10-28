@@ -6,7 +6,7 @@ using Xunit;
 
 namespace AoCEditor.Core.Tests.Sync;
 
-public class SyncLoggingTests
+public class SyncServiceLoggingTests
 {
     private static CancellationToken Ct => TestContext.Current.CancellationToken;
 

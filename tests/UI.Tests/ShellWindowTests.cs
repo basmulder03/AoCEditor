@@ -11,7 +11,7 @@ using Xunit;
 
 namespace AoCEditor.UI.Tests;
 
-public class ShellTests
+public class ShellWindowTests
 {
     [AvaloniaFact]
     public void NavigatesToSettingsAndSwitchesTheme()

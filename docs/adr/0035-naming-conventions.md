@@ -22,5 +22,5 @@ Names drifted across slices (Coordinator vs Service, Panel vs View, `*Log` for u
 
 ## Consequences
 - One-time rename across code, tests and docs.
-- Enforced by review and, where possible, analyzers: CA1711 (identifier suffixes) and the async suffix rule via `.editorconfig` (VSTHRD200 or the IDE rule).
+- Enforced by review, the CA1711 analyzer, and `scripts/check-practices.sh` (Async suffix on Task methods, with attributed test methods exempt, and `cancellationToken` parameter names); the built-in analyzers cannot express the attribute exemption without a new package.
 - Shared's inconsistencies remain until a later decision.

@@ -6,7 +6,7 @@ using Xunit;
 
 namespace AoCEditor.Infrastructure.Tests.Storage;
 
-public class SyncStateStoreTests
+public class SqliteSyncStateStoreTests
 {
     private static CancellationToken Ct => TestContext.Current.CancellationToken;
 

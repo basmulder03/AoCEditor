@@ -4,7 +4,7 @@ using Xunit;
 
 namespace AoCEditor.UI.Tests.Session;
 
-public sealed class CookieSourceTests
+public sealed class CookieSourcesTests
 {
     private sealed class FakeSource(Func<CancellationToken, Task<CookieRead>> read) : ICookieSource
     {
