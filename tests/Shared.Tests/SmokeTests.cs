@@ -1,3 +1,4 @@
+using Shouldly;
 using Xunit;
 
 namespace Shared.Tests;
@@ -5,5 +6,5 @@ namespace Shared.Tests;
 public class SmokeTests
 {
     [Fact]
-    public void TestRunnerWorks() => Assert.True(true);
+    public void TestRunnerWorks() => (1 + 1).ShouldBe(2);
 }

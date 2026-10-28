@@ -16,6 +16,10 @@ The project is developed test-first, with human-readable behavior specs, and shi
 - E2E and full matrix automation is added near the first release; before that, unit and BDD run on every PR.
 - A bug fix starts with a failing test.
 
+- Assertions use Shouldly only. `Xunit.Assert` is banned in `tests/` through BannedApiAnalyzers (`tests/BannedSymbols.txt`), so the build fails on violations. Guidelines are in `tests/README.md`.
+- Reqnroll features follow the practices in `tests/README.md` (declarative scenarios, thin bindings, context injection, parallel-safe).
+- Reqnroll code-behind (`*.feature.cs`) is generated at build and not committed.
+
 ## Consequences
 - More up-front work per slice; regressions caught early.
 - E2E is slower and runs on a schedule or release branch, not every commit.

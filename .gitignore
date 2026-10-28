@@ -482,3 +482,6 @@ $RECYCLE.BIN/
 *.swp
 docs/api/
 _site/
+
+# Reqnroll generated code-behind
+*.feature.cs

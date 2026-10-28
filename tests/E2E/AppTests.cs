@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Shouldly;
 using Xunit;
 
 namespace E2E;
@@ -10,12 +11,12 @@ public class AppTests
     public async Task AppPrintsVersionAndExitsZero()
     {
         var dll = Path.Combine(AppContext.BaseDirectory, "AoCEditor.dll");
-        var psi = new ProcessStartInfo("dotnet", [dll]) { RedirectStandardOutput = true };
+        var psi = new ProcessStartInfo("dotnet", [dll, "--version"]) { RedirectStandardOutput = true };
         using var process = Process.Start(psi)!;
         var output = await process.StandardOutput.ReadToEndAsync(TestContext.Current.CancellationToken);
         await process.WaitForExitAsync(TestContext.Current.CancellationToken);
 
-        Assert.Equal(0, process.ExitCode);
-        Assert.StartsWith("AoCEditor ", output);
+        process.ExitCode.ShouldBe(0);
+        output.ShouldStartWith("AoCEditor ");
     }
 }

@@ -1,0 +1,1 @@
+T:Xunit.Assert;Use Shouldly (value.ShouldBe(...), Should.Throw<T>(...)) for all assertions
