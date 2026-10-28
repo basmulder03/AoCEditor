@@ -18,12 +18,23 @@ public sealed class ProcessRunner : IRunner
     private static readonly TimeSpan DrainLimit = TimeSpan.FromSeconds(2);
 
     private readonly SandboxLevel _level;
+    private readonly string[] _protectedFolders;
 
     public ProcessRunner() : this(LinuxSandbox.Detect())
     {
     }
 
-    internal ProcessRunner(SandboxLevel level) => _level = level;
+    /// <summary>The folders (the app-data folder, for one) that no PATH entry or toolchain location may ever make readable.</summary>
+    public ProcessRunner(IReadOnlyList<string> protectedFolders) : this(LinuxSandbox.Detect(), protectedFolders)
+    {
+    }
+
+    internal ProcessRunner(SandboxLevel level, IReadOnlyList<string>? protectedFolders = null)
+    {
+        _level = level;
+        var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        _protectedFolders = [.. (protectedFolders ?? []).Concat([Path.Combine(home, ".ssh"), Path.Combine(home, ".config")]).Select(Canonical)];
+    }
 
     public SandboxLevel Level => _level;
 
@@ -52,6 +63,8 @@ public sealed class ProcessRunner : IRunner
 
     private async Task<RunResult> RunCoreAsync(RunRequest request, string? scratch, IProgress<OutputLine> output, CancellationToken cancellationToken)
     {
+        var helper = new HelperWatch(output);
+        output = helper;
         using var process = new Process { StartInfo = StartInfo(request, scratch) };
         var clock = Stopwatch.StartNew();
         try
@@ -92,6 +105,11 @@ public sealed class ProcessRunner : IRunner
 
         // A grandchild that survived could keep the pipes open forever, so draining is bounded.
         await Task.WhenAny(pumps, Task.Delay(DrainLimit, CancellationToken.None));
+        if (status == RunStatus.Completed && _level != SandboxLevel.None && process.ExitCode == SandboxHelper.SetupFailed && helper.Refusal is { } refusal)
+        {
+            return new RunResult(RunStatus.SandboxFailed, null, clock.Elapsed, $"The sandbox could not be set up, so the program was not started. {refusal}");
+        }
+
         return new RunResult(status, status == RunStatus.Completed ? process.ExitCode : null, clock.Elapsed);
     }
 
@@ -151,25 +169,21 @@ public sealed class ProcessRunner : IRunner
         return info;
     }
 
-    private SandboxPlan BuildPlan(RunRequest request, string? scratch, string path)
+    internal SandboxPlan BuildPlan(RunRequest request, string? scratch, string path)
     {
         var readable = new List<string>(SystemReadable) { request.WorkingDirectory };
-        var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-        // PATH entries hold the toolchains; the home folder itself (or a parent of it) must never be opened up that way.
+        // PATH entries hold the toolchains; they are resolved through symlinks first so a link cannot smuggle in the home folder or a secret folder.
         foreach (var entry in path.Split(':', StringSplitOptions.RemoveEmptyEntries).Where(Path.IsPathRooted))
         {
-            if (!IsSameOrParent(entry, home))
-            {
-                readable.Add(entry);
-            }
+            AddGrantable(readable, entry);
         }
 
         if (ResolveProgram(request.Command[0], path, request.WorkingDirectory) is { } program)
         {
-            readable.Add(Path.GetDirectoryName(program)!);
+            AddGrantable(readable, Path.GetDirectoryName(program)!);
             if (File.ResolveLinkTarget(program, returnFinalTarget: true)?.FullName is { } real)
             {
-                readable.Add(Path.GetDirectoryName(real)!);
+                AddGrantable(readable, Path.GetDirectoryName(real)!);
             }
         }
 
@@ -186,8 +200,43 @@ public sealed class ProcessRunner : IRunner
             writable,
             request.Limits ?? SandboxLimits.Default,
             _level.HasFlag(SandboxLevel.Filesystem),
-            _level.HasFlag(SandboxLevel.Network) && !request.AllowNetwork,
+            _level.HasFlag(SandboxLevel.Network),
+            request.AllowNetwork,
             request.Command);
+    }
+
+    private void AddGrantable(List<string> readable, string folder)
+    {
+        var real = Canonical(folder);
+        var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        var forbidden = new[] { Canonical(home) }.Concat(_protectedFolders).Any(p => IsSameOrParent(real, p)) || _protectedFolders.Any(p => IsSameOrParent(p, real));
+        if (!forbidden)
+        {
+            readable.Add(real);
+        }
+    }
+
+    // Resolves symlinks in every component, so the check sees where the path really leads.
+    private static string Canonical(string path)
+    {
+        var resolved = Path.GetPathRoot(Path.GetFullPath(path)) ?? "/";
+        foreach (var part in Path.GetFullPath(path)[resolved.Length..].Split([Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar], StringSplitOptions.RemoveEmptyEntries))
+        {
+            resolved = Path.Combine(resolved, part);
+            try
+            {
+                if (Directory.ResolveLinkTarget(resolved, returnFinalTarget: true) is { } target)
+                {
+                    resolved = target.FullName;
+                }
+            }
+            catch (IOException)
+            {
+                // Not resolvable (loop or vanished): keep the lexical path, which only makes the check stricter.
+            }
+        }
+
+        return resolved;
     }
 
     private static readonly string[] SystemReadable =
@@ -292,6 +341,22 @@ public sealed class ProcessRunner : IRunner
             }
 
             text.Clear();
+        }
+    }
+
+    // Remembers the helper's refusal line so exit code 125 can be told apart from a program that exits with 125.
+    private sealed class HelperWatch(IProgress<OutputLine> inner) : IProgress<OutputLine>
+    {
+        public string? Refusal { get; private set; }
+
+        public void Report(OutputLine value)
+        {
+            if (value.Stream == OutputChannel.Stderr && value.Text.StartsWith(SandboxHelper.RefusalPrefix, StringComparison.Ordinal))
+            {
+                Refusal = value.Text;
+            }
+
+            inner.Report(value);
         }
     }
 

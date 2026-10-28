@@ -52,6 +52,7 @@ public class ConsoleViewModelTests
     [InlineData(RunStatus.Cancelled, null, "Cancelled after 1.50 s")]
     [InlineData(RunStatus.FailedToStart, null, "Could not start: boom")]
     [InlineData(RunStatus.SandboxUnavailable, null, "Not started: boom")]
+    [InlineData(RunStatus.SandboxFailed, null, "Not started: boom")]
     public void TheEndOfARunIsSummarisedInWords(RunStatus status, int? exit, string expected)
     {
         var console = new ConsoleViewModel();

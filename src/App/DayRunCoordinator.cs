@@ -78,7 +78,12 @@ public sealed class DayRunCoordinator(
             var built = await runner.RunAsync(new RunRequest(CommandTemplate.Expand(compile.Command, values), folder, null, CompileTimeout, allowUnsandboxed, [inputPath], [folder], AllowNetwork: true), output, cancellationToken);
             if (built.Status == RunStatus.SandboxUnavailable)
             {
-                return new DayRunResult(DayRunKind.SandboxRefused, built, built.Error);
+                return new DayRunResult(DayRunKind.SandboxRefused, built, $"{built.Error} {SandboxLevelExtensions.BuildStepNotice}");
+            }
+
+            if (built.Status == RunStatus.SandboxFailed)
+            {
+                return new DayRunResult(DayRunKind.CompileFailed, built, built.Error);
             }
 
             if (built.Status != RunStatus.Completed || built.ExitCode != 0)

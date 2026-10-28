@@ -49,7 +49,7 @@ public sealed class AppServices : IDisposable
         Coordinator = new DayRunCoordinator(
             Workspace,
             (year, day, ct) => Puzzle.LoadInputAsync(year, day, false, ct),
-            new ProcessRunner(),
+            new ProcessRunner([Paths.Root]),
             Paths,
             plugin => ToolchainLocator.Find(plugin.ToolchainExecutables, Environment.GetEnvironmentVariable("PATH")));
         logs.CreateLogger("App").AppStarted(Shared.AppInfo.Version, Diagnostics.Debug.IsEnabled);

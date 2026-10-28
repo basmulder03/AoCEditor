@@ -1,3 +1,4 @@
+using System.Runtime.Versioning;
 using Reqnroll;
 using Shouldly;
 using Specs.Drivers.Runner;
@@ -18,6 +19,7 @@ public sealed class SandboxSteps(SandboxDriver driver)
     }
 
     [Given("a private file outside the solution folder")]
+    [SupportedOSPlatform("linux")]
     public void GivenAPrivateFile() => driver.CreatePrivateFile();
 
     [Given("a server is listening on this computer")]
@@ -29,6 +31,9 @@ public sealed class SandboxSteps(SandboxDriver driver)
     [When("I run a solution that writes next to itself")]
     public Task WhenWritesNextToItself() => driver.RunShellAsync("echo x > created.txt");
 
+    [When("I run a solution that makes the private file readable for everyone")]
+    public Task WhenChmods() => driver.RunShellAsync($"chmod 777 '{driver.Private}/secret.txt'");
+
     [When("I run a solution that connects to the server")]
     public Task WhenConnects() => driver.RunConnectAsync();
 
@@ -37,6 +42,10 @@ public sealed class SandboxSteps(SandboxDriver driver)
 
     [Then("the solution did not get the contents of the private file")]
     public void ThenNoContents() => driver.Output.ShouldNotContain("private-contents");
+
+    [Then("the private file is still private")]
+    [SupportedOSPlatform("linux")]
+    public void ThenStillPrivate() => driver.PrivateFileMode.ShouldBe(UnixFileMode.UserRead | UnixFileMode.UserWrite);
 
     [Then("no file was created")]
     public void ThenNoFile() => driver.FilesInSolutionFolder.ShouldBe(0);

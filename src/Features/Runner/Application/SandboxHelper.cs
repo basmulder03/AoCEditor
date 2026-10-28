@@ -6,7 +6,8 @@ namespace Runner.Application;
 /// </summary>
 public static class SandboxHelper
 {
-    private const int SetupFailed = 125;
+    internal const int SetupFailed = 125;
+    internal const string RefusalPrefix = "Sandbox refused to start";
     private const int ExecFailed = 127;
 
     /// <summary>Null when the arguments are not for the helper. Otherwise the exit code, which is only reached when the program could not be started.</summary>
@@ -19,7 +20,7 @@ public static class SandboxHelper
         }
         catch (FormatException ex)
         {
-            Console.Error.WriteLine($"Sandbox refused to start: {ex.Message}");
+            Console.Error.WriteLine($"{RefusalPrefix}: {ex.Message}");
             return SetupFailed;
         }
 
@@ -31,7 +32,7 @@ public static class SandboxHelper
         var error = OperatingSystem.IsLinux() ? LinuxSandbox.Apply(plan) : "only Linux is supported";
         if (error is not null)
         {
-            Console.Error.WriteLine($"Sandbox refused to start the program: {error}.");
+            Console.Error.WriteLine($"{RefusalPrefix} the program: {error}.");
             return SetupFailed;
         }
 

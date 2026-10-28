@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.Versioning;
 using Runner.Application;
 
 namespace Specs.Drivers.Runner;
@@ -28,7 +29,16 @@ public sealed class SandboxDriver : IDisposable
 
     public bool ServerSawConnection => _listener?.Pending() ?? false;
 
-    public void CreatePrivateFile() => File.WriteAllText(Path.Combine(Private, "secret.txt"), "private-contents");
+    [SupportedOSPlatform("linux")]
+    public void CreatePrivateFile()
+    {
+        var file = Path.Combine(Private, "secret.txt");
+        File.WriteAllText(file, "private-contents");
+        File.SetUnixFileMode(file, UnixFileMode.UserRead | UnixFileMode.UserWrite);
+    }
+
+    [SupportedOSPlatform("linux")]
+    public UnixFileMode PrivateFileMode => File.GetUnixFileMode(Path.Combine(Private, "secret.txt"));
 
     public void StartServer()
     {

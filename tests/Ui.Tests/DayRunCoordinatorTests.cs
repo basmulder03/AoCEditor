@@ -173,6 +173,32 @@ public sealed class DayRunCoordinatorTests : IDisposable
     }
 
     [Fact]
+    public async Task ARefusedBuildStepTellsTheUserItMayUseTheInternet()
+    {
+        await _workspace.SetRootAsync(Solutions, Ct);
+        _runner.Next = new RunResult(RunStatus.SandboxUnavailable, null, TimeSpan.Zero, "network isolation is missing");
+
+        var result = await Create().RunAsync(2024, 3, Compiled, new Progress<OutputLine>(), false, Ct);
+
+        result.Kind.ShouldBe(DayRunKind.SandboxRefused);
+        result.Detail.ShouldNotBeNull();
+        result.Detail.ShouldContain("network isolation is missing");
+        result.Detail.ShouldContain("internet");
+    }
+
+    [Fact]
+    public async Task ASandboxThatCouldNotBeSetUpDuringTheBuildIsNotReportedAsABrokenBuild()
+    {
+        await _workspace.SetRootAsync(Solutions, Ct);
+        _runner.Next = new RunResult(RunStatus.SandboxFailed, null, TimeSpan.Zero, "the sandbox could not be set up");
+
+        var result = await Create().RunAsync(2024, 3, Compiled, new Progress<OutputLine>(), false, Ct);
+
+        result.Detail.ShouldBe("the sandbox could not be set up");
+        _runner.Requests.Count.ShouldBe(1);
+    }
+
+    [Fact]
     public async Task ScaffoldingWithoutAWorkspaceIsAResultNotAnException()
     {
         var result = await Create().ScaffoldAsync(2024, 3, Python, Ct);

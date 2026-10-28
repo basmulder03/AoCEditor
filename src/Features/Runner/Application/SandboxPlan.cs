@@ -12,6 +12,7 @@ public sealed record SandboxPlan(
     SandboxLimits Limits,
     bool Filesystem,
     bool Network,
+    bool AllowInternet,
     IReadOnlyList<string> Command)
 {
     public const string Flag = "--aoc-sandbox-exec";
@@ -43,6 +44,11 @@ public sealed record SandboxPlan(
             args.Add("--net");
         }
 
+        if (AllowInternet)
+        {
+            args.Add("--inet");
+        }
+
         args.Add("--");
         args.AddRange(Command);
         return args;
@@ -59,7 +65,7 @@ public sealed record SandboxPlan(
         List<string> readable = [], writable = [];
         long mem = 0, fsize = 0;
         int cpu = 0, tasks = 0;
-        bool filesystem = false, network = false;
+        bool filesystem = false, network = false, inet = false;
         var i = 1;
         for (; i < args.Count && args[i] != "--"; i++)
         {
@@ -73,6 +79,7 @@ public sealed record SandboxPlan(
                 case "--fsize": fsize = long.Parse(Value(args, ref i), CultureInfo.InvariantCulture); break;
                 case "--fs": filesystem = true; break;
                 case "--net": network = true; break;
+                case "--inet": inet = true; break;
                 default: throw new FormatException($"Unknown sandbox option '{args[i]}'.");
             }
         }
@@ -82,7 +89,7 @@ public sealed record SandboxPlan(
             throw new FormatException("The sandbox plan has no command.");
         }
 
-        return new SandboxPlan(readable, writable, new SandboxLimits(mem, cpu, tasks, fsize), filesystem, network, [.. args.Skip(i + 1)]);
+        return new SandboxPlan(readable, writable, new SandboxLimits(mem, cpu, tasks, fsize), filesystem, network, inet, [.. args.Skip(i + 1)]);
     }
 
     private static string Value(IReadOnlyList<string> args, ref int i) =>

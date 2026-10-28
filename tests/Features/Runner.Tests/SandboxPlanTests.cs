@@ -15,6 +15,7 @@ public sealed class SandboxPlanTests
             new SandboxLimits(1024, 5, 7, 2048),
             Filesystem: true,
             Network: true,
+            AllowInternet: true,
             ["prog", "--", "$(x)", "-w", ""]);
 
         var parsed = SandboxPlan.TryParse(plan.ToArguments());
@@ -25,6 +26,7 @@ public sealed class SandboxPlanTests
         parsed.Limits.ShouldBe(plan.Limits);
         parsed.Filesystem.ShouldBeTrue();
         parsed.Network.ShouldBeTrue();
+        parsed.AllowInternet.ShouldBeTrue();
         parsed.Command.ShouldBe(plan.Command);
     }
 

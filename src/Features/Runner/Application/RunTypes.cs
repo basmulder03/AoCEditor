@@ -6,6 +6,9 @@ public enum SandboxLevel { None = 0, Limits = 1, Filesystem = 2, Network = 4, Fu
 
 public static class SandboxLevelExtensions
 {
+    /// <summary>What a build step may do beyond a run step; shown wherever the user is asked to accept the sandbox.</summary>
+    public const string BuildStepNotice = "The build step may use the internet (internet sockets only, for package restore) and write into the day's folder.";
+
     /// <summary>Names the protections the level lacks, or an empty string for <see cref="SandboxLevel.Full"/>.</summary>
     public static string Missing(this SandboxLevel level)
     {
@@ -35,7 +38,7 @@ public sealed record SandboxLimits(long MemoryBytes, int CpuSeconds, int ExtraTa
     public static SandboxLimits Default { get; } = new(4L << 30, 600, 512, 1L << 30);
 }
 
-public enum RunStatus { Completed, TimedOut, Cancelled, FailedToStart, SandboxUnavailable }
+public enum RunStatus { Completed, TimedOut, Cancelled, FailedToStart, SandboxUnavailable, SandboxFailed }
 
 public enum OutputChannel { Stdout, Stderr }
 

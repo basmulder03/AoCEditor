@@ -3,8 +3,8 @@ using System.Runtime.InteropServices;
 namespace Runner.Application;
 
 /// <summary>
-/// Linux confinement through direct syscalls: Landlock for the filesystem, a seccomp filter that refuses socket creation
-/// for the network, and rlimits. Everything is applied by the helper process to itself right before it executes the program.
+/// Linux confinement through direct syscalls: Landlock for the filesystem (and signal and abstract-socket scoping where the
+/// kernel has it), a seccomp filter for sockets and dangerous system calls, and rlimits. Everything is applied by the helper process to itself right before it executes the program.
 /// </summary>
 internal static partial class LinuxSandbox
 {
@@ -18,6 +18,12 @@ internal static partial class LinuxSandbox
     private const int OPath = 0x200000;
     private const int OCloExec = 0x80000;
     private const int Sigkill = 9;
+    private const long SysCloseRange = 436;
+    private const int CloseRangeCloexec = 4;
+    private const int MinFilesystemAbi = 3;
+    private const int ScopeAbi = 6;
+    private const ulong ScopeAbstractUnixSocket = 1UL << 0;
+    private const ulong ScopeSignal = 1UL << 1;
 
     private const ulong Execute = 1UL << 0;
     private const ulong WriteFile = 1UL << 1;
@@ -40,19 +46,14 @@ internal static partial class LinuxSandbox
             return SandboxLevel.None;
         }
 
-        var level = SandboxLevel.Limits;
-        if (LandlockVersion() >= 1)
-        {
-            level |= SandboxLevel.Filesystem;
-        }
-
-        if (SeccompArch() is not null && prctl(PrGetSeccomp, 0, 0, 0, 0) >= 0)
-        {
-            level |= SandboxLevel.Network;
-        }
-
-        return level;
+        return LevelFor(LandlockAbi(), SeccompArch() is not null && prctl(PrGetSeccomp, 0, 0, 0, 0) >= 0);
     }
+
+    internal static int LandlockAbi() => LandlockVersion();
+
+    // Truncation control (ABI 3) is needed so a read-only grant cannot be used to empty files.
+    internal static SandboxLevel LevelFor(int landlockAbi, bool seccomp) =>
+        SandboxLevel.Limits | (landlockAbi >= MinFilesystemAbi ? SandboxLevel.Filesystem : 0) | (seccomp ? SandboxLevel.Network : 0);
 
     /// <summary>Kills every process the sandboxed program started (the helper makes itself a session leader).</summary>
     public static void KillGroup(int pid)
@@ -82,7 +83,13 @@ internal static partial class LinuxSandbox
             return landlockError;
         }
 
-        return plan.Network && !DenySockets() ? "could not block network access" : null;
+        if (plan.Network && !InstallFilter(plan.AllowInternet))
+        {
+            return "could not install the system call filter";
+        }
+
+        // Marked close-on-exec rather than closed now: the runtime still needs its own descriptors (JIT mappings) until the program replaces it.
+        return Syscall(SysCloseRange, 3, -1, CloseRangeCloexec) == 0 ? null : "could not close inherited file descriptors";
     }
 
     private static int LandlockVersion() => (int)Syscall(SysLandlockCreateRuleset, 0, 0, 1);
@@ -148,17 +155,20 @@ internal static partial class LinuxSandbox
     private static string? ApplyLandlock(SandboxPlan plan)
     {
         var abi = LandlockVersion();
-        if (abi < 1)
+        if (abi < MinFilesystemAbi)
         {
-            return "Landlock is not available";
+            return "Landlock ABI 3 or newer is not available";
         }
 
         var handled = AllV1 | (abi >= 2 ? Refer : 0) | (abi >= 3 ? Truncate : 0);
-        var attr = Marshal.AllocHGlobal(8);
+        var attr = Marshal.AllocHGlobal(24);
         try
         {
-            Marshal.WriteInt64(attr, (long)handled);
-            var ruleset = (int)Syscall(SysLandlockCreateRuleset, attr, 8, 0);
+            // handled filesystem rights, handled network rights (none), scopes; the kernel only accepts the longer form from ABI 6.
+            Marshal.WriteInt64(attr, 0, (long)handled);
+            Marshal.WriteInt64(attr, 8, 0);
+            Marshal.WriteInt64(attr, 16, abi >= ScopeAbi ? (long)(ScopeAbstractUnixSocket | ScopeSignal) : 0);
+            var ruleset = (int)Syscall(SysLandlockCreateRuleset, attr, abi >= ScopeAbi ? 24 : 8, 0);
             if (ruleset < 0)
             {
                 return "could not create the Landlock ruleset";
@@ -232,36 +242,17 @@ internal static partial class LinuxSandbox
         }
     }
 
-    private static (uint Arch, uint Socket)? SeccompArch() => RuntimeInformation.ProcessArchitecture switch
-    {
-        Architecture.X64 => (0xC000003E, 41),
-        Architecture.Arm64 => (0xC00000B7, 198),
-        _ => null,
-    };
+    private static Architecture? SeccompArch() => SeccompFilter.ArchOf(RuntimeInformation.ProcessArchitecture) is null ? null : RuntimeInformation.ProcessArchitecture;
 
-    // Refuses socket() and io_uring_setup() (io_uring can open sockets), and every syscall of a foreign ABI.
-    // Landlock's TCP rules would still leave UDP and abstract unix sockets open, which is why this filter is used.
-    private static bool DenySockets()
+    private static bool InstallFilter(bool allowInternet)
     {
-        if (SeccompArch() is not { } target)
+        if (SeccompArch() is not { } architecture)
         {
             return false;
         }
 
-        const ushort Ld = 0x20, Jeq = 0x15, Jge = 0x35, Ret = 0x06;
-        const uint Allow = 0x7fff0000, Errno = 0x00050000 | 13, IoUringSetup = 425, X32Bit = 0x40000000;
-        SockFilter[] program =
-        [
-            new(Ld, 0, 0, 4),
-            new(Jeq, 0, 5, target.Arch),
-            new(Ld, 0, 0, 0),
-            new(Jge, 3, 0, X32Bit),
-            new(Jeq, 2, 0, target.Socket),
-            new(Jeq, 1, 0, IoUringSetup),
-            new(Ret, 0, 0, Allow),
-            new(Ret, 0, 0, Errno),
-        ];
-
+        // The helper made itself a session leader, so its process group id is its pid; the program keeps that pid.
+        var program = SeccompFilter.Build(architecture, allowInternet, getpid());
         var filters = Marshal.AllocHGlobal(program.Length * 8);
         var prog = Marshal.AllocHGlobal(16);
         try
@@ -301,8 +292,6 @@ internal static partial class LinuxSandbox
         return Marshal.GetLastPInvokeError();
     }
 
-    private readonly record struct SockFilter(ushort Code, byte Jt, byte Jf, uint K);
-
     [StructLayout(LayoutKind.Sequential)]
     private readonly record struct RLimit(ulong Soft, ulong Hard);
 
@@ -325,6 +314,9 @@ internal static partial class LinuxSandbox
 
     [LibraryImport("libc", SetLastError = true)]
     private static partial int setsid();
+
+    [LibraryImport("libc")]
+    private static partial int getpid();
 
     [LibraryImport("libc", SetLastError = true)]
     private static partial int kill(int pid, int signal);

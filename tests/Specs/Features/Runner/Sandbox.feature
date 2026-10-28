@@ -20,6 +20,11 @@ Feature: Sandboxed runs
     When I run a solution that connects to the server
     Then the server saw no connection
 
+  Scenario: A solution cannot change who may read my files
+    Given a private file outside the solution folder
+    When I run a solution that makes the private file readable for everyone
+    Then the private file is still private
+
   Scenario: A runaway solution is stopped
     When I run a solution that uses the processor forever
     Then the run ended within 10 seconds
