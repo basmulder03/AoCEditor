@@ -73,6 +73,10 @@ Snapshot of the GitHub issues, which are the source of truth. Hierarchy: Epic > 
 - [ ] FEATURE #29 [MUST] Linux sandboxed runner
   - [ ] SPIKE #53 [MUST] Spike: Landlock/seccomp from .NET AoT
   - [ ] SECURITY #116 [MUST] Cap program output size in the runner and console
+  - [ ] SECURITY #119 [MUST] Compile step can reach the session bus, keyring and SSH agent over AF_UNIX
+  - [ ] SECURITY #120 [MUST] Sandboxed code can signal and ptrace other processes
+  - [ ] SECURITY #121 [SHOULD] Landlock ABI 1-2 leaves truncate unrestricted and chmod/utimes/setxattr are never governed
+  - [ ] SECURITY #122 [SHOULD] Harden sandbox lifecycle (lower findings)
 - [ ] FEATURE #30 [MUST] Windows sandboxed runner
   - [ ] SPIKE #54 [SHOULD] Spike: Windows AppContainer vs restricted token
 - [ ] FEATURE #31 [MUST] Python language plugin
