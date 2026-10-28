@@ -128,13 +128,24 @@ public class PuzzleServiceTests
     }
 
     [Fact]
-    public async Task UnrecognisedResponsesAreNotRecorded()
+    public async Task UnrecognisedResponsesAreNotRecordedButHoldBackTheNextSubmit()
     {
         _gateway.Reply = new GatewayResult.Ok("<article><p>Something new</p></article>");
 
         (await _service.SubmitAsync(2020, 3, 1, "5", CancellationToken.None)).Value!.Verdict.Outcome.ShouldBe(SubmitOutcome.Unknown);
 
         _store.Attempts.ShouldBeEmpty();
+        (await _service.CooldownUntilAsync(2020, 3, 1, CancellationToken.None)).ShouldBe(_time.GetUtcNow().AddMinutes(1));
+    }
+
+    [Fact]
+    public async Task ARateLimitWithAnUnreadableWaitStillCoolsDownForAMinute()
+    {
+        _gateway.Reply = new GatewayResult.Ok("<article><p>You gave an answer too recently. You have 1h 2m left to wait.</p></article>");
+
+        await _service.SubmitAsync(2020, 3, 1, "5", CancellationToken.None);
+
+        (await _service.CooldownUntilAsync(2020, 3, 1, CancellationToken.None)).ShouldBe(_time.GetUtcNow().AddMinutes(1));
     }
 
     [Fact]

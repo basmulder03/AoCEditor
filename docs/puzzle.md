@@ -34,7 +34,7 @@ Results are `Fetched<T>` with a `FetchStatus` (`Ok`, `NotSignedIn`, `RateLimited
 
 `PuzzleService` uses `IAnswerStore` (SQLite, see `docs/storage.md`) around `SubmitAsync`:
 
-- An active cooldown returns `FetchStatus.CoolingDown` with no request; `CooldownUntilAsync` gives the end time for a countdown. A rate-limited response with a readable wait saves its end time, so the cooldown survives restarts.
+- An active cooldown returns `FetchStatus.CoolingDown` with no request; `CooldownUntilAsync` gives the end time for a countdown. A rate-limited response saves its end time, so the cooldown survives restarts. When the wait cannot be read, and after any reply that is not recognised, a one-minute cooldown applies so a changed AoC wording can never turn Enter into a resend loop.
 - An answer already judged wrong, too high or too low for that part returns `AlreadyTried` with no request.
 - Every recognised response is stored as an attempt; unrecognised ones are not. A correct answer is also saved as the known answer for that part. Known answers live in app data only, never in the solutions folder.
 
@@ -45,6 +45,7 @@ Selecting an unlocked calendar tile opens `DayPage` (`src/App`), which hosts `Da
 - Tabs: one per unlocked part plus Input. The input is downloaded the first time the Input tab is opened.
 - The answer box submits for the last unlocked part. Submit is disabled while a request is in flight, the box is empty, the day is complete or a cooldown runs; Enter in the box submits too.
 - A cooldown shows "You can answer again in Ns" and counts down once a second (`Tick`). A cooldown saved before a restart is restored on load.
+- If a correct part 1 could not refresh the puzzle, submitting stays disabled until the puzzle is reloaded.
 - Load failures (not signed in, rate limited, not found, network) show as a plain sentence under the title.
 
 The editor and console panels from the day workspace design are not built yet; they will go beside this view.

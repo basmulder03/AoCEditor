@@ -16,6 +16,7 @@ public sealed class DayViewModel(PuzzleService service, int year, int day, TimeP
     private string _answer = string.Empty;
     private string? _inputText;
     private bool _busy;
+    private bool _awaitingReload;
     private DateTimeOffset? _cooldownUntil;
     private int _cooldownSeconds;
 
@@ -51,7 +52,7 @@ public sealed class DayViewModel(PuzzleService service, int year, int day, TimeP
 
     public int CooldownSeconds { get => _cooldownSeconds; private set => Set(ref _cooldownSeconds, value); }
 
-    public bool CanSubmit => !_busy && Parts.Count > 0 && !IsComplete && CooldownSeconds == 0 && !string.IsNullOrWhiteSpace(Answer);
+    public bool CanSubmit => !_busy && Parts.Count > 0 && !IsComplete && !_awaitingReload && CooldownSeconds == 0 && !string.IsNullOrWhiteSpace(Answer);
 
     public async Task LoadAsync(bool refresh, CancellationToken cancellationToken)
     {
@@ -108,6 +109,8 @@ public sealed class DayViewModel(PuzzleService service, int year, int day, TimeP
                 else
                 {
                     _solved = Math.Max(_solved, OpenPart);
+                    _awaitingReload = true;
+                    Status = "Part 1 is solved. Reload the puzzle to see part 2.";
                 }
             }
 
@@ -129,6 +132,7 @@ public sealed class DayViewModel(PuzzleService service, int year, int day, TimeP
 
     private void Show(PuzzleDocument doc)
     {
+        _awaitingReload = false;
         Heading = string.Create(CultureInfo.InvariantCulture, $"Day {day}: {doc.Title}");
         _solved = doc.Answers.Count;
         Parts = doc.Parts;

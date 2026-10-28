@@ -134,4 +134,24 @@ public class DayViewModelTests
 
         _model.InputText.ShouldBe("1\n2\n");
     }
+
+    [Fact]
+    public async Task ACorrectPartOneWithoutTheRefreshedPuzzleBlocksFurtherSubmitsUntilReload()
+    {
+        _gateway.Reply = new GatewayResult.Ok(Part1);
+        await _model.LoadAsync(false, Ct);
+        _gateway.PostReply = new GatewayResult.Ok("<article><p>That's the right answer!</p></article>");
+        _gateway.GetReply = new GatewayResult.NetworkError("down");
+        _model.Answer = "42";
+        await _model.SubmitAsync(Ct);
+
+        _model.Answer = "43";
+        _model.CanSubmit.ShouldBeFalse();
+        _model.Status.ShouldContain("Reload");
+
+        _gateway.GetReply = new GatewayResult.Ok(Part1 + Part2);
+        await _model.LoadAsync(true, Ct);
+
+        _model.CanSubmit.ShouldBeTrue();
+    }
 }

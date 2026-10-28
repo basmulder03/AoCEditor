@@ -15,6 +15,8 @@ public sealed record Submission(SubmitResult Verdict, PuzzleDocument? Unlocked);
 /// <summary>Puzzle text, input and answers for one day, each only on explicit user action.</summary>
 public sealed class PuzzleService(IAocGateway gateway, IAnswerStore answers, TimeProvider time)
 {
+    private static readonly TimeSpan UnknownWait = TimeSpan.FromMinutes(1);
+
     public async Task<Fetched<PuzzleDocument>> LoadPuzzleAsync(int year, int day, bool refresh, CancellationToken cancellationToken)
     {
         var page = await gateway.GetAsync(DayPath(year, day), RequestKind.Interactive, Policy(refresh), cancellationToken);
@@ -71,15 +73,21 @@ public sealed class PuzzleService(IAocGateway gateway, IAnswerStore answers, Tim
     private async Task RecordAsync(int year, int day, int part, string answer, SubmitResult result, CancellationToken cancellationToken)
     {
         var now = time.GetUtcNow();
-        if (result.Outcome == SubmitOutcome.Unknown)
+        if (result.Outcome != SubmitOutcome.Unknown)
         {
-            return;
+            await answers.AddAttemptAsync(year, day, part, new AnswerAttempt(answer, result.Outcome.ToString(), now), cancellationToken);
         }
 
-        await answers.AddAttemptAsync(year, day, part, new AnswerAttempt(answer, result.Outcome.ToString(), now), cancellationToken);
-        if (result.Wait is { } wait)
+        // An unreadable wait or reply must not let the next press of Enter hit AoC again at once.
+        var wait = result.Outcome switch
         {
-            await answers.SetCooldownAsync(year, day, part, now + wait, cancellationToken);
+            SubmitOutcome.RateLimited => result.Wait ?? UnknownWait,
+            SubmitOutcome.Unknown => UnknownWait,
+            _ => (TimeSpan?)null,
+        };
+        if (wait is { } w)
+        {
+            await answers.SetCooldownAsync(year, day, part, now + w, cancellationToken);
         }
 
         if (result.Outcome == SubmitOutcome.Correct)
