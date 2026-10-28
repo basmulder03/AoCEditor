@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>AoCEditor.Infrastructure</AssemblyName>
+    <RootNamespace>AoCEditor.Infrastructure</RootNamespace>
     <IsAotCompatible>true</IsAotCompatible>
     <!-- LibraryImport-generated stubs are unsafe code. -->
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>

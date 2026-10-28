@@ -3,6 +3,7 @@
     <OutputType>Exe</OutputType>
     <IsPackable>false</IsPackable>
     <AssemblyName>AoCEditor.Infrastructure.Tests</AssemblyName>
+    <RootNamespace>AoCEditor.Infrastructure.Tests</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="xunit.v3" />
