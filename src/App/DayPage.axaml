@@ -1,0 +1,11 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:AoCEditor"
+             x:Class="AoCEditor.DayPage"
+             x:DataType="local:DayPage">
+  <StackPanel Spacing="{DynamicResource Space2}">
+    <TextBlock x:Name="Title" Classes="heading" AutomationProperties.Name="Selected day" />
+    <Button x:Name="BackButton" Content="Back to calendar" AutomationProperties.Name="Back to calendar"
+            HorizontalAlignment="Left" Click="OnBackClick" />
+  </StackPanel>
+</UserControl>

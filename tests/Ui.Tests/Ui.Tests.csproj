@@ -6,6 +6,7 @@
   <ItemGroup>
     <PackageReference Include="xunit.v3" VersionOverride="3.2.2" />
     <PackageReference Include="Avalonia.Headless.XUnit" />
+    <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" />
     <ProjectReference Include="../../src/UiKit/UiKit.csproj" />
     <ProjectReference Include="../../src/App/App.csproj" />
     <!-- The contrast test reads the same token files the app compiles in. -->

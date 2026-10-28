@@ -6,6 +6,7 @@
   <x:Double x:Key="Space4">16</x:Double>
   <x:Double x:Key="Space6">24</x:Double>
   <Thickness x:Key="PadControl">12,8</Thickness>
+  <Thickness x:Key="InsetXs">4</Thickness>
   <Thickness x:Key="InsetSm">8</Thickness>
   <Thickness x:Key="InsetMd">16</Thickness>
   <Thickness x:Key="InsetTopMd">0,16,0,0</Thickness>
@@ -20,4 +21,7 @@
   <Thickness x:Key="FocusWidth">2</Thickness>
   <x:Double x:Key="MotionFastMs">100</x:Double>
   <x:Double x:Key="MotionNormalMs">200</x:Double>
+  <x:Double x:Key="IconSize">20</x:Double>
+  <x:Double x:Key="TileWidth">104</x:Double>
+  <x:Double x:Key="TileHeight">84</x:Double>
 </ResourceDictionary>

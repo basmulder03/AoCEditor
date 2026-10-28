@@ -6,7 +6,8 @@ The `src/UiKit` project holds all design tokens and base control styles. Feature
 
 - `Tokens/Colors.axaml`: per-theme colors (`BackgroundColor`, `SurfaceColor`, `TextColor`, `TextMutedColor`, `BorderColor`, `AccentColor`, `OnAccentColor`, `FocusColor`) in `ThemeDictionaries` keyed `Light`, `Dark`, `HighContrast`.
 - `Tokens/Brushes.axaml`: a `*Brush` for every color, resolved dynamically so it follows the active theme.
-- `Tokens/Metrics.axaml`: spacing (`Space1..6`), radius (`RadiusSm/Md/Lg`), type scale (`FontSize*`), border and focus widths (`BorderWidth`, `FocusWidth` are `Thickness`, since they feed `BorderThickness`), insets (`InsetSm`, `InsetMd`, `InsetTopMd`) for `Margin`, motion durations (`Motion*Ms`).
+- `Tokens/Metrics.axaml`: spacing (`Space1..6`), radius (`RadiusSm/Md/Lg`), type scale (`FontSize*`), border and focus widths (`BorderWidth`, `FocusWidth` are `Thickness`, since they feed `BorderThickness`), insets (`InsetXs`, `InsetSm`, `InsetMd`, `InsetTopMd`) for `Margin`, motion durations (`Motion*Ms`).
+- `Icons/Icons.axaml`: vector icons as `StreamGeometry` (`IconLocked`, `IconOpen`, `IconOneStar`, `IconTwoStars`), used with `PathIcon` and `IconSize`.
 - `Styles/Controls.axaml`: base styles for Window, TextBlock, Button, TextBox, TabControl, ListBox and its items, with a visible focus adorner.
 
 ## Themes

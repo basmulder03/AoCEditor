@@ -18,5 +18,7 @@
   href: sign-in.md
 - name: Calendar sync
   href: sync.md
+- name: Year calendar
+  href: calendar.md
 - name: Diagnostics
   href: diagnostics.md

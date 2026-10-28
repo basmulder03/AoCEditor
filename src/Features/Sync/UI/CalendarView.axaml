@@ -1,0 +1,99 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Sync.UI"
+             x:Class="Sync.UI.CalendarView"
+             x:DataType="vm:CalendarViewModel">
+  <UserControl.Styles>
+    <Style Selector="Button.tile">
+      <Setter Property="Width" Value="{DynamicResource TileWidth}" />
+      <Setter Property="Height" Value="{DynamicResource TileHeight}" />
+      <Setter Property="Margin" Value="{DynamicResource InsetXs}" />
+      <Setter Property="HorizontalContentAlignment" Value="Center" />
+    </Style>
+    <Style Selector="Button.tile.locked">
+      <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+      <Setter Property="BorderThickness" Value="0" />
+    </Style>
+    <Style Selector="Button.tile.onestar">
+      <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+      <Setter Property="BorderThickness" Value="{DynamicResource FocusWidth}" />
+    </Style>
+    <Style Selector="Button.tile.twostars">
+      <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+      <Setter Property="Foreground" Value="{DynamicResource OnAccentBrush}" />
+    </Style>
+    <Style Selector="Button.tile.twostars /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+      <Setter Property="Foreground" Value="{DynamicResource OnAccentBrush}" />
+    </Style>
+  </UserControl.Styles>
+  <ScrollViewer>
+    <StackPanel Spacing="{DynamicResource Space3}">
+      <TextBlock Classes="heading" Text="Calendar" />
+      <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Space3}">
+        <TextBlock VerticalAlignment="Center" Text="Year" />
+        <ComboBox x:Name="YearBox" MinWidth="120" ItemsSource="{Binding Years}"
+                  SelectedItem="{Binding SelectedYear, Mode=OneWay}"
+                  AutomationProperties.Name="Year" SelectionChanged="OnYearChanged" />
+        <TextBlock VerticalAlignment="Center" Text="{Binding StarsText}" AutomationProperties.Name="Stars earned" />
+      </StackPanel>
+      <TextBlock Classes="muted" Text="{Binding LastSyncedText}" AutomationProperties.Name="Last synced" />
+      <TextBlock x:Name="EmptyNote" IsVisible="{Binding IsEmpty}" TextWrapping="Wrap"
+                 Text="Not synced yet. Press Sync this year to load this calendar." />
+
+      <ItemsControl x:Name="DayGrid" ItemsSource="{Binding Days}" KeyDown="OnGridKeyDown"
+                    AutomationProperties.Name="Days of the year">
+        <ItemsControl.ItemsPanel>
+          <ItemsPanelTemplate>
+            <UniformGrid Columns="5" HorizontalAlignment="Left" />
+          </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="vm:DayTile">
+            <Button Classes="tile" Classes.locked="{Binding IsLocked}" Classes.onestar="{Binding IsOneStar}"
+                    Classes.twostars="{Binding IsTwoStars}" Click="OnTileClick"
+                    AutomationProperties.Name="{Binding Name}" ToolTip.Tip="{Binding Name}">
+              <StackPanel HorizontalAlignment="Center" Spacing="{DynamicResource Space1}">
+                <TextBlock HorizontalAlignment="Center" FontWeight="SemiBold" Text="{Binding DayText}" />
+                <Panel HorizontalAlignment="Center">
+                  <PathIcon Width="{DynamicResource IconSize}" Height="{DynamicResource IconSize}"
+                            Data="{DynamicResource IconLocked}" IsVisible="{Binding IsLocked}" />
+                  <PathIcon Width="{DynamicResource IconSize}" Height="{DynamicResource IconSize}"
+                            Data="{DynamicResource IconOpen}" IsVisible="{Binding IsOpen}" />
+                  <PathIcon Width="{DynamicResource IconSize}" Height="{DynamicResource IconSize}"
+                            Data="{DynamicResource IconOneStar}" IsVisible="{Binding IsOneStar}" />
+                  <PathIcon Width="{DynamicResource IconSize}" Height="{DynamicResource IconSize}"
+                            Data="{DynamicResource IconTwoStars}" IsVisible="{Binding IsTwoStars}" />
+                </Panel>
+                <TextBlock HorizontalAlignment="Center" FontSize="{DynamicResource FontSizeCaption}"
+                           Foreground="{Binding $parent[Button].Foreground}" Text="{Binding Label}" />
+              </StackPanel>
+            </Button>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+
+      <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Space2}">
+        <Button x:Name="SyncYearButton" Content="Sync this year" IsEnabled="{Binding CanSync}"
+                AutomationProperties.Name="Sync this year" Click="OnSyncYearClick" />
+        <Button x:Name="SyncAllButton" Content="Sync all years" IsEnabled="{Binding CanSync}"
+                AutomationProperties.Name="Sync all years" Click="OnSyncAllClick" />
+        <Button x:Name="CancelButton" Content="Cancel" IsVisible="{Binding IsSyncing}"
+                AutomationProperties.Name="Cancel sync" Click="OnCancelClick" />
+      </StackPanel>
+      <TextBlock x:Name="ProgressNote" IsVisible="{Binding IsSyncing}" TextWrapping="Wrap"
+                 Text="{Binding ProgressText}" AutomationProperties.Name="Sync progress" />
+      <TextBlock x:Name="ResultNote" TextWrapping="Wrap" Text="{Binding ResultText}"
+                 AutomationProperties.Name="Sync result" AutomationProperties.LiveSetting="Polite" />
+      <ItemsControl ItemsSource="{Binding ErrorLines}" AutomationProperties.Name="Sync errors">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="x:String">
+            <TextBlock TextWrapping="Wrap" Text="{Binding}" />
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+      <Button x:Name="AccountButton" Content="Open account settings" IsVisible="{Binding NeedsSignIn}"
+              HorizontalAlignment="Left" AutomationProperties.Name="Open account settings" Click="OnAccountClick" />
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

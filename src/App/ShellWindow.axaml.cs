@@ -7,6 +7,7 @@ namespace AoCEditor;
 public partial class ShellWindow : Window
 {
     private readonly AppServices? _services;
+    private readonly CalendarPage _calendar;
 
     public ShellWindow() : this(null)
     {
@@ -16,7 +17,10 @@ public partial class ShellWindow : Window
     {
         _services = services;
         InitializeComponent();
-        Host.Content = new CalendarPage();
+        _calendar = new CalendarPage(services);
+        _calendar.DaySelected += (_, e) => Host.Content = new DayPage(e.Year, e.Day, () => Host.Content = _calendar);
+        _calendar.AccountRequested += (_, _) => OnPromptSignInClick(null, null);
+        Host.Content = _calendar;
         if (services is not null)
         {
             services.Events.SignInRequired += (_, _) => Dispatcher.UIThread.Post(() => SignInPrompt.IsVisible = true);
@@ -54,7 +58,7 @@ public partial class ShellWindow : Window
         }
         else if (Nav.SelectedItem is ListBoxItem)
         {
-            Host.Content = new CalendarPage();
+            Host.Content = _calendar;
         }
     }
 
@@ -80,7 +84,7 @@ public partial class ShellWindow : Window
         }
     }
 
-    void OnPromptSignInClick(object? sender, RoutedEventArgs e)
+    void OnPromptSignInClick(object? sender, RoutedEventArgs? e)
     {
         SignInPrompt.IsVisible = false;
         NavigateTo("Settings");
