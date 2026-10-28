@@ -1,0 +1,25 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Puzzle.UI"
+             x:Class="Puzzle.UI.DayView"
+             x:DataType="vm:DayViewModel">
+  <DockPanel>
+    <StackPanel DockPanel.Dock="Top" Spacing="{DynamicResource Space1}">
+      <TextBlock Classes="heading" Text="{Binding Heading}" AutomationProperties.Name="Puzzle title" />
+      <TextBlock Text="{Binding Status}" TextWrapping="Wrap" IsVisible="{Binding Status, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                 AutomationProperties.Name="Puzzle status" />
+    </StackPanel>
+    <StackPanel DockPanel.Dock="Bottom" Spacing="{DynamicResource Space1}" Margin="0,8,0,0">
+      <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Space2}">
+        <TextBox x:Name="AnswerBox" MinWidth="240" PlaceholderText="Your answer" Text="{Binding Answer}"
+                 AutomationProperties.Name="Answer" KeyDown="OnAnswerKeyDown" />
+        <Button Content="Submit" IsEnabled="{Binding CanSubmit}" Click="OnSubmitClick"
+                AutomationProperties.Name="Submit answer" />
+        <TextBlock Classes="muted" VerticalAlignment="Center" x:Name="CooldownText"
+                   AutomationProperties.Name="Cooldown" />
+      </StackPanel>
+      <TextBlock Text="{Binding Result}" TextWrapping="Wrap" AutomationProperties.Name="Last result" />
+    </StackPanel>
+    <TabControl x:Name="Tabs" SelectionChanged="OnTabChanged" />
+  </DockPanel>
+</UserControl>

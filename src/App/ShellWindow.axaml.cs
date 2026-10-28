@@ -18,7 +18,7 @@ public partial class ShellWindow : Window
         _services = services;
         InitializeComponent();
         _calendar = new CalendarPage(services);
-        _calendar.DaySelected += (_, e) => Host.Content = new DayPage(e.Year, e.Day, () => Host.Content = _calendar);
+        _calendar.DaySelected += (_, e) => Host.Content = new DayPage(services, e.Year, e.Day, () => Host.Content = _calendar);
         _calendar.AccountRequested += (_, _) => OnPromptSignInClick(null, null);
         Host.Content = _calendar;
         if (services is not null)

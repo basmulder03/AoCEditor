@@ -1,6 +1,7 @@
 using System.Globalization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Shared;
 using Shared.Contracts;
 using Sync.Application;
 using Sync.Domain;

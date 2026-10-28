@@ -84,7 +84,7 @@ public class PuzzleServiceTests
 
         var result = await _service.SubmitAsync(2020, 3, part: 2, " 42 ", CancellationToken.None);
 
-        result.Value!.Result.Outcome.ShouldBe(SubmitOutcome.Wrong);
+        result.Value!.Verdict.Outcome.ShouldBe(SubmitOutcome.Wrong);
         _gateway.Posts.Single().Path.ShouldBe("/2020/day/3/answer");
         _gateway.Posts.Single().Form.ShouldBe(new Dictionary<string, string> { ["level"] = "2", ["answer"] = "42" });
     }
@@ -132,7 +132,7 @@ public class PuzzleServiceTests
     {
         _gateway.Reply = new GatewayResult.Ok("<article><p>Something new</p></article>");
 
-        (await _service.SubmitAsync(2020, 3, 1, "5", CancellationToken.None)).Value!.Result.Outcome.ShouldBe(SubmitOutcome.Unknown);
+        (await _service.SubmitAsync(2020, 3, 1, "5", CancellationToken.None)).Value!.Verdict.Outcome.ShouldBe(SubmitOutcome.Unknown);
 
         _store.Attempts.ShouldBeEmpty();
     }
@@ -175,69 +175,5 @@ public class PuzzleServiceTests
         await Should.ThrowAsync<ArgumentException>(() => _service.SubmitAsync(2020, 3, part, answer, CancellationToken.None));
 
         _gateway.Posts.ShouldBeEmpty();
-    }
-
-    private sealed class FakeAnswerStore : IAnswerStore
-    {
-        public List<AnswerAttempt> Attempts { get; } = [];
-
-        public Dictionary<(int, int, int), DateTimeOffset> Cooldowns { get; } = [];
-
-        public Dictionary<(int, int, int), string> Known { get; } = [];
-
-        public Task AddAttemptAsync(int year, int day, int part, AnswerAttempt attempt, CancellationToken cancellationToken)
-        {
-            Attempts.Add(attempt);
-            return Task.CompletedTask;
-        }
-
-        public Task<IReadOnlyList<AnswerAttempt>> AttemptsAsync(int year, int day, int part, CancellationToken cancellationToken) =>
-            Task.FromResult<IReadOnlyList<AnswerAttempt>>(Attempts);
-
-        public Task SetCooldownAsync(int year, int day, int part, DateTimeOffset until, CancellationToken cancellationToken)
-        {
-            Cooldowns[(year, day, part)] = until;
-            return Task.CompletedTask;
-        }
-
-        public Task<DateTimeOffset?> CooldownUntilAsync(int year, int day, int part, CancellationToken cancellationToken) =>
-            Task.FromResult(Cooldowns.TryGetValue((year, day, part), out var until) ? until : (DateTimeOffset?)null);
-
-        public Task SetKnownAnswerAsync(int year, int day, int part, string answer, CancellationToken cancellationToken)
-        {
-            Known[(year, day, part)] = answer;
-            return Task.CompletedTask;
-        }
-
-        public Task<string?> KnownAnswerAsync(int year, int day, int part, CancellationToken cancellationToken) =>
-            Task.FromResult(Known.TryGetValue((year, day, part), out var answer) ? answer : null);
-    }
-
-    private sealed class FakeGateway : IAocGateway
-    {
-        public GatewayResult Reply { get; set; } = new GatewayResult.NotFound();
-
-        /// <summary>Answer to GETs when different from <see cref="Reply"/>.</summary>
-        public GatewayResult? GetReply { get; set; }
-
-        public List<(string Path, RequestKind Kind, FetchPolicy Policy)> Gets { get; } = [];
-
-        public List<(string Path, IReadOnlyDictionary<string, string> Form)> Posts { get; } = [];
-
-        public Task<GatewayResult> GetAsync(string path, RequestKind kind, FetchPolicy policy, CancellationToken cancellationToken)
-        {
-            Gets.Add((path, kind, policy));
-            return Task.FromResult(GetReply ?? Reply);
-        }
-
-        public Task<GatewayResult> PostFormAsync(string path, IReadOnlyDictionary<string, string> form, CancellationToken cancellationToken)
-        {
-            Posts.Add((path, form));
-            return Task.FromResult(Reply);
-        }
-
-        public Task<GatewayResult> CheckTokenAsync(string token, CancellationToken cancellationToken) => Task.FromResult(Reply);
-
-        public DateTimeOffset NextAllowedAt(RequestKind kind) => DateTimeOffset.MinValue;
     }
 }

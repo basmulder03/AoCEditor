@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace Sync.UI;
+namespace Shared;
 
 public abstract class ObservableBase : INotifyPropertyChanged
 {
