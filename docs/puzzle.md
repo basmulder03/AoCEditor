@@ -11,3 +11,7 @@ The HTML reader is hand-written and forgiving (no parser library, so it stays Ao
 - Unknown elements degrade to their text, so a new AoC element never breaks rendering.
 
 Rendering with Avalonia controls and fetching through the gateway come in later slices.
+
+## Submit responses
+
+`SubmitResponseParser.Parse(html)` reads the answer response into a `SubmitResult`: `Correct`, `Wrong`, `TooHigh`, `TooLow`, `RateLimited` (with `Wait` when the "You have 4m 12s left to wait" text is readable) or `AlreadySolved`. Anything else, including a login page, is `Unknown`: show it raw and treat it as non-final. The phrases come from the wording other AoC tools match and are not yet verified against live responses (ADR 0015 open question), so the fixtures are synthetic.
