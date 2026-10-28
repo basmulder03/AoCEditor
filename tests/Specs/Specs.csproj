@@ -8,12 +8,8 @@
     <PackageReference Include="Reqnroll.xunit.v3" />
     <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" />
     <ProjectReference Include="../../src/Shared/Shared.csproj" />
-    <ProjectReference Include="../../src/Features/Session/Session.csproj" />
-    <ProjectReference Include="../../src/Features/Diagnostics/Diagnostics.csproj" />
-    <ProjectReference Include="../../src/Features/Gateway/Gateway.csproj" />
-    <ProjectReference Include="../../src/Features/Storage/Storage.csproj" />
-    <ProjectReference Include="../../src/Features/Sync/Sync.csproj" />
-    <ProjectReference Include="../../src/Features/Workspace/Workspace.csproj" />
-    <ProjectReference Include="../../src/Features/Runner/Runner.csproj" />
+    <ProjectReference Include="../../src/Core/Core.csproj" />
+    <ProjectReference Include="../../src/Infrastructure/Infrastructure.csproj" />
+    <ProjectReference Include="../../src/UI/UI.csproj" />
   </ItemGroup>
 </Project>

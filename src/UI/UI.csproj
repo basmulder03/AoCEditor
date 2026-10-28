@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>AoCEditor.UI</AssemblyName>
+    <IsAotCompatible>true</IsAotCompatible>
+    <!-- LibraryImport-generated stubs are unsafe code. -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.AvaloniaEdit" />
+    <PackageReference Include="AvaloniaEdit.TextMate" />
+    <PackageReference Include="Avalonia.Controls.WebView" />
+    <ProjectReference Include="../Shared/Shared.csproj" />
+    <ProjectReference Include="../Core/Core.csproj" />
+    <InternalsVisibleTo Include="Ui.Tests" />
+    <InternalsVisibleTo Include="AoCEditor.Infrastructure.Tests" />
+  </ItemGroup>
+</Project>

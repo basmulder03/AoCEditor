@@ -1,33 +1,18 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/App/App.csproj" />
-    <Project Path="src/Features/Storage/Storage.csproj" />
-    <Project Path="src/Features/Diagnostics/Diagnostics.csproj" />
-    <Project Path="src/Features/Gateway/Gateway.csproj" />
-    <Project Path="src/Features/Editor/Editor.csproj" />
-    <Project Path="src/Features/Runner/Runner.csproj" />
-    <Project Path="src/Features/Session/Session.csproj" />
-    <Project Path="src/Features/Plugins/Plugins.csproj" />
-    <Project Path="src/Features/Puzzle/Puzzle.csproj" />
-    <Project Path="src/Features/Sync/Sync.csproj" />
-    <Project Path="src/Features/Workspace/Workspace.csproj" />
+    <Project Path="src/Core/Core.csproj" />
+    <Project Path="src/Infrastructure/Infrastructure.csproj" />
+    <Project Path="src/UI/UI.csproj" />
     <Project Path="src/Shared/Shared.csproj" />
     <Project Path="src/UiKit/UiKit.csproj" />
   </Folder>
   <Folder Name="/tests/">
-    <Project Path="tests/E2E/E2E.csproj" />
-    <Project Path="tests/Features/Diagnostics.Tests/Diagnostics.Tests.csproj" />
-    <Project Path="tests/Features/Gateway.Tests/Gateway.Tests.csproj" />
-    <Project Path="tests/Features/Editor.Tests/Editor.Tests.csproj" />
-    <Project Path="tests/Features/Runner.Tests/Runner.Tests.csproj" />
-    <Project Path="tests/Features/Session.Tests/Session.Tests.csproj" />
-    <Project Path="tests/Features/Plugins.Tests/Plugins.Tests.csproj" />
-    <Project Path="tests/Features/Puzzle.Tests/Puzzle.Tests.csproj" />
+    <Project Path="tests/Core.Tests/Core.Tests.csproj" />
+    <Project Path="tests/Infrastructure.Tests/Infrastructure.Tests.csproj" />
+    <Project Path="tests/Ui.Tests/Ui.Tests.csproj" />
     <Project Path="tests/Shared.Tests/Shared.Tests.csproj" />
     <Project Path="tests/Specs/Specs.csproj" />
-    <Project Path="tests/Features/Storage.Tests/Storage.Tests.csproj" />
-    <Project Path="tests/Features/Sync.Tests/Sync.Tests.csproj" />
-    <Project Path="tests/Features/Workspace.Tests/Workspace.Tests.csproj" />
-    <Project Path="tests/Ui.Tests/Ui.Tests.csproj" />
+    <Project Path="tests/E2E/E2E.csproj" />
   </Folder>
 </Solution>

@@ -6,13 +6,11 @@
   <ItemGroup>
     <PackageReference Include="xunit.v3" VersionOverride="3.2.2" />
     <PackageReference Include="Avalonia.Headless.XUnit" />
+    <PackageReference Include="Avalonia.Desktop" />
     <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" />
     <ProjectReference Include="../../src/UiKit/UiKit.csproj" />
-    <ProjectReference Include="../../src/Features/Puzzle/Puzzle.csproj" />
-    <ProjectReference Include="../../src/Features/Workspace/Workspace.csproj" />
-    <ProjectReference Include="../../src/Features/Plugins/Plugins.csproj" />
-    <ProjectReference Include="../../src/Features/Runner/Runner.csproj" />
-    <ProjectReference Include="../../src/Features/Editor/Editor.csproj" />
+    <ProjectReference Include="../../src/Core/Core.csproj" />
+    <ProjectReference Include="../../src/UI/UI.csproj" />
     <ProjectReference Include="../../src/App/App.csproj" />
     <!-- The contrast test reads the same token files the app compiles in. -->
     <Content Include="../../src/UiKit/Tokens/Colors.axaml" Link="Tokens/Colors.axaml" CopyToOutputDirectory="PreserveNewest" />
