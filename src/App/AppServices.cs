@@ -1,6 +1,7 @@
 using Diagnostics.Application;
 using Gateway;
 using Microsoft.Extensions.Logging;
+using Puzzle.Application;
 using Session.Application;
 using Session.Infrastructure;
 using Session.UI;
@@ -38,6 +39,7 @@ public sealed class AppServices : IDisposable
         _browser = new WebViewSignInBrowser(SignInUri, Path.Combine(Paths.Root, "webview"), logs.CreateLogger("Session.WebView"));
         _signIn = new SignInCoordinator(tokens, _gateway, () => _browser.TryClearProfile(), logger: logs.CreateLogger("Session.SignIn"));
         Sync = new SyncService(_gateway, SyncState, TimeProvider.System, logs.CreateLogger("Sync.SyncService"));
+        Puzzle = new PuzzleService(_gateway, Answers, TimeProvider.System);
         logs.CreateLogger("App").AppStarted(Shared.AppInfo.Version, Diagnostics.Debug.IsEnabled);
     }
 
@@ -60,6 +62,8 @@ public sealed class AppServices : IDisposable
     public IStorageStatus StorageStatus { get; }
 
     public SyncService Sync { get; }
+
+    public PuzzleService Puzzle { get; }
 
     /// <summary>Opens (and so migrates) the database.</summary>
     public async Task InitializeAsync(CancellationToken cancellationToken)

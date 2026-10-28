@@ -1,6 +1,7 @@
 using Puzzle.Application;
 using Puzzle.Domain;
 using Shared.Contracts;
+using Microsoft.Extensions.Time.Testing;
 using Shouldly;
 using Xunit;
 
@@ -11,9 +12,11 @@ public class PuzzleServiceTests
     private const string PuzzleHtml = "<article class=\"day-desc\"><h2>--- Day 3: Trees ---</h2><p>Go.</p></article>";
 
     private readonly FakeGateway _gateway = new();
+    private readonly FakeAnswerStore _store = new();
+    private readonly FakeTimeProvider _time = new(new DateTimeOffset(2020, 12, 3, 12, 0, 0, TimeSpan.Zero));
     private readonly PuzzleService _service;
 
-    public PuzzleServiceTests() => _service = new PuzzleService(_gateway);
+    public PuzzleServiceTests() => _service = new PuzzleService(_gateway, _store, _time);
 
     [Fact]
     public async Task ThePuzzleComesFromTheDayPageAsAnInteractiveCacheFirstRequest()
@@ -110,6 +113,59 @@ public class PuzzleServiceTests
         _gateway.Gets.ShouldBeEmpty();
     }
 
+    [Fact]
+    public async Task EveryFinalAnswerIsRecordedAndACorrectOneBecomesTheKnownAnswer()
+    {
+        _gateway.Reply = new GatewayResult.Ok("<article><p>That's not the right answer.</p></article>");
+        await _service.SubmitAsync(2020, 3, 1, "5", CancellationToken.None);
+        _gateway.Reply = new GatewayResult.Ok("<article><p>That's the right answer!</p></article>");
+        _gateway.GetReply = new GatewayResult.Ok(PuzzleHtml);
+        await _service.SubmitAsync(2020, 3, 1, "6", CancellationToken.None);
+
+        _store.Attempts.Select(a => (a.Answer, a.Outcome)).ShouldBe([("5", "Wrong"), ("6", "Correct")]);
+        _store.Attempts[0].At.ShouldBe(_time.GetUtcNow());
+        _store.Known[(2020, 3, 1)].ShouldBe("6");
+    }
+
+    [Fact]
+    public async Task UnrecognisedResponsesAreNotRecorded()
+    {
+        _gateway.Reply = new GatewayResult.Ok("<article><p>Something new</p></article>");
+
+        (await _service.SubmitAsync(2020, 3, 1, "5", CancellationToken.None)).Value!.Result.Outcome.ShouldBe(SubmitOutcome.Unknown);
+
+        _store.Attempts.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task ARateLimitStartsACooldownThatBlocksTheNextSubmitWithoutARequest()
+    {
+        _gateway.Reply = new GatewayResult.Ok("<article><p>You gave an answer too recently. You have 1m 30s left to wait.</p></article>");
+        await _service.SubmitAsync(2020, 3, 1, "5", CancellationToken.None);
+
+        (await _service.CooldownUntilAsync(2020, 3, 1, CancellationToken.None)).ShouldBe(_time.GetUtcNow().AddSeconds(90));
+        var blocked = await _service.SubmitAsync(2020, 3, 1, "6", CancellationToken.None);
+
+        blocked.Status.ShouldBe(FetchStatus.CoolingDown);
+        _gateway.Posts.Count.ShouldBe(1);
+
+        _time.Advance(TimeSpan.FromSeconds(91));
+        (await _service.CooldownUntilAsync(2020, 3, 1, CancellationToken.None)).ShouldBeNull();
+        (await _service.SubmitAsync(2020, 3, 1, "6", CancellationToken.None)).Status.ShouldBe(FetchStatus.Ok);
+    }
+
+    [Fact]
+    public async Task AWrongAnswerIsNotSentTwice()
+    {
+        _gateway.Reply = new GatewayResult.Ok("<article><p>That's not the right answer; your answer is too high.</p></article>");
+        await _service.SubmitAsync(2020, 3, 1, "5", CancellationToken.None);
+
+        var again = await _service.SubmitAsync(2020, 3, 1, " 5 ", CancellationToken.None);
+
+        again.Status.ShouldBe(FetchStatus.AlreadyTried);
+        _gateway.Posts.Count.ShouldBe(1);
+    }
+
     [Theory]
     [InlineData(0, "1")]
     [InlineData(3, "1")]
@@ -119,6 +175,42 @@ public class PuzzleServiceTests
         await Should.ThrowAsync<ArgumentException>(() => _service.SubmitAsync(2020, 3, part, answer, CancellationToken.None));
 
         _gateway.Posts.ShouldBeEmpty();
+    }
+
+    private sealed class FakeAnswerStore : IAnswerStore
+    {
+        public List<AnswerAttempt> Attempts { get; } = [];
+
+        public Dictionary<(int, int, int), DateTimeOffset> Cooldowns { get; } = [];
+
+        public Dictionary<(int, int, int), string> Known { get; } = [];
+
+        public Task AddAttemptAsync(int year, int day, int part, AnswerAttempt attempt, CancellationToken cancellationToken)
+        {
+            Attempts.Add(attempt);
+            return Task.CompletedTask;
+        }
+
+        public Task<IReadOnlyList<AnswerAttempt>> AttemptsAsync(int year, int day, int part, CancellationToken cancellationToken) =>
+            Task.FromResult<IReadOnlyList<AnswerAttempt>>(Attempts);
+
+        public Task SetCooldownAsync(int year, int day, int part, DateTimeOffset until, CancellationToken cancellationToken)
+        {
+            Cooldowns[(year, day, part)] = until;
+            return Task.CompletedTask;
+        }
+
+        public Task<DateTimeOffset?> CooldownUntilAsync(int year, int day, int part, CancellationToken cancellationToken) =>
+            Task.FromResult(Cooldowns.TryGetValue((year, day, part), out var until) ? until : (DateTimeOffset?)null);
+
+        public Task SetKnownAnswerAsync(int year, int day, int part, string answer, CancellationToken cancellationToken)
+        {
+            Known[(year, day, part)] = answer;
+            return Task.CompletedTask;
+        }
+
+        public Task<string?> KnownAnswerAsync(int year, int day, int part, CancellationToken cancellationToken) =>
+            Task.FromResult(Known.TryGetValue((year, day, part), out var answer) ? answer : null);
     }
 
     private sealed class FakeGateway : IAocGateway

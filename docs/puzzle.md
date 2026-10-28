@@ -29,3 +29,11 @@ Results are `Fetched<T>` with a `FetchStatus` (`Ok`, `NotSignedIn`, `RateLimited
 ## PuzzleView
 
 `PuzzleView` (`Puzzle.UI`) renders one `PuzzlePart` (`Part` property) with native controls: selectable wrapped text for paragraphs and list items (`• ` prefix), a monospace boxed block for code, italic for emphasis, monospace for inline code and underline for links. Links are not clickable yet; opening them in the system browser after confirmation (ADR 0008) is still to do, as is the day page that hosts the part tabs.
+
+## Attempts, cooldowns and known answers
+
+`PuzzleService` uses `IAnswerStore` (SQLite, see `docs/storage.md`) around `SubmitAsync`:
+
+- An active cooldown returns `FetchStatus.CoolingDown` with no request; `CooldownUntilAsync` gives the end time for a countdown. A rate-limited response with a readable wait saves its end time, so the cooldown survives restarts.
+- An answer already judged wrong, too high or too low for that part returns `AlreadyTried` with no request.
+- Every recognised response is stored as an attempt; unrecognised ones are not. A correct answer is also saved as the known answer for that part. Known answers live in app data only, never in the solutions folder.
