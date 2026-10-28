@@ -14,3 +14,5 @@
   href: design-system.md
 - name: Session token storage
   href: session-storage.md
+- name: Calendar sync
+  href: sync.md

@@ -1,4 +1,4 @@
-namespace Gateway;
+namespace Shared.Contracts;
 
 public abstract record GatewayResult
 {

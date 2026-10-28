@@ -1,5 +1,6 @@
 using System.Net;
 using Microsoft.Extensions.Time.Testing;
+using Shared.Contracts;
 using Shouldly;
 using Xunit;
 

@@ -11,5 +11,6 @@
     <ProjectReference Include="../../src/Features/Session/Session.csproj" />
     <ProjectReference Include="../../src/Features/Gateway/Gateway.csproj" />
     <ProjectReference Include="../../src/Features/Storage/Storage.csproj" />
+    <ProjectReference Include="../../src/Features/Sync/Sync.csproj" />
   </ItemGroup>
 </Project>

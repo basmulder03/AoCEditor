@@ -4,6 +4,7 @@
     <Project Path="src/Features/Storage/Storage.csproj" />
     <Project Path="src/Features/Gateway/Gateway.csproj" />
     <Project Path="src/Features/Session/Session.csproj" />
+    <Project Path="src/Features/Sync/Sync.csproj" />
     <Project Path="src/Shared/Shared.csproj" />
     <Project Path="src/UiKit/UiKit.csproj" />
   </Folder>
@@ -14,6 +15,7 @@
     <Project Path="tests/Shared.Tests/Shared.Tests.csproj" />
     <Project Path="tests/Specs/Specs.csproj" />
     <Project Path="tests/Storage.Tests/Storage.Tests.csproj" />
+    <Project Path="tests/Sync.Tests/Sync.Tests.csproj" />
     <Project Path="tests/Ui.Tests/Ui.Tests.csproj" />
   </Folder>
 </Solution>

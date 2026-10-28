@@ -6,7 +6,7 @@ using Shared.Contracts;
 namespace Gateway;
 
 /// <summary>The only component allowed to talk to adventofcode.com.</summary>
-public sealed class AocGateway : IDisposable
+public sealed class AocGateway : IAocGateway, IDisposable
 {
     private readonly HttpClient _http;
     private readonly ISessionTokenProvider _tokens;

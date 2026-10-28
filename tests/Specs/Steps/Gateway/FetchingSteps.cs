@@ -1,5 +1,6 @@
 using Gateway;
 using Reqnroll;
+using Shared.Contracts;
 using Shouldly;
 using Specs.Drivers.Gateway;
 
@@ -8,11 +9,6 @@ namespace Specs.Steps.Gateway;
 [Binding]
 public sealed class FetchingSteps(FetchingDriver driver)
 {
-    [Given("I am signed in")]
-    public static void GivenIAmSignedIn()
-    {
-    }
-
     [Given("I have already downloaded a page")]
     public Task GivenIHaveAlreadyDownloadedAPage() => driver.SavePageAsync("saved copy");
 
