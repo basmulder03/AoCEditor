@@ -8,16 +8,6 @@ using Workspace.Domain;
 
 namespace AoCEditor;
 
-public enum DayRunKind { Ran, NoWorkspace, NoToolchain, InputUnavailable, CompileFailed, SandboxRefused, SourceChanged }
-
-public enum DayScaffoldKind { Scaffolded, NoWorkspace }
-
-/// <summary>Folder and SourcePath are set when Kind is Scaffolded.</summary>
-public sealed record DayScaffoldResult(DayScaffoldKind Kind, string? Folder = null, string? SourcePath = null);
-
-/// <summary>Run is the result of the last command that started; Detail is a sentence for the user when the run did not go ahead.</summary>
-public sealed record DayRunResult(DayRunKind Kind, RunResult? Run = null, string? Detail = null);
-
 /// <summary>Ties the slices together for one run: scaffold the day, find the toolchain, store the input in app data, compile, run.</summary>
 public sealed class DayRunCoordinator(
     WorkspaceService workspace,

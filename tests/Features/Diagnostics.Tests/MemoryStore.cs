@@ -16,16 +16,3 @@ internal sealed class MemoryStore : IKeyValueStore
         return Task.CompletedTask;
     }
 }
-
-internal sealed class ListSink : ILogSink
-{
-    public List<LogEntry> Entries { get; } = [];
-
-    public void Write(LogEntry entry) => Entries.Add(entry);
-}
-
-internal static class LoggerExtras
-{
-    public static void Say(this Microsoft.Extensions.Logging.ILogger logger, Microsoft.Extensions.Logging.LogLevel level, string message, Exception? exception = null) =>
-        logger.Log(level, default, message, exception, static (s, _) => s);
-}

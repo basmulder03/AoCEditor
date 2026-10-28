@@ -13,3 +13,7 @@ Pre-release. The solution skeleton exists and most features are still planned. E
 - [Architecture decision records](adr/README.md)
 
 Advent of Code access follows the site's automation rules. This documentation contains no puzzle text or personal inputs.
+
+## Code conventions
+
+Every `.cs` file under `src` and `tests` declares one top-level type named after the file; `scripts/check-practices.sh` enforces it.

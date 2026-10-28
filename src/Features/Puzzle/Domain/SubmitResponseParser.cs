@@ -3,11 +3,6 @@ using System.Text.RegularExpressions;
 
 namespace Puzzle.Domain;
 
-public enum SubmitOutcome { Unknown, Correct, Wrong, TooHigh, TooLow, RateLimited, AlreadySolved }
-
-/// <summary>Wait is only set for RateLimited, and null when the response gave no readable time.</summary>
-public sealed record SubmitResult(SubmitOutcome Outcome, TimeSpan? Wait = null);
-
 public static partial class SubmitResponseParser
 {
     [GeneratedRegex(@"You have (?:(\d+)m )?(?:(\d+)s )?left to wait", RegexOptions.CultureInvariant, matchTimeoutMilliseconds: 1000)]

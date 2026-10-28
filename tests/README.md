@@ -32,3 +32,7 @@ Filter by category in a mixed run: `dotnet test --solution AoCEditor.slnx --filt
 ## Layout
 
 `tests/Features/<Slice>.Tests` holds each slice's unit tests (mirrors `src/Features`). `tests/Specs` holds all Reqnroll scenarios, `tests/E2E` the process-level tests, `tests/Ui.Tests` and `tests/Shared.Tests` the UI kit and shared code.
+
+## One top-level type per file
+
+`src` and `tests` follow one top-level type per file, named after the type (generic parameters are not part of the file name; `Foo.axaml.cs` holds `Foo`). Partial parts, nested types and generated files (`*.g.cs`, `*.feature.cs`) are excepted. Test helpers (fakes, builders) therefore get their own file too, or are nested private classes inside the test class that uses them. `scripts/check-practices.sh` fails otherwise.

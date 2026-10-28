@@ -23,12 +23,3 @@ public abstract record SignInResult
 
     public sealed record BrowserUnsupported(string Reason) : SignInResult;
 }
-
-public enum SessionState
-{
-    SignedOut,
-    SignedIn,
-    StoreUnavailable,
-}
-
-public sealed record SessionStatus(SessionState State, string? Reason = null);

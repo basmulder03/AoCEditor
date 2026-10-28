@@ -13,10 +13,10 @@ public sealed class PracticeRuleTests : IDisposable
 
     public void Dispose() => Directory.Delete(_root, recursive: true);
 
-    private (int Exit, string Output) Run(string code)
+    private (int Exit, string Output) Run(string code, string fileName = "Sample.cs")
     {
         Directory.CreateDirectory(_root);
-        File.WriteAllText(Path.Combine(_root, "Sample.cs"), code);
+        File.WriteAllText(Path.Combine(_root, fileName), code);
         var dir = AppContext.BaseDirectory;
         while (!File.Exists(Path.Combine(dir, "scripts", "check-practices.sh")))
         {
@@ -51,6 +51,30 @@ public sealed class PracticeRuleTests : IDisposable
     public void OrdinaryLoggingPasses(string line)
     {
         var (exit, _) = Run(line);
+
+        exit.ShouldBe(0);
+    }
+
+    [Theory(Skip = "Practice script runs on Linux only", SkipUnless = nameof(RunsHere), SkipType = typeof(PracticeRuleTests))]
+    [InlineData("namespace N;\npublic sealed class Sample;\npublic enum Other { A }\n", "Sample.cs")]
+    [InlineData("namespace N;\npublic delegate void Sample();\npublic interface ISample;\n", "Sample.cs")]
+    [InlineData("namespace N;\npublic sealed class Different;\n", "Sample.cs")]
+    [InlineData("namespace N\n{\n    public sealed class Sample;\n    public record Other(int A);\n}\n", "Sample.cs")]
+    public void SeveralTopLevelTypesOrAMismatchedFileNameIsFlagged(string code, string fileName)
+    {
+        var (exit, output) = Run(code, fileName);
+
+        exit.ShouldBe(1);
+        output.ShouldContain("One top-level type per file");
+    }
+
+    [Theory(Skip = "Practice script runs on Linux only", SkipUnless = nameof(RunsHere), SkipType = typeof(PracticeRuleTests))]
+    [InlineData("namespace N;\npublic sealed class Sample\n{\n    private sealed class Nested;\n    public enum Kind { A }\n}\n")]
+    [InlineData("namespace N;\npublic sealed partial class Sample<T>\n{\n}\n")]
+    [InlineData("namespace N;\npublic delegate void Sample(int a);\n")]
+    public void OneTopLevelTypeNamedAfterTheFilePasses(string code)
+    {
+        var (exit, _) = Run(code);
 
         exit.ShouldBe(0);
     }

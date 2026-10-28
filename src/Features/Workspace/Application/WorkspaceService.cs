@@ -4,8 +4,6 @@ using Workspace.Domain;
 
 namespace Workspace.Application;
 
-public enum SetRootResult { Ok, NotAbsolute, OverlapsAppData }
-
 /// <summary>The solutions workspace: its root and the files scaffolded into it on user action.</summary>
 public sealed class WorkspaceService(IKeyValueStore settings, IAppDataPaths appData)
 {

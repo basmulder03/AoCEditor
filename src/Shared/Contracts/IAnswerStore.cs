@@ -1,8 +1,5 @@
 namespace Shared.Contracts;
 
-/// <summary>One submitted answer; Outcome is the name of the parsed result.</summary>
-public sealed record AnswerAttempt(string Answer, string Outcome, DateTimeOffset At);
-
 /// <summary>Submission history, cooldowns and known correct answers per day and part (1 or 2).</summary>
 public interface IAnswerStore
 {

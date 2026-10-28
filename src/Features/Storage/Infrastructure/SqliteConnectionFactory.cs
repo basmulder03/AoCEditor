@@ -5,12 +5,6 @@ using Shared.Contracts;
 
 namespace Storage.Infrastructure;
 
-public interface IConnectionFactory
-{
-    /// <summary>Opens a migrated connection with WAL and foreign keys on.</summary>
-    Task<SqliteConnection> OpenAsync(CancellationToken ct);
-}
-
 public sealed class SqliteConnectionFactory(IAppDataPaths paths, ILogger? logger = null) : IConnectionFactory
 {
     private readonly ILogger _log = logger ?? NullLogger.Instance;

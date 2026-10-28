@@ -4,41 +4,6 @@ using System.Text.Json.Serialization;
 
 namespace Plugins.Domain;
 
-internal sealed class ManifestDto
-{
-    public int? SchemaVersion { get; set; }
-
-    public string? Id { get; set; }
-
-    public string? Name { get; set; }
-
-    public string[]? Extensions { get; set; }
-
-    public Dictionary<string, string>? TemplateFiles { get; set; }
-
-    public ToolchainDto? Toolchain { get; set; }
-
-    public CommandDto? Compile { get; set; }
-
-    public CommandDto? Run { get; set; }
-}
-
-internal sealed class ToolchainDto
-{
-    public string[]? Executables { get; set; }
-}
-
-internal sealed class CommandDto
-{
-    public string[]? Command { get; set; }
-
-    public string? Input { get; set; }
-}
-
-[JsonSerializable(typeof(ManifestDto))]
-[JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase, ReadCommentHandling = JsonCommentHandling.Skip, AllowTrailingCommas = true)]
-internal sealed partial class ManifestJson : JsonSerializerContext;
-
 /// <summary>Reads and validates a <c>plugin.json</c>; a manifest with any error is rejected whole.</summary>
 public static class ManifestParser
 {

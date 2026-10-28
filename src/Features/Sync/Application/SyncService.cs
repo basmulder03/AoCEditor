@@ -5,28 +5,6 @@ using Sync.Domain;
 
 namespace Sync.Application;
 
-public enum SyncOutcome
-{
-    Completed,
-    NotSignedIn,
-    RateLimited,
-    EventsUnavailable,
-}
-
-public enum SyncError
-{
-    ParseError,
-    NotFound,
-    NetworkError,
-}
-
-public sealed record YearError(int Year, SyncError Error, string? Reason = null);
-
-/// <summary>Reported just before a year's request: the year in progress, years queued after it and the wait before the request may go out.</summary>
-public sealed record SyncProgress(int Year, int YearsRemaining, int SecondsUntilNextRequest);
-
-public sealed record SyncSummary(SyncOutcome Outcome, IReadOnlyList<int> YearsSynced, int DaysUpdated, IReadOnlyList<YearError> Errors, IReadOnlyList<int> YearsSkipped);
-
 /// <summary>Fetches the event list and calendar pages on explicit user request, saving progress per year.</summary>
 public sealed class SyncService(IAocGateway gateway, ISyncStateStore store, TimeProvider time, ILogger? logger = null)
 {

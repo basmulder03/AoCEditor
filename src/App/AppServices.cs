@@ -127,9 +127,3 @@ public sealed class AppServices
         return result;
     }
 }
-
-internal static partial class AppLog
-{
-    [LoggerMessage(Level = LogLevel.Information, Message = "AoCEditor {Version} started, debug mode {Debug}")]
-    public static partial void AppStarted(this ILogger logger, string version, bool debug);
-}

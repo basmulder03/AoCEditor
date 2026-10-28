@@ -16,9 +16,6 @@ using Workspace.Application;
 
 namespace AoCEditor;
 
-/// <summary>Replacements for the machine-specific parts of the graph; null keeps the real one.</summary>
-public sealed record AppOverrides(ISecretStore? Secrets = null, IAppDataPaths? Paths = null, DebugMode? Debug = null);
-
 public static class AppServiceRegistration
 {
     /// <summary>Registers every service explicitly; slices are created by factories, never by activation.</summary>

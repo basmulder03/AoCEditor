@@ -2,14 +2,6 @@ using Shared.Contracts;
 
 namespace Sync.Domain;
 
-public enum DayState
-{
-    Locked,
-    Open,
-    Part1Done,
-    Complete,
-}
-
 public static class CalendarRules
 {
     private static readonly TimeSpan EventOffset = TimeSpan.FromHours(-5);

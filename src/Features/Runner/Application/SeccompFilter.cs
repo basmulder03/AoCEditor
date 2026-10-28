@@ -2,8 +2,6 @@ using System.Runtime.InteropServices;
 
 namespace Runner.Application;
 
-internal readonly record struct SockFilter(ushort Code, byte Jt, byte Jf, uint K);
-
 /// <summary>
 /// Builds the classic-BPF program of the sandbox. Every listed system call fails with EPERM, sockets are refused
 /// (or limited to AF_INET and AF_INET6 for build steps), utimensat() only works on descriptors (a null path), kill() is limited to non-negative pids and the own process

@@ -1,8 +1,5 @@
 namespace Shared.Contracts;
 
-/// <summary>Stars earned on one day as last seen on the calendar page.</summary>
-public sealed record SyncedDay(int Day, int Stars);
-
 /// <summary>Persisted result of calendar syncs.</summary>
 public interface ISyncStateStore
 {

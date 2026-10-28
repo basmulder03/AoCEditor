@@ -3,13 +3,6 @@ using Sync.Domain;
 
 namespace Sync.UI;
 
-public sealed class DaySelectedEventArgs(int year, int day) : EventArgs
-{
-    public int Year { get; } = year;
-
-    public int Day { get; } = day;
-}
-
 /// <summary>One calendar day as shown in the grid; the state is always also spelled out in <see cref="Label"/>.</summary>
 public sealed class DayTile
 {

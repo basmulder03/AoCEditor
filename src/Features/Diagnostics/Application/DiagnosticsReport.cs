@@ -5,15 +5,6 @@ using Shared.Contracts;
 
 namespace Diagnostics.Application;
 
-public sealed record DiagnosticsSnapshot(
-    string AppVersion,
-    string Os,
-    string Runtime,
-    string SessionState,
-    StorageStatus Storage,
-    IReadOnlyList<GatewayRequestEntry> Requests,
-    IReadOnlyList<LogEntry> Logs);
-
 /// <summary>Builds the text behind "Copy diagnostics"; the result is redacted.</summary>
 public static class DiagnosticsReport
 {

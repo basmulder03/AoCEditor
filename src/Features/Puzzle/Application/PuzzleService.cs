@@ -4,14 +4,6 @@ using Shared.Contracts;
 
 namespace Puzzle.Application;
 
-public enum FetchStatus { Ok, NotSignedIn, RateLimited, NotFound, NetworkError, Unreadable, CoolingDown, AlreadyTried }
-
-/// <summary>Reason is the gateway's network failure text, never a secret.</summary>
-public sealed record Fetched<T>(FetchStatus Status, T? Value = default, string? Reason = null);
-
-/// <summary>Unlocked is the refreshed puzzle after a correct part 1, null otherwise or when that refresh failed.</summary>
-public sealed record Submission(SubmitResult Verdict, PuzzleDocument? Unlocked);
-
 /// <summary>Puzzle text, input and answers for one day, each only on explicit user action.</summary>
 public sealed class PuzzleService(IAocGateway gateway, IAnswerStore answers, TimeProvider time)
 {
