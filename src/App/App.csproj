@@ -20,6 +20,7 @@
     <ProjectReference Include="../Features/Workspace/Workspace.csproj" />
     <ProjectReference Include="../Features/Plugins/Plugins.csproj" />
     <ProjectReference Include="../Features/Runner/Runner.csproj" />
+    <ProjectReference Include="../Features/Editor/Editor.csproj" />
     <ProjectReference Include="../UiKit/UiKit.csproj" />
   </ItemGroup>
 </Project>

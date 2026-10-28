@@ -144,6 +144,30 @@ public sealed class DayRunCoordinatorTests : IDisposable
         result.Kind.ShouldBe(DayRunKind.SandboxRefused);
     }
 
+    [Fact]
+    public async Task ScaffoldingWithoutAWorkspaceIsAResultNotAnException()
+    {
+        var result = await Create().ScaffoldAsync(2024, 3, Python, Ct);
+
+        result.Kind.ShouldBe(DayScaffoldKind.NoWorkspace);
+    }
+
+    [Fact]
+    public async Task ScaffoldingCreatesTheSourceWithoutRunningOrLoadingInput()
+    {
+        await _workspace.SetRootAsync(Solutions, Ct);
+        _input = new Fetched<string>(FetchStatus.NotSignedIn);
+
+        var result = await Create().ScaffoldAsync(2024, 3, Python, Ct);
+
+        var folder = Path.Combine(Solutions, "2024", "03", "python");
+        result.Kind.ShouldBe(DayScaffoldKind.Scaffolded);
+        result.Folder.ShouldBe(folder);
+        result.SourcePath.ShouldBe(Path.Combine(folder, "main.py"));
+        File.ReadAllText(result.SourcePath!).ShouldBe("print(1)");
+        _runner.Requests.ShouldBeEmpty();
+    }
+
     private sealed class FakeRunner : IRunner
     {
         public SandboxLevel Level => SandboxLevel.None;

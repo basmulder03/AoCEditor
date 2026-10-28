@@ -2,10 +2,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:AoCEditor"
              xmlns:runner="using:Runner.UI"
+             xmlns:editor="using:Editor.UI"
              x:Class="AoCEditor.SolutionPanel"
              x:DataType="local:SolutionViewModel">
-  <DockPanel>
-    <StackPanel DockPanel.Dock="Top" Spacing="{DynamicResource Space2}">
+  <Grid RowDefinitions="Auto,*,*">
+    <StackPanel Grid.Row="0" Spacing="{DynamicResource Space2}">
       <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Space2}">
         <TextBlock VerticalAlignment="Center" Text="Language" />
         <ComboBox x:Name="LanguageBox" MinWidth="160" ItemsSource="{Binding PluginNames}" SelectedIndex="0"
@@ -19,6 +20,7 @@
                    AutomationProperties.Name="Solutions folder" />
       </StackPanel>
     </StackPanel>
-    <runner:ConsoleView x:Name="Console" DataContext="{Binding Console}" />
-  </DockPanel>
+    <editor:EditorView x:Name="CodeEditor" Grid.Row="1" MinHeight="120" />
+    <runner:ConsoleView x:Name="Console" Grid.Row="2" DataContext="{Binding Console}" />
+  </Grid>
 </UserControl>

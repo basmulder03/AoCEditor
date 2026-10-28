@@ -8,7 +8,12 @@ using Workspace.Domain;
 
 namespace AoCEditor;
 
-public enum DayRunKind { Ran, NoWorkspace, NoToolchain, InputUnavailable, CompileFailed, SandboxRefused }
+public enum DayRunKind { Ran, NoWorkspace, NoToolchain, InputUnavailable, CompileFailed, SandboxRefused, SourceChanged }
+
+public enum DayScaffoldKind { Scaffolded, NoWorkspace }
+
+/// <summary>Folder and SourcePath are set when Kind is Scaffolded.</summary>
+public sealed record DayScaffoldResult(DayScaffoldKind Kind, string? Folder = null, string? SourcePath = null);
 
 /// <summary>Run is the result of the last command that started; Detail is a sentence for the user when the run did not go ahead.</summary>
 public sealed record DayRunResult(DayRunKind Kind, RunResult? Run = null, string? Detail = null);
@@ -24,6 +29,19 @@ public sealed class DayRunCoordinator(
     // shortcut: fixed limits, make them settings when the settings page grows a run section.
     private static readonly TimeSpan CompileTimeout = TimeSpan.FromMinutes(2);
     private static readonly TimeSpan RunTimeout = TimeSpan.FromMinutes(1);
+
+    /// <summary>Creates the day's template files (never overwriting) without running anything or needing the input.</summary>
+    public async Task<DayScaffoldResult> ScaffoldAsync(int year, int day, PluginManifest plugin, CancellationToken cancellationToken)
+    {
+        if (await workspace.RootAsync(cancellationToken) is not { } root)
+        {
+            return new DayScaffoldResult(DayScaffoldKind.NoWorkspace);
+        }
+
+        await workspace.ScaffoldDayAsync(year, day, plugin.Id, plugin.TemplateFiles, cancellationToken);
+        var folder = WorkspaceLayout.DayFolder(root, year, day, plugin.Id);
+        return new DayScaffoldResult(DayScaffoldKind.Scaffolded, folder, Path.Combine(folder, SourceName(plugin)));
+    }
 
     public async Task<DayRunResult> RunAsync(int year, int day, PluginManifest plugin, IProgress<OutputLine> output, bool allowUnsandboxed, CancellationToken cancellationToken)
     {

@@ -13,6 +13,7 @@
   </Application.Resources>
   <Application.Styles>
     <FluentTheme />
+    <StyleInclude Source="avares://AvaloniaEdit/Themes/Fluent/AvaloniaEdit.xaml" />
     <StyleInclude Source="avares://UiKit/Styles/Controls.axaml" />
   </Application.Styles>
 </Application>

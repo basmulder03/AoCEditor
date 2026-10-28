@@ -9,3 +9,5 @@
 - **Accessibility.** The editor has the automation name "Code editor", a monospace font, and a 2 px focus-brush frame while it has focus. Ctrl+S saves. How well screen readers read AvaloniaEdit's text is unverified.
 
 The app must include the AvaloniaEdit theme (`avares://AvaloniaEdit/Themes/Fluent/AvaloniaEdit.xaml`) in its styles for the editor to render correctly.
+
+On the day page (`docs/runner.md`) the app composes the editor in `SolutionPanel`, and `CheckDisk()` is also called when the window is activated while the page is shown. The headless test of that activation is the only check; how it looks was not verified visually.
