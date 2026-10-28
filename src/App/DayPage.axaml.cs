@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Gateway;
 using Puzzle.UI;
 
 namespace AoCEditor;
@@ -25,7 +26,7 @@ public partial class DayPage : UserControl
             return;
         }
 
-        var model = new DayViewModel(services.Puzzle, year, day, TimeProvider.System);
+        var model = new DayViewModel(services.Puzzle, year, day, TimeProvider.System, new GatewayOptions().BaseAddress);
         View.DataContext = model;
         AttachedToVisualTree += async (_, _) => await model.LoadAsync(false, CancellationToken.None);
     }

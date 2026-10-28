@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Documents;
 using Avalonia.Headless.XUnit;
+using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.VisualTree;
 using Puzzle.Domain;
@@ -51,5 +52,29 @@ public class PuzzleViewTests
         view.Part = new PuzzlePart([new CodeBlock("x")]);
 
         view.GetVisualDescendants().OfType<SelectableTextBlock>().Single().Text.ShouldBe("x");
+    }
+
+    [AvaloniaFact]
+    public void ClickingAWebLinkRequestsItsResolvedAddress()
+    {
+        var view = new PuzzleView { BaseAddress = new Uri("https://adventofcode.com/"), Part = new PuzzlePart([new ParagraphBlock([new Fragment("see "), new Fragment("about", InlineStyle.Link, "/2020/about")])]) };
+        new Window { Content = view, Width = 600, Height = 400 }.Show();
+        Uri? requested = null;
+        view.LinkRequested += (_, uri) => requested = uri;
+
+        var link = view.GetVisualDescendants().OfType<HyperlinkButton>().Single();
+        link.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+
+        requested!.AbsoluteUri.ShouldBe("https://adventofcode.com/2020/about");
+    }
+
+    [AvaloniaFact]
+    public void UnsafeLinksAreShownButNotClickable()
+    {
+        var view = new PuzzleView { Part = new PuzzlePart([new ParagraphBlock([new Fragment("x", InlineStyle.Link, "javascript:alert(1)")])]) };
+        new Window { Content = view, Width = 600, Height = 400 }.Show();
+
+        view.GetVisualDescendants().OfType<HyperlinkButton>().ShouldBeEmpty();
+        view.GetVisualDescendants().OfType<SelectableTextBlock>().Single().Inlines!.OfType<Run>().Single().Text.ShouldBe("x");
     }
 }

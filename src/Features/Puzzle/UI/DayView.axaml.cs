@@ -73,7 +73,7 @@ public partial class DayView : UserControl
 
         var selected = Tabs.SelectedIndex;
         var tabs = model.Parts
-            .Select((part, i) => new TabItem { Header = $"Part {i + 1}", Content = new ScrollViewer { Content = new PuzzleView { Part = part } } })
+            .Select((part, i) => new TabItem { Header = $"Part {i + 1}", Content = new ScrollViewer { Content = PuzzleViewFor(part) } })
             .ToList();
         tabs.Add(new TabItem
         {
@@ -89,6 +89,21 @@ public partial class DayView : UserControl
         });
         Tabs.ItemsSource = tabs;
         Tabs.SelectedIndex = Math.Clamp(selected, 0, tabs.Count - 1);
+    }
+
+    PuzzleView PuzzleViewFor(Domain.PuzzlePart part)
+    {
+        var view = new PuzzleView { Part = part, BaseAddress = Model?.SiteAddress };
+        view.LinkRequested += async (_, uri) => await OpenLinkAsync(uri);
+        return view;
+    }
+
+    async Task OpenLinkAsync(Uri uri)
+    {
+        if (TopLevel.GetTopLevel(this) is Window window && await ConfirmDialog.AskAsync(window, $"Open {uri.AbsoluteUri} in your browser?"))
+        {
+            await window.Launcher.LaunchUriAsync(uri);
+        }
     }
 
     void ShowCooldown() =>

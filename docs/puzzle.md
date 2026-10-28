@@ -28,7 +28,7 @@ Results are `Fetched<T>` with a `FetchStatus` (`Ok`, `NotSignedIn`, `RateLimited
 
 ## PuzzleView
 
-`PuzzleView` (`Puzzle.UI`) renders one `PuzzlePart` (`Part` property) with native controls: selectable wrapped text for paragraphs and list items (`• ` prefix), a monospace boxed block for code, italic for emphasis, monospace for inline code and underline for links. Links are not clickable yet; opening them in the system browser after confirmation (ADR 0008) is still to do, as is the day page that hosts the part tabs.
+`PuzzleView` (`Puzzle.UI`) renders one `PuzzlePart` (`Part` property) with native controls: selectable wrapped text for paragraphs and list items (`• ` prefix), a monospace boxed block for code, italic for emphasis, monospace for inline code and and a clickable link for web links. A click raises `LinkRequested` with the resolved address; `LinkResolver` resolves relative links against adventofcode.com and accepts only http and https, so other schemes are shown as underlined text and never opened. `DayView` asks for confirmation before opening a link in the system browser (ADR 0008).
 
 ## Attempts, cooldowns and known answers
 

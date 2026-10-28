@@ -6,18 +6,30 @@ using Puzzle.Domain;
 
 namespace Puzzle.UI;
 
-/// <summary>Renders one puzzle part with native text controls; links are shown but not yet clickable.</summary>
+/// <summary>Renders one puzzle part with native text controls; web links raise <see cref="LinkRequested"/>, other links are shown as underlined text.</summary>
 public sealed class PuzzleView : UserControl
 {
     private static readonly FontFamily Mono = new("Cascadia Mono, Consolas, DejaVu Sans Mono, monospace");
 
     public static readonly StyledProperty<PuzzlePart?> PartProperty = AvaloniaProperty.Register<PuzzleView, PuzzlePart?>(nameof(Part));
 
+    public static readonly StyledProperty<Uri?> BaseAddressProperty = AvaloniaProperty.Register<PuzzleView, Uri?>(nameof(BaseAddress));
+
+    /// <summary>The site that relative puzzle links are resolved against.</summary>
+    public Uri? BaseAddress
+    {
+        get => GetValue(BaseAddressProperty);
+        set => SetValue(BaseAddressProperty, value);
+    }
+
     public PuzzlePart? Part
     {
         get => GetValue(PartProperty);
         set => SetValue(PartProperty, value);
     }
+
+    /// <summary>Raised with the resolved address when the user clicks a web link; the host decides whether to open it.</summary>
+    public event EventHandler<Uri>? LinkRequested;
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
@@ -28,7 +40,7 @@ public sealed class PuzzleView : UserControl
         }
     }
 
-    private static StackPanel Build(PuzzlePart part)
+    private StackPanel Build(PuzzlePart part)
     {
         var panel = new StackPanel { Spacing = 10 };
         foreach (var block in part.Blocks)
@@ -56,11 +68,19 @@ public sealed class PuzzleView : UserControl
         return panel;
     }
 
-    private static SelectableTextBlock Text(IEnumerable<Fragment> inlines)
+    private SelectableTextBlock Text(IEnumerable<Fragment> inlines)
     {
         var text = new SelectableTextBlock { TextWrapping = TextWrapping.Wrap };
         foreach (var inline in inlines)
         {
+            if (inline.Style == InlineStyle.Link && LinkResolver.Resolve(BaseAddress, inline.Href) is { } uri)
+            {
+                var link = new HyperlinkButton { Content = inline.Text, Padding = new Thickness(0) };
+                link.Click += (_, _) => LinkRequested?.Invoke(this, uri);
+                text.Inlines!.Add(new InlineUIContainer(link));
+                continue;
+            }
+
             var run = new Run(inline.Text);
             switch (inline.Style)
             {

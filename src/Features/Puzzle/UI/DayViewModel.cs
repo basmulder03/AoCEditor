@@ -6,7 +6,7 @@ using Shared;
 namespace Puzzle.UI;
 
 /// <summary>State of one day's page: the unlocked puzzle parts, the input and the answer box with its cooldown.</summary>
-public sealed class DayViewModel(PuzzleService service, int year, int day, TimeProvider time) : ObservableBase
+public sealed class DayViewModel(PuzzleService service, int year, int day, TimeProvider time, Uri? siteAddress = null) : ObservableBase
 {
     private IReadOnlyList<PuzzlePart> _parts = [];
     private int _solved;
@@ -18,6 +18,9 @@ public sealed class DayViewModel(PuzzleService service, int year, int day, TimeP
     private bool _busy;
     private DateTimeOffset? _cooldownUntil;
     private int _cooldownSeconds;
+
+    /// <summary>What relative puzzle links resolve against.</summary>
+    public Uri? SiteAddress { get; } = siteAddress;
 
     public string Heading { get => _heading; private set => Set(ref _heading, value); }
 
