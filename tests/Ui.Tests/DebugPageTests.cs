@@ -19,7 +19,8 @@ public class DebugPageTests
     [AvaloniaFact]
     public void DebugEntryIsHiddenOutsideDebugMode()
     {
-        using var services = AccountTests.Create(new AccountTests.Store());
+        using var app = AccountTests.Create(new AccountTests.Store());
+        var services = app.Services;
         var shell = new ShellWindow(services);
         shell.Show();
 
@@ -29,7 +30,8 @@ public class DebugPageTests
     [AvaloniaFact]
     public void DebugEntryAppearsWhenDebugModeIsOn()
     {
-        using var services = AccountTests.Create(new AccountTests.Store(), DebugMode.FromLaunch(["--debug"], _ => null));
+        using var app = AccountTests.Create(new AccountTests.Store(), DebugMode.FromLaunch(["--debug"], _ => null));
+        var services = app.Services;
         var shell = new ShellWindow(services);
         shell.Show();
 
@@ -39,7 +41,8 @@ public class DebugPageTests
     [AvaloniaFact]
     public async Task EntryFollowsTheSettingAtRuntimeAndLeavesTheDebugPageWhenItGoesAway()
     {
-        using var services = AccountTests.Create(new AccountTests.Store());
+        using var app = AccountTests.Create(new AccountTests.Store());
+        var services = app.Services;
         var shell = new ShellWindow(services);
         shell.Show();
 
@@ -59,7 +62,8 @@ public class DebugPageTests
     [AvaloniaFact]
     public void LogListShowsRedactedEntriesAndFiltersByLevel()
     {
-        using var services = AccountTests.Create(new AccountTests.Store(), DebugMode.FromLaunch(["--debug"], _ => null));
+        using var app = AccountTests.Create(new AccountTests.Store(), DebugMode.FromLaunch(["--debug"], _ => null));
+        var services = app.Services;
         var shell = new ShellWindow(services);
         shell.Show();
         var log = services.Diagnostics.LoggerFactory.CreateLogger("Gateway.AocGateway");
@@ -83,7 +87,8 @@ public class DebugPageTests
     [AvaloniaFact]
     public void InteractiveControlsAreNamedAndKeyboardReachable()
     {
-        using var services = AccountTests.Create(new AccountTests.Store(), DebugMode.FromLaunch(["--debug"], _ => null));
+        using var app = AccountTests.Create(new AccountTests.Store(), DebugMode.FromLaunch(["--debug"], _ => null));
+        var services = app.Services;
         var shell = new ShellWindow(services);
         shell.Show();
         shell.NavigateTo("Debug");
@@ -98,7 +103,8 @@ public class DebugPageTests
     [AvaloniaFact]
     public async Task CopyDiagnosticsShowsARedactedPreviewFirst()
     {
-        using var services = AccountTests.Create(new AccountTests.Store(), DebugMode.FromLaunch(["--debug"], _ => null));
+        using var app = AccountTests.Create(new AccountTests.Store(), DebugMode.FromLaunch(["--debug"], _ => null));
+        var services = app.Services;
         var shell = new ShellWindow(services);
         shell.Show();
         services.Diagnostics.LoggerFactory.CreateLogger("Session.SignIn").Log(LogLevel.Warning, default, "cookie: session=abc123", null, static (s, _) => s);

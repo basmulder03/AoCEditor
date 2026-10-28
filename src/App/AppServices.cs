@@ -15,44 +15,47 @@ using Workspace.Application;
 
 namespace AoCEditor;
 
-/// <summary>Composition root: builds the object graph by hand.</summary>
-public sealed class AppServices : IDisposable
+/// <summary>Application facade over the registered services; built by the container.</summary>
+public sealed class AppServices
 {
-    private readonly AocGateway _gateway;
     private readonly WebViewSignInBrowser _browser;
     private readonly SignInCoordinator _signIn;
-    private readonly SqliteConnectionFactory _connections;
+    private readonly IConnectionFactory _connections;
 
-    public AppServices(ISecretStore? secrets = null, IAppDataPaths? paths = null, DebugMode? debug = null)
+    public AppServices(
+        IAppDataPaths paths,
+        SessionEvents events,
+        DiagnosticsServices diagnostics,
+        IConnectionFactory connections,
+        ISyncStateStore syncState,
+        IAnswerStore answers,
+        IKeyValueStore settings,
+        IStorageStatus storageStatus,
+        WebViewSignInBrowser browser,
+        SignInCoordinator signIn,
+        SyncService sync,
+        PuzzleService puzzle,
+        WorkspaceService workspace,
+        IReadOnlyList<PluginManifest> plugins,
+        DayRunCoordinator coordinator)
     {
-        Paths = paths ?? new AppDataPaths();
-        Diagnostics = DiagnosticsServices.Create(
-            Paths.Root,
-            debug ?? DebugMode.FromLaunch(Environment.GetCommandLineArgs(), Environment.GetEnvironmentVariable),
-            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-            TimeProvider.System);
-        var logs = Diagnostics.LoggerFactory;
-        _connections = new SqliteConnectionFactory(Paths, logs.CreateLogger("Storage.Connection"));
-        SyncState = new SqliteSyncStateStore(_connections);
-        Answers = new SqliteAnswerStore(_connections);
-        Settings = new SqliteKeyValueStore(_connections);
+        Paths = paths;
+        Events = events;
+        Diagnostics = diagnostics;
+        _connections = connections;
+        SyncState = syncState;
+        Answers = answers;
+        Settings = settings;
+        StorageStatus = storageStatus;
+        _browser = browser;
+        _signIn = signIn;
+        Sync = sync;
+        Puzzle = puzzle;
+        Workspace = workspace;
+        Plugins = plugins;
+        Coordinator = coordinator;
         Diagnostics.Debug.AttachStore(Settings);
-        StorageStatus = new SqliteStorageStatus(_connections, Paths);
-        var tokens = new SessionTokenProvider(secrets ?? SecretStores.CreateForCurrentOs());
-        _gateway = new AocGateway(tokens, new FileResponseCache(Paths.Cache), events: Events, logger: logs.CreateLogger("Gateway.AocGateway"), requests: Diagnostics.Requests);
-        _browser = new WebViewSignInBrowser(SignInUri, Path.Combine(Paths.Root, "webview"), logs.CreateLogger("Session.WebView"));
-        _signIn = new SignInCoordinator(tokens, _gateway, () => _browser.TryClearProfile(), logger: logs.CreateLogger("Session.SignIn"));
-        Sync = new SyncService(_gateway, SyncState, TimeProvider.System, logs.CreateLogger("Sync.SyncService"));
-        Puzzle = new PuzzleService(_gateway, Answers, TimeProvider.System);
-        Workspace = new WorkspaceService(Settings, Paths);
-        Plugins = BuiltInPlugins.Load();
-        Coordinator = new DayRunCoordinator(
-            Workspace,
-            (year, day, ct) => Puzzle.LoadInputAsync(year, day, false, ct),
-            new ProcessRunner([Paths.Root]),
-            Paths,
-            plugin => ToolchainLocator.Find(plugin.ToolchainExecutables, Environment.GetEnvironmentVariable("PATH")));
-        logs.CreateLogger("App").AppStarted(Shared.AppInfo.Version, Diagnostics.Debug.IsEnabled);
+        Diagnostics.LoggerFactory.CreateLogger("App").AppStarted(Shared.AppInfo.Version, Diagnostics.Debug.IsEnabled);
     }
 
     public event EventHandler? SignedIn;
@@ -61,7 +64,7 @@ public sealed class AppServices : IDisposable
 
     public IAppDataPaths Paths { get; }
 
-    public SessionEvents Events { get; } = new();
+    public SessionEvents Events { get; }
 
     public ISyncStateStore SyncState { get; }
 
@@ -112,12 +115,6 @@ public sealed class AppServices : IDisposable
         Announce(_signIn.SignInWithPastedTokenAsync(token, cancellationToken));
 
     public Task<SecretResult> SignOutAsync(CancellationToken cancellationToken) => _signIn.SignOutAsync(cancellationToken);
-
-    public void Dispose()
-    {
-        _gateway.Dispose();
-        Diagnostics.Dispose();
-    }
 
     private async Task<SignInResult> Announce(Task<SignInResult> signIn)
     {

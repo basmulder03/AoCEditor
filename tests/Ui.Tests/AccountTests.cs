@@ -16,7 +16,8 @@ public class AccountTests
     [AvaloniaFact]
     public void SignInRequiredShowsANonBlockingPromptWithASignInButton()
     {
-        using var services = Create(new Store());
+        using var app = Create(new Store());
+        var services = app.Services;
         var shell = new ShellWindow(services);
         shell.Show();
         shell.IsSignInPromptVisible.ShouldBeFalse();
@@ -33,7 +34,8 @@ public class AccountTests
     [AvaloniaFact]
     public void AccountSectionControlsAreNamedForAssistiveTechnology()
     {
-        using var services = Create(new Store());
+        using var app = Create(new Store());
+        var services = app.Services;
         var shell = new ShellWindow(services);
         shell.Show();
         shell.NavigateTo("Settings");
@@ -50,7 +52,8 @@ public class AccountTests
     [AvaloniaFact]
     public async Task GuidedPastePanelIsTheMainWayToSignIn()
     {
-        using var services = Create(new Store());
+        using var app = Create(new Store());
+        var services = app.Services;
         var shell = new ShellWindow(services);
         shell.Show();
         shell.NavigateTo("Settings");
@@ -69,7 +72,8 @@ public class AccountTests
     [AvaloniaFact]
     public async Task UnavailableSecureStorageIsExplainedAndSigningInIsDisabled()
     {
-        using var services = Create(new Store { Down = true });
+        using var app = Create(new Store { Down = true });
+        var services = app.Services;
         var shell = new ShellWindow(services);
         shell.Show();
         shell.NavigateTo("Settings");
@@ -81,8 +85,8 @@ public class AccountTests
         controls.OfType<Button>().Single(b => b.Name == "SignInButton").IsEnabled.ShouldBeFalse();
     }
 
-    internal static AppServices Create(Store store, Diagnostics.Application.DebugMode? debug = null) =>
-        new(store, new AppDataPaths(Path.Combine(Path.GetTempPath(), "aoceditor-ui-" + Guid.NewGuid().ToString("N"))), debug ?? Diagnostics.Application.DebugMode.FromLaunch([], _ => null));
+    internal static TestApp Create(Store store, Diagnostics.Application.DebugMode? debug = null) =>
+        new(new AppOverrides(store, new AppDataPaths(Path.Combine(Path.GetTempPath(), "aoceditor-ui-" + Guid.NewGuid().ToString("N"))), debug ?? Diagnostics.Application.DebugMode.FromLaunch([], _ => null)));
 
     internal sealed class Store : ISecretStore
     {

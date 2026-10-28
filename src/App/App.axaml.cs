@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace AoCEditor;
 
@@ -12,9 +13,9 @@ public partial class App : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            var services = new AppServices();
-            desktop.MainWindow = new ShellWindow(services);
-            desktop.Exit += (_, _) => services.Dispose();
+            var provider = new ServiceCollection().AddAocEditor().BuildServiceProvider();
+            desktop.MainWindow = provider.GetRequiredService<ShellWindow>();
+            desktop.Exit += (_, _) => provider.Dispose();
         }
         base.OnFrameworkInitializationCompleted();
     }

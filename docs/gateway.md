@@ -44,4 +44,4 @@ A configured value below its floor is raised to the floor. Cache hits send nothi
 
 ## Wiring
 
-The app does not use dependency injection yet, so there is no registration extension: `AppServices` in `src/App` is the composition root: it constructs `new AocGateway(tokens, new FileResponseCache(paths.Cache), events: sessionEvents)` once and shares it.
+`AddAocEditor` (`src/App/AppServiceRegistration.cs`) registers `AocGateway` as a singleton, built by an explicit factory with `new FileResponseCache(paths.Cache)`, the shared `SessionEvents` and the request log. `IAocGateway` resolves to the same instance, so the spacing clocks and the in-flight gate are shared. The container disposes it on exit.

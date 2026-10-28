@@ -16,9 +16,10 @@ public sealed class SolutionPanelTests : IDisposable
 
     public void Dispose() => Directory.Delete(_folder, true);
 
-    private async Task<(AppServices Services, SolutionPanel Panel, Window Window)> OpenAsync()
+    private async Task<(TestApp App, SolutionPanel Panel, Window Window)> OpenAsync()
     {
-        var services = AccountTests.Create(new AccountTests.Store());
+        var app = AccountTests.Create(new AccountTests.Store());
+        var services = app.Services;
         await services.Workspace.SetRootAsync(_folder, TestContext.Current.CancellationToken);
         var panel = new SolutionPanel(services, 2024, 3);
         var window = new Window { Content = panel, Width = 800, Height = 600 };
@@ -29,14 +30,15 @@ public sealed class SolutionPanelTests : IDisposable
             Dispatcher.UIThread.RunJobs();
         }
 
-        return (services, panel, window);
+        return (app, panel, window);
     }
 
     [AvaloniaFact]
     public async Task OpeningWithAWorkspaceShowsTheScaffoldedSourceInANamedEditor()
     {
-        var (services, panel, _) = await OpenAsync();
-        using var _ = services;
+        var (app, panel, _) = await OpenAsync();
+        var services = app.Services;
+        using var _ = app;
 
         var editor = panel.GetVisualDescendants().OfType<TextEditor>().Single();
         AutomationProperties.GetName(editor).ShouldBe("Code editor");
@@ -47,8 +49,9 @@ public sealed class SolutionPanelTests : IDisposable
     [AvaloniaFact]
     public async Task RunSavesUnsavedEditsBeforeRunning()
     {
-        var (services, panel, _) = await OpenAsync();
-        using var _ = services;
+        var (app, panel, _) = await OpenAsync();
+        var services = app.Services;
+        using var _ = app;
         panel.Editor!.Text = "edited by the user";
 
         panel.GetVisualDescendants().OfType<Button>().Single(b => AutomationProperties.GetName(b) == "Run solution").RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
@@ -60,8 +63,9 @@ public sealed class SolutionPanelTests : IDisposable
     [AvaloniaFact]
     public async Task ActivatingTheWindowNoticesAChangeOnDisk()
     {
-        var (services, panel, window) = await OpenAsync();
-        using var _ = services;
+        var (app, panel, window) = await OpenAsync();
+        var services = app.Services;
+        using var _ = app;
         File.WriteAllText(panel.Editor!.FilePath!, "changed elsewhere");
 
         window.Activate();
@@ -81,8 +85,9 @@ public sealed class SolutionPanelTests : IDisposable
     [AvaloniaFact]
     public async Task SwitchingLanguageWithAConflictingUnsavedEditKeepsTheFileAndLanguage()
     {
-        var (services, panel, _) = await OpenAsync();
-        using var _ = services;
+        var (app, panel, _) = await OpenAsync();
+        var services = app.Services;
+        using var _ = app;
         var editor = panel.Editor!;
         var path = editor.FilePath!;
         editor.Text = "my unsaved work";
@@ -101,8 +106,9 @@ public sealed class SolutionPanelTests : IDisposable
     [AvaloniaFact]
     public async Task ChoosingAFolderWithAConflictingUnsavedEditKeepsTheFile()
     {
-        var (services, panel, _) = await OpenAsync();
-        using var _ = services;
+        var (app, panel, _) = await OpenAsync();
+        var services = app.Services;
+        using var _ = app;
         var editor = panel.Editor!;
         editor.Text = "my unsaved work";
         File.WriteAllText(editor.FilePath!, "changed elsewhere");

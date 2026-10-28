@@ -10,7 +10,7 @@ Work is tracked as GitHub issues per slice and delivered by agents with small co
 - Domain-driven design with vertical slicing: one folder/project per feature slice (for example Calendar, Puzzle, Submission, Runner, Workspace), each holding its own domain, application and UI code.
 - Shared kernel is minimal: value objects such as Year, Day, Part, and the AoC HTTP gateway abstraction.
 - Dependency rules: domain depends on nothing; application depends on domain; infrastructure and UI depend on application. Slices talk to each other only through interfaces or events in the shared kernel, never through another slice's internals.
-- Composition root wires slices; no service locator, no reflection-based DI scanning (AoT).
+- Composition root wires slices with Microsoft.Extensions.DependencyInjection using explicit registrations only (factories or closed types in `src/App/AppServiceRegistration.cs`); no service locator, no assembly scanning, no open generics, no activation of unknown types (AoT-safe). Slice projects never reference the container and keep plain constructors.
 - Architecture tests (xUnit, see 0023) enforce the dependency rules.
 
 - Granularity: one project per slice (`src/Features/<Slice>/<Slice>.csproj`) with Domain, Application, Infrastructure and UI folders inside. Slices reference only `Shared`, never each other, so the compiler enforces the boundary. Superseded by 0034: projects are now split by layer and an architecture test enforces slice isolation.
@@ -22,4 +22,3 @@ Work is tracked as GitHub issues per slice and delivered by agents with small co
 
 ## Open questions
 - Final slice list: slices are added as their features are built.
-- Choice of DI/mediator library, if any, is unverified for AoT.
