@@ -10,6 +10,8 @@
     <PackageReference Include="Avalonia.Desktop" />
     <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" />
     <ProjectReference Include="../../src/UiKit/UiKit.csproj" />
+    <ProjectReference Include="../TestSupport/TestSupport.csproj" />
+    <Using Include="AoCEditor.TestSupport" />
     <ProjectReference Include="../../src/Core/Core.csproj" />
     <ProjectReference Include="../../src/UI/UI.csproj" />
     <ProjectReference Include="../../src/App/App.csproj" />

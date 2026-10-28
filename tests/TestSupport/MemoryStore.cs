@@ -1,12 +1,24 @@
 using Shared.Contracts;
 
-namespace AoCEditor.UI.Tests.Sync;
+namespace AoCEditor.TestSupport;
 
-internal sealed class MemoryStore : ISyncStateStore
+/// <summary>In-memory key-value settings and per-year sync state in one fake.</summary>
+public sealed class MemoryStore : IKeyValueStore, ISyncStateStore
 {
+    public Dictionary<string, string> Items { get; } = [];
+
     public Dictionary<int, List<SyncedDay>> Years { get; } = [];
 
     public Dictionary<int, DateTimeOffset> SyncedAt { get; } = [];
+
+    public Task<string?> GetAsync(string key, CancellationToken cancellationToken) =>
+        Task.FromResult(Items.TryGetValue(key, out var v) ? v : null);
+
+    public Task SetAsync(string key, string value, CancellationToken cancellationToken)
+    {
+        Items[key] = value;
+        return Task.CompletedTask;
+    }
 
     public Task<IReadOnlyList<SyncedDay>> ReadYearAsync(int year, CancellationToken cancellationToken) =>
         Task.FromResult<IReadOnlyList<SyncedDay>>(Years.TryGetValue(year, out var d) ? d : []);

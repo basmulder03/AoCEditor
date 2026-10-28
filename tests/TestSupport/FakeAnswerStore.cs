@@ -1,9 +1,8 @@
-using AoCEditor.Core.Puzzle.Domain;
 using Shared.Contracts;
 
-namespace AoCEditor.Core.Tests.Puzzle;
+namespace AoCEditor.TestSupport;
 
-internal sealed class FakeAnswerStore : IAnswerStore
+public sealed class FakeAnswerStore : IAnswerStore
 {
     public List<AnswerAttempt> Attempts { get; } = [];
 

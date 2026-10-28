@@ -1,8 +1,6 @@
-using Shared.Contracts;
+namespace AoCEditor.TestSupport;
 
-namespace AoCEditor.Core.Tests.Diagnostics;
-
-internal static class LoggerExtras
+public static class LoggerExtras
 {
     public static void Say(this Microsoft.Extensions.Logging.ILogger logger, Microsoft.Extensions.Logging.LogLevel level, string message, Exception? exception = null) =>
         logger.Log(level, default, message, exception, static (s, _) => s);

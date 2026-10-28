@@ -27,7 +27,7 @@ public class PuzzleServiceTests
 
         result.Status.ShouldBe(FetchStatus.Ok);
         result.Value!.Title.ShouldBe("Trees");
-        _gateway.Gets.ShouldBe([("/2020/day/3", RequestKind.Interactive, FetchPolicy.CacheFirst)]);
+        _gateway.Requests.ShouldBe([("/2020/day/3", RequestKind.Interactive, FetchPolicy.CacheFirst)]);
     }
 
     [Fact]
@@ -37,7 +37,7 @@ public class PuzzleServiceTests
 
         await _service.LoadPuzzleAsync(2020, 3, refresh: true, CancellationToken.None);
 
-        _gateway.Gets.Single().Policy.ShouldBe(FetchPolicy.Refresh);
+        _gateway.Requests.Single().Policy.ShouldBe(FetchPolicy.Refresh);
     }
 
     [Fact]
@@ -74,7 +74,7 @@ public class PuzzleServiceTests
         var result = await _service.LoadInputAsync(2020, 3, false, CancellationToken.None);
 
         result.Value.ShouldBe("1\n2\n");
-        _gateway.Gets.Single().Path.ShouldBe("/2020/day/3/input");
+        _gateway.Requests.Single().Path.ShouldBe("/2020/day/3/input");
     }
 
     [Fact]
@@ -98,7 +98,7 @@ public class PuzzleServiceTests
         var result = await _service.SubmitAsync(2020, 3, part: 1, "7", CancellationToken.None);
 
         result.Value!.Unlocked!.Parts.Count.ShouldBe(2);
-        _gateway.Gets.ShouldBe([("/2020/day/3", RequestKind.Interactive, FetchPolicy.Refresh)]);
+        _gateway.Requests.ShouldBe([("/2020/day/3", RequestKind.Interactive, FetchPolicy.Refresh)]);
     }
 
     [Theory]
@@ -110,7 +110,7 @@ public class PuzzleServiceTests
 
         (await _service.SubmitAsync(2020, 3, part, "7", CancellationToken.None)).Value!.Unlocked.ShouldBeNull();
 
-        _gateway.Gets.ShouldBeEmpty();
+        _gateway.Requests.ShouldBeEmpty();
     }
 
     [Fact]

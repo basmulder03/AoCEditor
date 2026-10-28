@@ -1,8 +1,6 @@
-using Shared.Contracts;
+namespace AoCEditor.TestSupport;
 
-namespace AoCEditor.Core.Tests.Sync;
-
-internal sealed class CapturingLogger<T> : Microsoft.Extensions.Logging.ILogger<T>
+public sealed class CapturingLogger<T> : Microsoft.Extensions.Logging.ILogger<T>
 {
     public List<string> Lines { get; } = [];
 

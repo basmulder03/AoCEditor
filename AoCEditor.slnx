@@ -13,6 +13,7 @@
     <Project Path="tests/UI.Tests/UI.Tests.csproj" />
     <Project Path="tests/Shared.Tests/Shared.Tests.csproj" />
     <Project Path="tests/Specs/Specs.csproj" />
+    <Project Path="tests/TestSupport/TestSupport.csproj" />
     <Project Path="tests/E2E/E2E.csproj" />
   </Folder>
 </Solution>

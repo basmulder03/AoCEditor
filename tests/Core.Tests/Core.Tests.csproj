@@ -8,6 +8,8 @@
   <ItemGroup>
     <PackageReference Include="xunit.v3" />
     <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" />
+    <ProjectReference Include="../TestSupport/TestSupport.csproj" />
+    <Using Include="AoCEditor.TestSupport" />
     <ProjectReference Include="../../src/Core/Core.csproj" />
   </ItemGroup>
 </Project>

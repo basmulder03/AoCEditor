@@ -1,8 +1,6 @@
-using Shared.Contracts;
+namespace AoCEditor.TestSupport;
 
-namespace AoCEditor.Core.Tests.Sync;
-
-internal static class Html
+public static class Html
 {
     public static string Events(params string[] hrefs) =>
         "<article>" + string.Concat(hrefs.Select(h => $"<div class=\"eventlist-event\"><a href=\"{h}\">[x]</a> <span class=\"star-count\">1*</span></div>")) + "</article>";

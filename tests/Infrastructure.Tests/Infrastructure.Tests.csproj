@@ -9,6 +9,8 @@
     <PackageReference Include="xunit.v3" />
     <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" />
     <PackageReference Include="Avalonia.Desktop" />
+    <ProjectReference Include="../TestSupport/TestSupport.csproj" />
+    <Using Include="AoCEditor.TestSupport" />
     <ProjectReference Include="../../src/Core/Core.csproj" />
     <ProjectReference Include="../../src/UI/UI.csproj" />
     <ProjectReference Include="../../src/Infrastructure/Infrastructure.csproj" />
