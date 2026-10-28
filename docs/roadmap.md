@@ -20,13 +20,16 @@ Snapshot of the GitHub issues, which are the source of truth. Hierarchy: Epic > 
   - [x] TASK #64 [MUST] Create the .NET 10 solution and project structure
   - [x] TASK #65 [MUST] Add LICENSE headers policy, editorconfig and analyzers
   - [ ] TASK #131 [MUST] Unit tests follow Arrange-Act-Assert and use fixtures at the lowest needed scope and visibility
-  - [ ] TASK #123 [MUST] Adopt Microsoft.Extensions.DependencyInjection with explicit registrations
+  - [ ] TASK #136 [SHOULD] Constructor-inject services into pages instead of the AppServices bag
+  - [ ] TASK #137 [SHOULD] Rename ambiguous test classes to the type under test
+  - [ ] TASK #138 [SHOULD] Rename the Shared namespace to AoCEditor.Shared (and UiKit if consistent)
+  - [x] TASK #123 [MUST] Adopt Microsoft.Extensions.DependencyInjection with explicit registrations
   - [x] TASK #124 [SHOULD] One top-level type per file
-  - [ ] TASK #125 [SHOULD] Consolidate slice projects into Core, Infrastructure and UI projects
-  - [ ] TASK #128 [SHOULD] Replace the hand-written logging sink layer with ILoggerProviders
-  - [ ] TASK #130 [SHOULD] Inject a required ILogger<T>; remove optional loggers and NullLogger fallbacks
-  - [ ] TASK #129 [SHOULD] Naming conventions and renames (ADR 0035)
-  - [ ] TASK #126 [SHOULD] XML docs describe functionality: summary, params, returns, exceptions (blocked by #131)
+  - [x] TASK #125 [SHOULD] Consolidate slice projects into Core, Infrastructure and UI projects
+  - [x] TASK #128 [SHOULD] Replace the hand-written logging sink layer with ILoggerProviders
+  - [x] TASK #130 [SHOULD] Inject a required ILogger<T>; remove optional loggers and NullLogger fallbacks
+  - [x] TASK #129 [SHOULD] Naming conventions and renames (ADR 0035)
+  - [ ] TASK #126 [SHOULD] XML docs describe functionality: summary, params, returns, exceptions (blocked by #131, #132, #133, #134, #135)
 - [x] FEATURE #11 [MUST] Test infrastructure: xUnit v3, Reqnroll, E2E harness
 - [x] FEATURE #12 [MUST] CI: build and test matrix on Linux and Windows
 - [x] FEATURE #13 [SHOULD] DocFX documentation skeleton
@@ -59,8 +62,12 @@ Snapshot of the GitHub issues, which are the source of truth. Hierarchy: Epic > 
 ## Day workspace: puzzle, input, console, submit
 
 - [ ] FEATURE #22 [MUST] Day page split layout
+  - [ ] BUG #132 [MUST] Day page tab selection jumps while the puzzle loads
+  - [ ] STORY #133 [MUST] Show a loading indicator while the puzzle and input download
 - [x] FEATURE #23 [MUST] Native puzzle rendering with part tabs
   - [x] SPIKE #52 [MUST] Spike: HTML to native puzzle rendering
+  - [ ] BUG #134 [SHOULD] Links in puzzle text float above the line
+  - [ ] STORY #135 [SHOULD] Style puzzle text elements (inline code, emphasis, headings, code blocks)
 - [x] FEATURE #24 [MUST] Puzzle input tab
 - [ ] FEATURE #25 [MUST] Console output panel
 - [x] FEATURE #26 [MUST] Answer submission with cooldown tracking
@@ -76,15 +83,15 @@ Snapshot of the GitHub issues, which are the source of truth. Hierarchy: Epic > 
 ## Languages, toolchains and sandboxed execution
 
 - [ ] FEATURE #27 [MUST] Language plugin model
-  - [ ] SECURITY #117 [MUST] Reject ':' and reserved device names in template and executable names
+  - [x] SECURITY #117 [MUST] Reject ':' and reserved device names in template and executable names
 - [ ] FEATURE #28 [MUST] Toolchain detection and provisioning
 - [ ] FEATURE #29 [MUST] Linux sandboxed runner
   - [ ] SPIKE #53 [MUST] Spike: Landlock/seccomp from .NET AoT
-  - [ ] SECURITY #116 [MUST] Cap program output size in the runner and console
-  - [ ] SECURITY #119 [MUST] Compile step can reach the session bus, keyring and SSH agent over AF_UNIX
+  - [x] SECURITY #116 [MUST] Cap program output size in the runner and console
+  - [x] SECURITY #119 [MUST] Compile step can reach the session bus, keyring and SSH agent over AF_UNIX
   - [ ] BUG #127 [MUST] C# plugin cannot build or run in the Linux sandbox (.NET child processes die)
-  - [ ] SECURITY #120 [MUST] Sandboxed code can signal and ptrace other processes
-  - [ ] SECURITY #121 [SHOULD] Landlock ABI 1-2 leaves truncate unrestricted and chmod/utimes/setxattr are never governed
+  - [x] SECURITY #120 [MUST] Sandboxed code can signal and ptrace other processes
+  - [x] SECURITY #121 [SHOULD] Landlock ABI 1-2 leaves truncate unrestricted and chmod/utimes/setxattr are never governed
   - [ ] SECURITY #122 [SHOULD] Harden sandbox lifecycle (lower findings)
 - [ ] FEATURE #30 [MUST] Windows sandboxed runner
   - [ ] SPIKE #54 [SHOULD] Spike: Windows AppContainer vs restricted token
@@ -95,7 +102,7 @@ Snapshot of the GitHub issues, which are the source of truth. Hierarchy: Epic > 
 
 ## Editor intelligence: LSP, debugging, terminal
 
-- [ ] FEATURE #34 [SHOULD] Code editor control
+- [x] FEATURE #34 [SHOULD] Code editor control
 - [ ] FEATURE #35 [SHOULD] LSP client
 - [ ] FEATURE #36 [SHOULD] Debugging via DAP
 - [ ] FEATURE #37 [SHOULD] Integrated terminal
