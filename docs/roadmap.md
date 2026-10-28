@@ -68,14 +68,17 @@ Snapshot of the GitHub issues, which are the source of truth. Hierarchy: Epic > 
 ## Languages, toolchains and sandboxed execution
 
 - [ ] FEATURE #27 [MUST] Language plugin model
+  - [ ] SECURITY #117 [MUST] Reject ':' and reserved device names in template and executable names
 - [ ] FEATURE #28 [MUST] Toolchain detection and provisioning
 - [ ] FEATURE #29 [MUST] Linux sandboxed runner
   - [ ] SPIKE #53 [MUST] Spike: Landlock/seccomp from .NET AoT
+  - [ ] SECURITY #116 [MUST] Cap program output size in the runner and console
 - [ ] FEATURE #30 [MUST] Windows sandboxed runner
   - [ ] SPIKE #54 [SHOULD] Spike: Windows AppContainer vs restricted token
 - [ ] FEATURE #31 [MUST] Python language plugin
 - [ ] FEATURE #32 [MUST] .NET language plugin
 - [ ] FEATURE #33 [MUST] Run lifecycle management
+  - [ ] SECURITY #118 [SHOULD] Harden scaffolding and run lifecycle (low findings)
 
 ## Editor intelligence: LSP, debugging, terminal
 
