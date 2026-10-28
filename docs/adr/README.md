@@ -25,13 +25,13 @@ Status: `Accepted` = decided with the owner, `Proposed` = default chosen by the 
 | 0016 | Solutions workspace layout | Accepted | Multi-year, shared helpers across years, user-defined path |
 | 0017 | Git and gh integration | Accepted | History, auto-commit of correct solutions, no inputs |
 | 0018 | Performance tracking | Proposed | Timings after first correct answer, regression view |
-| 0019 | Stats markdown templating | Proposed | Template to generated README section, own results only |
-| 0020 | External IDE mode | Proposed | App as controller, IDE edits files |
+| 0019 | Stats markdown templating | Accepted | Template to generated README section, own results only |
+| 0020 | External IDE mode | Accepted | App as controller, IDE edits files |
 | 0021 | MCP server | Accepted | App-in-the-loop, configurable tools, AoC-rule notice |
 | 0022 | Design system and accessibility | Proposed | Tokens, themes, WCAG, keyboard |
 | 0023 | Testing strategy | Accepted | xUnit v3, Reqnroll BDD, E2E, TDD flow |
 | 0024 | Installer and self-update | Accepted | Velopack, per-user, unsigned at first |
-| 0025 | CI/CD and release automation | Proposed | Build/test matrix, release, gh-pages |
+| 0025 | CI/CD and release automation | Accepted | Build/test matrix, release, gh-pages |
 | 0026 | Documentation and gh-pages | Accepted | DocFX, docs folder, publish on release |
 | 0027 | Issue tracking and roadmap | Accepted | Type and MoSCoW labels, roadmap, auto-issues |
 | 0028 | Code documentation standard | Accepted | Comment density, no ADR references |

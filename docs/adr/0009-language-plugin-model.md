@@ -14,6 +14,8 @@ Users solve puzzles in many languages. Native AoT forbids loading assemblies at 
 - All spawned processes (compile, run, LSP, DAP) run out-of-process; running user code goes through the sandbox (0011).
 - Built-in plugins: Python and .NET, shipped in the same format as third-party ones.
 
+- v1 distribution: built-in plugins plus folder drop into the plugins directory, with explicit confirmation on first use. No gallery yet.
+
 ## Consequences
 - Adding a language needs no app release; plugins are data.
 - Anything needing logic beyond command templates needs a helper executable, kept out-of-process.
@@ -21,4 +23,4 @@ Users solve puzzles in many languages. Native AoT forbids loading assemblies at 
 
 ## Open questions
 - Manifest schema details and versioning are not designed.
-- Plugin distribution (folder drop vs gallery) is not decided.
+

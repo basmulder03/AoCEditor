@@ -1,7 +1,7 @@
 # 0020 External IDE mode
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 Some users prefer their own IDE. The app should still manage puzzles, inputs, running, and submitting.
@@ -13,10 +13,12 @@ Some users prefer their own IDE. The app should still manage puzzles, inputs, ru
 - Run uses the same sandboxed Runner (0011) and the same plugin commands (0009), reading the files as they are on disk.
 - Scaffolding, shared helper wiring and auto-commit behave as in normal mode.
 
+- The MCP server (0021) works unchanged in this mode, with its per-tool settings.
+
 ## Consequences
 - Small cost: mostly UI toggles plus a file watcher.
 - IDE and app may both write files; the app never writes to a file the user has modified since the last scaffold.
 - Language server and toolchain setup is the user's own responsibility in the IDE, though 0010 still provisions the run toolchain.
 
 ## Open questions
-- Whether the MCP server (0021) should be usable together with this mode (likely yes; not decided).
+- None.

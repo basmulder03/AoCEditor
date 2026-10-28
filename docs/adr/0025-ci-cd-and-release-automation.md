@@ -1,7 +1,7 @@
 # 0025 CI/CD and release automation
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 The repo is public on GitHub. Builds target Linux and Windows with AoT, and need tests, installers and docs publishing.
@@ -18,7 +18,7 @@ The repo is public on GitHub. Builds target Linux and Windows with AoT, and need
 ## Consequences
 - Every release is reproducible from a tag.
 - Windows and Linux runner minutes are the main cost; free for public repos.
-- E2E on release only means late detection of some UI breaks.
+- E2E runs nightly on Linux and Windows and on release tags; a failing nightly opens a BUG issue.
 
 ## Open questions
 - Whether macOS gets a build job later.
