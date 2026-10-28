@@ -1,0 +1,12 @@
+CREATE TABLE kv (
+    key TEXT NOT NULL PRIMARY KEY,
+    value TEXT NOT NULL
+) WITHOUT ROWID;
+
+CREATE TABLE sync_state (
+    year INTEGER NOT NULL,
+    day INTEGER NOT NULL,
+    stars INTEGER NOT NULL DEFAULT 0,
+    synced_at INTEGER NOT NULL,
+    PRIMARY KEY (year, day)
+) WITHOUT ROWID;

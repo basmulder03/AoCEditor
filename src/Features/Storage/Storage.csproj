@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsAotCompatible>true</IsAotCompatible>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite" />
+    <ProjectReference Include="../../Shared/Shared.csproj" />
+    <EmbeddedResource Include="Migrations/*.sql" LogicalName="Migrations/%(Filename)%(Extension)" />
+    <InternalsVisibleTo Include="Storage.Tests" />
+  </ItemGroup>
+</Project>

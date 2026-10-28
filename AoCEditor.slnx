@@ -1,13 +1,19 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/App/App.csproj" />
+    <Project Path="src/Features/Storage/Storage.csproj" />
+    <Project Path="src/Features/Gateway/Gateway.csproj" />
+    <Project Path="src/Features/Session/Session.csproj" />
     <Project Path="src/Shared/Shared.csproj" />
     <Project Path="src/UiKit/UiKit.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/E2E/E2E.csproj" />
+    <Project Path="tests/Gateway.Tests/Gateway.Tests.csproj" />
+    <Project Path="tests/Session.Tests/Session.Tests.csproj" />
     <Project Path="tests/Shared.Tests/Shared.Tests.csproj" />
     <Project Path="tests/Specs/Specs.csproj" />
+    <Project Path="tests/Storage.Tests/Storage.Tests.csproj" />
     <Project Path="tests/Ui.Tests/Ui.Tests.csproj" />
   </Folder>
 </Solution>

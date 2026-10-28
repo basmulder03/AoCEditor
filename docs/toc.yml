@@ -6,5 +6,11 @@
   href: roadmap.md
 - name: Architecture decisions
   href: adr/README.md
+- name: Storage
+  href: storage.md
+- name: AoC gateway
+  href: gateway.md
 - name: Design system
   href: design-system.md
+- name: Session token storage
+  href: session-storage.md

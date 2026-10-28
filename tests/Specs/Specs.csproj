@@ -6,6 +6,10 @@
   <ItemGroup>
     <PackageReference Include="xunit.v3" />
     <PackageReference Include="Reqnroll.xunit.v3" />
+    <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" />
     <ProjectReference Include="../../src/Shared/Shared.csproj" />
+    <ProjectReference Include="../../src/Features/Session/Session.csproj" />
+    <ProjectReference Include="../../src/Features/Gateway/Gateway.csproj" />
+    <ProjectReference Include="../../src/Features/Storage/Storage.csproj" />
   </ItemGroup>
 </Project>
