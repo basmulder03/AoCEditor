@@ -3,6 +3,7 @@
     <IsAotCompatible>true</IsAotCompatible>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Avalonia" />
     <ProjectReference Include="../../Shared/Shared.csproj" />
     <InternalsVisibleTo Include="Runner.Tests" />
   </ItemGroup>

@@ -1,0 +1,25 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Runner.UI"
+             x:Class="Runner.UI.ConsoleView"
+             x:DataType="vm:ConsoleViewModel">
+  <UserControl.Styles>
+    <Style Selector="SelectableTextBlock.error">
+      <Setter Property="FontStyle" Value="Italic" />
+    </Style>
+  </UserControl.Styles>
+  <DockPanel>
+    <TextBlock DockPanel.Dock="Top" Classes="muted" Text="{Binding Status}" AutomationProperties.Name="Run status" />
+    <TextBlock DockPanel.Dock="Bottom" Classes="muted" Text="Output was cut off here to keep the app responsive."
+               IsVisible="{Binding IsTruncated}" />
+    <ScrollViewer x:Name="Scroller" AutomationProperties.Name="Console output">
+      <ItemsControl ItemsSource="{Binding Lines}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="vm:ConsoleLine">
+            <SelectableTextBlock Classes.error="{Binding IsError}" Text="{Binding Text}" FontFamily="Cascadia Mono, Consolas, DejaVu Sans Mono, monospace" />
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </ScrollViewer>
+  </DockPanel>
+</UserControl>

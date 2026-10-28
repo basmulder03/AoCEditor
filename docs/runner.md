@@ -26,3 +26,7 @@ The tests start real processes through `sh` and run on Linux only; the Windows b
 4. runs the compile command when the plugin has one (`CompileFailed` when it does not exit 0), then the run command.
 
 `SandboxRefused` means the runner would not start without the user's consent; the UI asks and calls again with `allowUnsandboxed`. Timeouts are fixed at 2 minutes for a build and 1 minute for a run until they become settings.
+
+## Console
+
+`ConsoleView` and `ConsoleViewModel` (`Runner.UI`) show the output of the latest run: `Begin()` clears the old output, `Append` adds a line (stderr lines are italic, so the difference is not colour alone), `End(result)` writes a one-line status such as "Finished with exit code 0 in 1.50 s", and `Fail(message)` covers problems before a run starts. At most 10,000 lines are kept; after that output is dropped and a note says so, so a program that prints forever cannot exhaust memory.
