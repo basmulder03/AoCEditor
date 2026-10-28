@@ -8,7 +8,7 @@ Work is split into vertical slices (ADR 0003). The owner wants every slice, bug 
 
 ## Decision
 - One GitHub issue per slice or task.
-- Type labels: FEATURE, BUG, DOCS, CHORE, TEST, SECURITY, SPIKE. Every issue has exactly one.
+- Type labels: EPIC, FEATURE, STORY, TASK, BUG, SPIKE, DOCS, CHORE, TEST, SECURITY. Hierarchy Epic > Feature > Story/Task/Spike uses GitHub sub-issues; ordering uses "blocked by" links; milestones M1-M8; a Projects v2 Kanban board shows flow. Every issue has exactly one.
 - Priority labels (MoSCoW): MUST, SHOULD, COULD, WONT. Every issue has exactly one.
 - When anything is found broken or missing during work, a new issue is opened instead of fixing it silently or leaving a TODO.
 - Follow-up work found while working on an issue becomes a new, prioritized issue (see above), not scope creep.
