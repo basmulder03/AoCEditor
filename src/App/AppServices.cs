@@ -34,13 +34,15 @@ public sealed class AppServices : IDisposable
         StorageStatus = new SqliteStorageStatus(_connections, Paths);
         var tokens = new SessionTokenProvider(secrets ?? SecretStores.CreateForCurrentOs());
         _gateway = new AocGateway(tokens, new FileResponseCache(Paths.Cache), events: Events, logger: logs.CreateLogger("Gateway.AocGateway"), requests: Diagnostics.Requests);
-        _browser = new WebViewSignInBrowser(new Uri(new GatewayOptions().BaseAddress, "auth/login"), Path.Combine(Paths.Root, "webview"), logs.CreateLogger("Session.WebView"));
+        _browser = new WebViewSignInBrowser(SignInUri, Path.Combine(Paths.Root, "webview"), logs.CreateLogger("Session.WebView"));
         _signIn = new SignInCoordinator(tokens, _gateway, () => _browser.TryClearProfile(), logger: logs.CreateLogger("Session.SignIn"));
         Sync = new SyncService(_gateway, SyncState, TimeProvider.System, logs.CreateLogger("Sync.SyncService"));
         logs.CreateLogger("App").AppStarted(Shared.AppInfo.Version, Diagnostics.Debug.IsEnabled);
     }
 
     public event EventHandler? SignedIn;
+
+    public Uri SignInUri { get; } = new(new GatewayOptions().BaseAddress, "auth/login");
 
     public IAppDataPaths Paths { get; }
 

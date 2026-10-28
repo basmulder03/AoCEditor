@@ -80,11 +80,11 @@ public partial class ShellWindow : Window
         }
     }
 
-    async void OnPromptSignInClick(object? sender, RoutedEventArgs e)
+    void OnPromptSignInClick(object? sender, RoutedEventArgs e)
     {
         SignInPrompt.IsVisible = false;
         NavigateTo("Settings");
-        await ((SettingsPage)CurrentPage!).BeginSignInAsync();
+        ((SettingsPage)CurrentPage!).FocusAccount();
     }
 
     void OnPromptDismissClick(object? sender, RoutedEventArgs e) => SignInPrompt.IsVisible = false;

@@ -17,18 +17,22 @@
     <StackPanel x:Name="AccountPanel" Spacing="{DynamicResource Space2}" Margin="{DynamicResource InsetTopMd}">
       <TextBlock Classes="heading" Text="Account" />
       <TextBlock x:Name="StatusText" AutomationProperties.Name="Sign-in status" />
-      <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Space2}">
-        <Button x:Name="SignInButton" Content="Sign in" AutomationProperties.Name="Sign in" Click="OnSignInClick" />
-        <Button x:Name="SignOutButton" Content="Sign out" AutomationProperties.Name="Sign out" Click="OnSignOutClick" />
-        <Button x:Name="PasteToggle" Content="Paste a token instead" AutomationProperties.Name="Paste a token instead" Click="OnPasteToggleClick" />
-      </StackPanel>
+      <Button x:Name="SignOutButton" Content="Sign out" AutomationProperties.Name="Sign out" Click="OnSignOutClick" HorizontalAlignment="Left" />
       <TextBlock x:Name="MessageText" TextWrapping="Wrap" AutomationProperties.Name="Sign-in message" />
-      <StackPanel x:Name="PastePanel" IsVisible="False" Spacing="{DynamicResource Space2}" MaxWidth="560">
+      <StackPanel x:Name="PastePanel" Spacing="{DynamicResource Space2}" MaxWidth="560" AutomationProperties.Name="Guided sign-in">
         <TextBlock Classes="muted" TextWrapping="Wrap"
-                   Text="Sign in to Advent of Code in your web browser. Open the developer tools (F12), go to Application or Storage, then Cookies, and copy the value of the cookie named session. Paste it here." />
-        <TextBox x:Name="PasteBox" PasswordChar="*" PlaceholderText="session cookie value"
-                 AutomationProperties.Name="Session cookie value" />
-        <Button x:Name="UseTokenButton" Content="Use this token" AutomationProperties.Name="Use this token" Click="OnUseTokenClick" />
+                   Text="1. Open Advent of Code and sign in with your provider.&#10;2. Open your browser's developer tools, Storage/Application &gt; Cookies, for the Advent of Code site.&#10;3. Copy the value of the cookie named session.&#10;4. Paste it here." />
+        <Button x:Name="OpenSiteButton" Content="Open Advent of Code in your browser" AutomationProperties.Name="Open Advent of Code in your browser"
+                HorizontalAlignment="Left" Click="OnOpenSiteClick" />
+        <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Space2}">
+          <TextBox x:Name="PasteBox" PasswordChar="*" PlaceholderText="session cookie value" MinWidth="320"
+                   AutomationProperties.Name="Session cookie value" />
+          <ToggleButton x:Name="RevealToggle" Content="Show" AutomationProperties.Name="Show token" IsCheckedChanged="OnRevealChanged" />
+        </StackPanel>
+        <Button x:Name="UseTokenButton" Content="Validate and save" AutomationProperties.Name="Validate and save" Click="OnUseTokenClick" HorizontalAlignment="Left" />
+        <TextBlock Classes="muted" TextWrapping="Wrap" x:Name="StorageNote"
+                   Text="The token is checked once with Advent of Code and then kept only in your operating system's secure storage (Secret Service on Linux, Credential Manager on Windows). It is never written to a file or a log." />
+        <Button x:Name="SignInButton" Content="Try browser sign-in" AutomationProperties.Name="Try browser sign-in" Click="OnSignInClick" HorizontalAlignment="Left" />
       </StackPanel>
     </StackPanel>
   </StackPanel>

@@ -33,6 +33,12 @@ Feature: Signing in to Advent of Code
     Then I am told the token is not valid
     And no token is stored
 
+  Scenario: Pasting a token while Advent of Code cannot be reached
+    Given Advent of Code cannot be reached
+    When I sign in by pasting the token "synthetic-token"
+    Then I am told Advent of Code could not be reached
+    And no token is stored
+
   Scenario: Pasting a token copied together with its name and stray spaces
     Given Advent of Code accepts my login
     When I sign in by pasting the token "  session=synthetic-token  "

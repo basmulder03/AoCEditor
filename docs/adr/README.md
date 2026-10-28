@@ -39,3 +39,4 @@ Status: `Accepted` = decided with the owner, `Proposed` = default chosen by the 
 | 0030 | In-app issue reporting | Accepted | Report button, prefilled issue, GDPR-safe redaction |
 | 0031 | Puzzle examples | Proposed | Select from puzzle, custom examples, expected answers |
 | 0032 | Diagnostics and observability | Proposed | Logging, tracing, metrics, debug mode and view |
+| 0033 | Security practices | Accepted | Threat model, security agent and skill, CodeQL, dependency review |

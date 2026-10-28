@@ -41,6 +41,8 @@ public sealed class SignInDriver : IDisposable
 
     public void SiteRejectsLogin() => _handler.Status = HttpStatusCode.Found;
 
+    public void SiteIsDown() => _handler.Status = HttpStatusCode.InternalServerError;
+
     public void BreakSecretService() => _store.Down = true;
 
     public void BrowserWindowIsClosed() => _outcome = new BrowserOutcome.Cancelled();

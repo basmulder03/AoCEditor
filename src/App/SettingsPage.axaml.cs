@@ -21,6 +21,11 @@ public partial class SettingsPage : UserControl
         ThemeBox.ItemsSource = ThemeChoice.Names;
         ThemeBox.SelectedItem = ThemeChoice.Names.FirstOrDefault(n => ThemeChoice.Resolve(n) == Application.Current!.RequestedThemeVariant) ?? "System";
         AccountPanel.IsVisible = services is not null;
+        if (OperatingSystem.IsLinux())
+        {
+            SignInButton.Content = "Try browser sign-in (experimental)";
+        }
+
         DebugModeBox.IsVisible = services is not null;
         if (services is not null)
         {
@@ -68,7 +73,22 @@ public partial class SettingsPage : UserControl
 
     async void OnSignInClick(object? sender, RoutedEventArgs e) => await BeginSignInAsync();
 
-    void OnPasteToggleClick(object? sender, RoutedEventArgs e) => PastePanel.IsVisible = !PastePanel.IsVisible;
+    public void FocusAccount()
+    {
+        AccountPanel.BringIntoView();
+        PasteBox.Focus();
+    }
+
+    void OnRevealChanged(object? sender, RoutedEventArgs e) => PasteBox.PasswordChar = RevealToggle.IsChecked == true ? '\0' : '*';
+
+    async void OnOpenSiteClick(object? sender, RoutedEventArgs e)
+    {
+        var launcher = TopLevel.GetTopLevel(this)?.Launcher;
+        if (launcher is null || !await launcher.LaunchUriAsync(_services!.SignInUri))
+        {
+            MessageText.Text = $"Could not open your browser. Open {_services!.SignInUri} yourself.";
+        }
+    }
 
     async void OnUseTokenClick(object? sender, RoutedEventArgs e)
     {
@@ -98,14 +118,13 @@ public partial class SettingsPage : UserControl
             _ => "Not signed in.",
         };
         var usable = status.State != SessionState.StoreUnavailable;
-        SignInButton.IsEnabled = usable && status.State == SessionState.SignedOut;
-        PasteToggle.IsEnabled = usable;
-        SignOutButton.IsEnabled = usable && status.State == SessionState.SignedIn;
+        var signedOut = status.State == SessionState.SignedOut;
+        SignOutButton.IsVisible = status.State == SessionState.SignedIn;
+        SignOutButton.IsEnabled = true;
+        PastePanel.IsVisible = status.State != SessionState.SignedIn;
+        SignInButton.IsEnabled = usable && signedOut;
         UseTokenButton.IsEnabled = usable;
-        if (!usable)
-        {
-            PastePanel.IsVisible = false;
-        }
+        OpenSiteButton.IsEnabled = true;
     }
 
     void SetBusy(bool busy)
@@ -118,10 +137,6 @@ public partial class SettingsPage : UserControl
     void Show(SignInResult result)
     {
         MessageText.Text = SignInResultText.For(result);
-        if (result is SignInResult.BrowserUnsupported or SignInResult.Cancelled or SignInResult.TimedOut)
-        {
-            PastePanel.IsVisible = true;
-            PasteBox.Focus();
-        }
+        PasteBox.Focus();
     }
 }

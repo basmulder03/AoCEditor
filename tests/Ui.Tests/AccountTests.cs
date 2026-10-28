@@ -39,12 +39,31 @@ public class AccountTests
         shell.NavigateTo("Settings");
 
         var names = shell.GetLogicalDescendants().OfType<Control>()
-            .Where(c => c.Name is "SignInButton" or "SignOutButton" or "PasteToggle" or "PasteBox" or "UseTokenButton")
+            .Where(c => c.Name is "SignInButton" or "SignOutButton" or "OpenSiteButton" or "RevealToggle" or "PasteBox" or "UseTokenButton")
             .Select(c => Avalonia.Automation.AutomationProperties.GetName(c))
             .ToList();
 
-        names.Count.ShouldBe(5);
+        names.Count.ShouldBe(6);
         names.ShouldAllBe(n => !string.IsNullOrWhiteSpace(n));
+    }
+
+    [AvaloniaFact]
+    public async Task GuidedPastePanelIsTheMainWayToSignIn()
+    {
+        using var services = Create(new Store());
+        var shell = new ShellWindow(services);
+        shell.Show();
+        shell.NavigateTo("Settings");
+        await Task.Delay(200, TestContext.Current.CancellationToken);
+        Dispatcher.UIThread.RunJobs();
+
+        var controls = shell.GetVisualDescendants().OfType<Control>().ToList();
+        var panel = controls.Single(c => c.Name == "PastePanel");
+        panel.IsVisible.ShouldBeTrue();
+        Avalonia.Automation.AutomationProperties.GetName(panel).ShouldBe("Guided sign-in");
+        controls.OfType<TextBlock>().Any(t => t.Text is { } x && x.StartsWith("1. Open Advent of Code", StringComparison.Ordinal)).ShouldBeTrue();
+        controls.OfType<TextBox>().Single(t => t.Name == "PasteBox").PasswordChar.ShouldBe('*');
+        controls.OfType<Button>().Single(b => b.Name == "SignOutButton").IsVisible.ShouldBeFalse();
     }
 
     [AvaloniaFact]

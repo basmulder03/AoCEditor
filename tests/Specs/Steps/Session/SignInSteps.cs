@@ -59,6 +59,12 @@ public sealed class SignInSteps(SignInDriver driver)
     [Then("the sign-in timed out")]
     public void ThenTimedOut() => driver.Result.ShouldBeOfType<SignInResult.TimedOut>();
 
+    [Given("Advent of Code cannot be reached")]
+    public void GivenDown() => driver.SiteIsDown();
+
+    [Then("I am told Advent of Code could not be reached")]
+    public void ThenUnreachable() => driver.Result.ShouldBeOfType<SignInResult.NetworkError>();
+
     [Then("I am told the token is not valid")]
     public void ThenInvalid() => driver.Result.ShouldBeOfType<SignInResult.InvalidToken>();
 
