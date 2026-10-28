@@ -38,6 +38,9 @@ jobs:
       - run: dotnet build -c Release --no-restore
       - name: Test (E2E excluded)
         run: dotnet test --solution AoCEditor.slnx -c Release --no-build --filter-not-trait "Category=E2E" --ignore-exit-code 8
+      - name: Practice checks
+        if: runner.os == 'Linux'
+        run: ./scripts/check-practices.sh
       - name: Format check
         if: runner.os == 'Linux'
         run: dotnet format --verify-no-changes --no-restore

@@ -2,10 +2,12 @@
   <Folder Name="/src/">
     <Project Path="src/App/App.csproj" />
     <Project Path="src/Shared/Shared.csproj" />
+    <Project Path="src/UiKit/UiKit.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/E2E/E2E.csproj" />
     <Project Path="tests/Shared.Tests/Shared.Tests.csproj" />
     <Project Path="tests/Specs/Specs.csproj" />
+    <Project Path="tests/Ui.Tests/Ui.Tests.csproj" />
   </Folder>
 </Solution>

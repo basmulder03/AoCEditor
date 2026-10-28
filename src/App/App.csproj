@@ -3,8 +3,14 @@
     <OutputType>Exe</OutputType>
     <AssemblyName>AoCEditor</AssemblyName>
     <PublishAot>true</PublishAot>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <TrimmerSingleWarn>false</TrimmerSingleWarn>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.Desktop" />
+    <PackageReference Include="Avalonia.Themes.Fluent" />
     <ProjectReference Include="../Shared/Shared.csproj" />
+    <ProjectReference Include="../UiKit/UiKit.csproj" />
   </ItemGroup>
 </Project>

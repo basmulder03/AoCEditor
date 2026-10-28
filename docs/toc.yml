@@ -6,3 +6,5 @@
   href: roadmap.md
 - name: Architecture decisions
   href: adr/README.md
+- name: Design system
+  href: design-system.md

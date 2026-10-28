@@ -1,0 +1,10 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:AoCEditor"
+             x:Class="AoCEditor.CalendarPage"
+             x:DataType="local:CalendarPage">
+  <StackPanel Spacing="{DynamicResource Space2}">
+    <TextBlock Classes="heading" Text="Calendar" />
+    <TextBlock Classes="muted" Text="Puzzle calendar will appear here." />
+  </StackPanel>
+</UserControl>

@@ -1,0 +1,35 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ResourceDictionary.ThemeDictionaries>
+    <ResourceDictionary x:Key="Light">
+      <Color x:Key="BackgroundColor">#FFFFFF</Color>
+      <Color x:Key="SurfaceColor">#F3F4F6</Color>
+      <Color x:Key="TextColor">#111827</Color>
+      <Color x:Key="TextMutedColor">#4B5563</Color>
+      <Color x:Key="BorderColor">#6B7280</Color>
+      <Color x:Key="AccentColor">#1D4ED8</Color>
+      <Color x:Key="OnAccentColor">#FFFFFF</Color>
+      <Color x:Key="FocusColor">#1D4ED8</Color>
+    </ResourceDictionary>
+    <ResourceDictionary x:Key="Dark">
+      <Color x:Key="BackgroundColor">#111827</Color>
+      <Color x:Key="SurfaceColor">#1F2937</Color>
+      <Color x:Key="TextColor">#F9FAFB</Color>
+      <Color x:Key="TextMutedColor">#D1D5DB</Color>
+      <Color x:Key="BorderColor">#9CA3AF</Color>
+      <Color x:Key="AccentColor">#60A5FA</Color>
+      <Color x:Key="OnAccentColor">#0B1220</Color>
+      <Color x:Key="FocusColor">#93C5FD</Color>
+    </ResourceDictionary>
+    <ResourceDictionary x:Key="HighContrast">
+      <Color x:Key="BackgroundColor">#000000</Color>
+      <Color x:Key="SurfaceColor">#0A0A0A</Color>
+      <Color x:Key="TextColor">#FFFFFF</Color>
+      <Color x:Key="TextMutedColor">#E5E5E5</Color>
+      <Color x:Key="BorderColor">#FFFFFF</Color>
+      <Color x:Key="AccentColor">#FFD400</Color>
+      <Color x:Key="OnAccentColor">#000000</Color>
+      <Color x:Key="FocusColor">#00E5FF</Color>
+    </ResourceDictionary>
+  </ResourceDictionary.ThemeDictionaries>
+</ResourceDictionary>

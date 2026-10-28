@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="xunit.v3" VersionOverride="3.2.2" />
+    <PackageReference Include="Avalonia.Headless.XUnit" />
+    <ProjectReference Include="../../src/UiKit/UiKit.csproj" />
+    <ProjectReference Include="../../src/App/App.csproj" />
+    <!-- The contrast test reads the same token files the app compiles in. -->
+    <Content Include="../../src/UiKit/Tokens/Colors.axaml" Link="Tokens/Colors.axaml" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

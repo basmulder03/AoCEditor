@@ -21,5 +21,7 @@ Puzzle text and inputs are copyrighted and AoC asks that they not be redistribut
 
 - The local database is SQLite. The native SQLite library ships inside the app package, so the installer provides it when the system has none; no separate user install.
 
+- Provider (spike result): Microsoft.Data.Sqlite 10.0.14 with its default SQLitePCLRaw.bundle_e_sqlite3 2.1.13 (SQLite 3.53.3). Under PublishAot on linux-x64 it gives zero warnings; WAL, parameterized CRUD and unix-ms integer timestamps work. The native library ships next to the executable (+3.1 MB), so single-file deploy is not possible. Raw ADO.NET with hand-mapped readers; no ORM.
+
 ## Open questions
-- The AoT-safe .NET provider (for example Microsoft.Data.Sqlite with a bundled native library) is unverified; settle in a spike.
+- Validate the win-x64 native library (`e_sqlite3.dll`) in CI; it could only be checked on linux-x64.

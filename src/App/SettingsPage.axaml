@@ -1,0 +1,12 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:AoCEditor"
+             x:Class="AoCEditor.SettingsPage"
+             x:DataType="local:SettingsPage">
+  <StackPanel Spacing="{DynamicResource Space2}">
+    <TextBlock Classes="heading" Text="Settings" />
+    <TextBlock Text="Theme" />
+    <ComboBox x:Name="ThemeBox" MinWidth="200" SelectedIndex="0"
+              AutomationProperties.Name="Theme" SelectionChanged="OnThemeChanged" />
+  </StackPanel>
+</UserControl>

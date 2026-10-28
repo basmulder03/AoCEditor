@@ -1,0 +1,16 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="using:AoCEditor"
+        x:Class="AoCEditor.ShellWindow"
+        x:DataType="local:ShellWindow"
+        Title="AoCEditor" Width="960" Height="640"
+        AutomationProperties.Name="AoCEditor">
+  <Grid ColumnDefinitions="200,*">
+    <ListBox x:Name="Nav" SelectedIndex="0" SelectionChanged="OnNavChanged"
+             AutomationProperties.Name="Navigation" Margin="{DynamicResource Space2}">
+      <ListBoxItem Tag="Calendar" AutomationProperties.Name="Calendar">Calendar</ListBoxItem>
+      <ListBoxItem Tag="Settings" AutomationProperties.Name="Settings">Settings</ListBoxItem>
+    </ListBox>
+    <ContentControl x:Name="Host" Grid.Column="1" Margin="{DynamicResource Space4}" IsTabStop="False" />
+  </Grid>
+</Window>
