@@ -2,6 +2,7 @@ using AoCEditor.Core.Plugins.Domain;
 using AoCEditor.Core.Runner.Application;
 using AoCEditor.Core.Workspace.Application;
 using AoCEditor.UI.Editor;
+using AoCEditor.UI.Puzzle;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Threading;

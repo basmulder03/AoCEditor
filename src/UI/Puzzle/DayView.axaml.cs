@@ -101,7 +101,7 @@ public partial class DayView : UserControl
 
     async Task OpenLinkAsync(Uri uri)
     {
-        if (TopLevel.GetTopLevel(this) is Window window && await ConfirmDialog.AskAsync(window, $"Open {uri.AbsoluteUri} in your browser?"))
+        if (TopLevel.GetTopLevel(this) is Window window && await ConfirmDialog.AskAsync(window, "Open link", $"Open {uri.AbsoluteUri} in your browser?", "Open"))
         {
             await window.Launcher.LaunchUriAsync(uri);
         }
