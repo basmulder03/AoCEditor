@@ -22,5 +22,5 @@ Users solve puzzles in many languages. Native AoT forbids loading assemblies at 
 - Third-party plugins can execute arbitrary commands, so install requires explicit user confirmation.
 
 ## Open questions
-- Manifest schema details and versioning are not designed.
+- Manifest schema v1 is described in `docs/plugins.md`; LSP and debug adapter fields are added with those slices.
 

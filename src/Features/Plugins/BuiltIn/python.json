@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "python",
+  "name": "Python",
+  "extensions": [".py"],
+  "templateFiles": {
+    "main.py": "import sys\n\n\ndef part1(data: str):\n    return None\n\n\ndef part2(data: str):\n    return None\n\n\nif __name__ == \"__main__\":\n    data = sys.stdin.read()\n    print(part1(data))\n    print(part2(data))\n"
+  },
+  "toolchain": { "executables": ["python3", "python"] },
+  "run": { "command": ["{toolchain}", "{source}"], "input": "stdin" }
+}

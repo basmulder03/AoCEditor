@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsAotCompatible>true</IsAotCompatible>
+  </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="BuiltIn/*.json" LogicalName="BuiltIn/%(Filename)%(Extension)" />
+    <ProjectReference Include="../../Shared/Shared.csproj" />
+    <InternalsVisibleTo Include="Plugins.Tests" />
+  </ItemGroup>
+</Project>
