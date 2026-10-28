@@ -2,13 +2,13 @@ namespace Puzzle.Domain;
 
 public enum InlineStyle { Plain, Emphasis, Code, Link }
 
-public sealed record Inline(string Text, InlineStyle Style = InlineStyle.Plain, string? Href = null);
+public sealed record Fragment(string Text, InlineStyle Style = InlineStyle.Plain, string? Href = null);
 
 public abstract record Block;
 
-public sealed record ParagraphBlock(IReadOnlyList<Inline> Inlines) : Block;
+public sealed record ParagraphBlock(IReadOnlyList<Fragment> Inlines) : Block;
 
-public sealed record ListBlock(IReadOnlyList<IReadOnlyList<Inline>> Items) : Block;
+public sealed record ListBlock(IReadOnlyList<IReadOnlyList<Fragment>> Items) : Block;
 
 public sealed record CodeBlock(string Text) : Block;
 

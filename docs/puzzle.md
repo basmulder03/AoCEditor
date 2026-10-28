@@ -7,7 +7,7 @@ The HTML reader is hand-written and forgiving (no parser library, so it stays Ao
 ## Model
 
 - Blocks: paragraph, list and code block. Part headings are dropped, the part tabs name them.
-- Inlines: plain, emphasis, code and link (with `Href`). Emphasised code (`<em><code>`) counts as code.
+- Fragments (inline runs of a paragraph or list item): plain, emphasis, code and link (with `Href`). Emphasised code (`<em><code>`) counts as code.
 - Unknown elements degrade to their text, so a new AoC element never breaks rendering.
 
 Rendering with Avalonia controls and fetching through the gateway come in later slices.
@@ -25,3 +25,7 @@ Rendering with Avalonia controls and fetching through the gateway come in later 
 - `SubmitAsync(year, day, part, answer)`: one `POST /{year}/day/{day}/answer` with `level` and the trimmed answer, parsed with `SubmitResponseParser`. It is never retried. A part outside 1 to 2 or a blank answer throws before any request.
 
 Results are `Fetched<T>` with a `FetchStatus` (`Ok`, `NotSignedIn`, `RateLimited`, `NotFound`, `NetworkError`, `Unreadable`). The default is cache-first, so after a correct part 1 the caller must refresh the puzzle to pick up part 2. Locked days are not checked here, the caller must not ask for them.
+
+## PuzzleView
+
+`PuzzleView` (`Puzzle.UI`) renders one `PuzzlePart` (`Part` property) with native controls: selectable wrapped text for paragraphs and list items (`• ` prefix), a monospace boxed block for code, italic for emphasis, monospace for inline code and underline for links. Links are not clickable yet; opening them in the system browser after confirmation (ADR 0008) is still to do, as is the day page that hosts the part tabs.

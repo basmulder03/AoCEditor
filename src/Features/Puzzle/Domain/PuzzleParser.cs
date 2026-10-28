@@ -62,11 +62,11 @@ public static class PuzzleParser
         return blocks;
     }
 
-    private static List<Inline> Inlines(HtmlNode node)
+    private static List<Fragment> Inlines(HtmlNode node)
     {
         if (node.IsText)
         {
-            return [new Inline(Collapse(node.Text!))];
+            return [new Fragment(Collapse(node.Text!))];
         }
 
         var style = node.Name switch
@@ -79,7 +79,7 @@ public static class PuzzleParser
         if (style != InlineStyle.Plain)
         {
             node.Attrs.TryGetValue("href", out var href);
-            return [new Inline(Collapse(node.PlainText()), style, style == InlineStyle.Link ? href : null)];
+            return [new Fragment(Collapse(node.PlainText()), style, style == InlineStyle.Link ? href : null)];
         }
 
         return [.. node.Children.SelectMany(Inlines)];
