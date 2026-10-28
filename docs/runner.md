@@ -12,7 +12,7 @@
 
 ## Sandbox
 
-On Linux the runner confines the user's program. `ProcessRunner` does not start the program directly: it starts the app itself with a hidden first argument (`--aoc-sandbox-exec`, handled first thing in `Program.Main` through `SandboxHelper.RunIfRequested`). That helper applies the protections to itself with direct syscalls (AoT-safe `LibraryImport`) and then `execvp`s the command, so nothing but the program runs afterwards. If any protection cannot be applied, the program does not start (exit code 125 with a message). Test hosts call the same entry from a module initializer.
+On Linux the runner confines the user's program. `ProcessRunner` does not start the program directly: it starts the app itself with a hidden first argument (`--aoc-sandbox-exec`, handled first thing in `Program.Main` through `SandboxEntryPoint.RunIfRequested`). That helper applies the protections to itself with direct syscalls (AoT-safe `LibraryImport`) and then `execvp`s the command, so nothing but the program runs afterwards. If any protection cannot be applied, the program does not start (exit code 125 with a message). Test hosts call the same entry from a module initializer.
 
 `SandboxLevel` is a flag set, detected at startup, and `Level` reports what this computer can enforce:
 

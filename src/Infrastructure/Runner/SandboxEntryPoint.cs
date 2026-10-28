@@ -4,7 +4,7 @@ namespace AoCEditor.Infrastructure.Runner;
 /// Entry point of the re-executed helper: the host calls this first thing in Main. When the arguments ask for it, the
 /// helper confines itself and replaces itself with the program, so nothing of the host's own code runs afterwards.
 /// </summary>
-public static class SandboxHelper
+public static class SandboxEntryPoint
 {
     internal const int SetupFailed = 125;
     internal const string RefusalPrefix = "Sandbox refused to start";

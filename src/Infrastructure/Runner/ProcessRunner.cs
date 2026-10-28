@@ -106,7 +106,7 @@ public sealed class ProcessRunner : IRunner
 
         // A grandchild that survived could keep the pipes open forever, so draining is bounded.
         await Task.WhenAny(pumps, Task.Delay(DrainLimit, CancellationToken.None));
-        if (status == RunStatus.Completed && _level != SandboxLevel.None && process.ExitCode == SandboxHelper.SetupFailed && helper.Refusal is { } refusal)
+        if (status == RunStatus.Completed && _level != SandboxLevel.None && process.ExitCode == SandboxEntryPoint.SetupFailed && helper.Refusal is { } refusal)
         {
             return new RunResult(RunStatus.SandboxFailed, null, clock.Elapsed, $"The sandbox could not be set up, so the program was not started. {refusal}");
         }
@@ -352,7 +352,7 @@ public sealed class ProcessRunner : IRunner
 
         public void Report(OutputLine value)
         {
-            if (value.Stream == OutputChannel.Stderr && value.Text.StartsWith(SandboxHelper.RefusalPrefix, StringComparison.Ordinal))
+            if (value.Stream == OutputChannel.Stderr && value.Text.StartsWith(SandboxEntryPoint.RefusalPrefix, StringComparison.Ordinal))
             {
                 Refusal = value.Text;
             }

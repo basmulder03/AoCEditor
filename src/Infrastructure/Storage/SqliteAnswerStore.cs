@@ -9,7 +9,7 @@ public sealed class SqliteAnswerStore(IConnectionFactory connections) : IAnswerS
         ExecuteAsync(
             "INSERT INTO answer_attempts (year, day, part, answer, outcome, at) VALUES ($y, $d, $p, $a, $o, $at)",
             cancellationToken,
-            ("$y", year), ("$d", day), ("$p", part), ("$a", attempt.Answer), ("$o", attempt.Outcome), ("$at", UnixMs.From(attempt.At)));
+            ("$y", year), ("$d", day), ("$p", part), ("$a", attempt.Answer), ("$o", attempt.Outcome), ("$at", UnixMilliseconds.From(attempt.At)));
 
     public async Task<IReadOnlyList<AnswerAttempt>> AttemptsAsync(int year, int day, int part, CancellationToken cancellationToken)
     {
@@ -21,7 +21,7 @@ public sealed class SqliteAnswerStore(IConnectionFactory connections) : IAnswerS
         await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
         while (await reader.ReadAsync(cancellationToken))
         {
-            attempts.Add(new AnswerAttempt(reader.GetString(0), reader.GetString(1), UnixMs.To(reader.GetInt64(2))));
+            attempts.Add(new AnswerAttempt(reader.GetString(0), reader.GetString(1), UnixMilliseconds.To(reader.GetInt64(2))));
         }
 
         return attempts;
@@ -31,11 +31,11 @@ public sealed class SqliteAnswerStore(IConnectionFactory connections) : IAnswerS
         ExecuteAsync(
             "INSERT INTO answer_cooldowns (year, day, part, until) VALUES ($y, $d, $p, $u) ON CONFLICT(year, day, part) DO UPDATE SET until = excluded.until",
             cancellationToken,
-            ("$y", year), ("$d", day), ("$p", part), ("$u", UnixMs.From(until)));
+            ("$y", year), ("$d", day), ("$p", part), ("$u", UnixMilliseconds.From(until)));
 
     public async Task<DateTimeOffset?> CooldownUntilAsync(int year, int day, int part, CancellationToken cancellationToken) =>
         await ScalarAsync("SELECT until FROM answer_cooldowns WHERE year = $y AND day = $d AND part = $p", year, day, part, cancellationToken) is long ms
-            ? UnixMs.To(ms)
+            ? UnixMilliseconds.To(ms)
             : null;
 
     public Task SetKnownAnswerAsync(int year, int day, int part, string answer, CancellationToken cancellationToken) =>

@@ -41,7 +41,7 @@ public sealed class SqliteSyncStateStore(IConnectionFactory connections) : ISync
             insert.Parameters.AddWithValue("$y", year);
             insert.Parameters.AddWithValue("$d", day.Day);
             insert.Parameters.AddWithValue("$s", day.Stars);
-            insert.Parameters.AddWithValue("$at", UnixMs.From(syncedAt));
+            insert.Parameters.AddWithValue("$at", UnixMilliseconds.From(syncedAt));
             await insert.ExecuteNonQueryAsync(cancellationToken);
         }
 
@@ -69,6 +69,6 @@ public sealed class SqliteSyncStateStore(IConnectionFactory connections) : ISync
         await using var cmd = connection.CreateCommand();
         cmd.CommandText = "SELECT MAX(synced_at) FROM sync_state WHERE year = $y";
         cmd.Parameters.AddWithValue("$y", year);
-        return await cmd.ExecuteScalarAsync(cancellationToken) is long ms ? UnixMs.To(ms) : null;
+        return await cmd.ExecuteScalarAsync(cancellationToken) is long ms ? UnixMilliseconds.To(ms) : null;
     }
 }

@@ -65,6 +65,6 @@ public class MigrationTests
     {
         var at = new DateTimeOffset(2026, 10, 28, 17, 3, 39, 824, TimeSpan.Zero);
 
-        UnixMs.To(UnixMs.From(at)).ShouldBe(at);
+        UnixMilliseconds.To(UnixMilliseconds.From(at)).ShouldBe(at);
     }
 }

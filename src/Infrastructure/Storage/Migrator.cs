@@ -41,7 +41,7 @@ public static class Migrator
             record.Transaction = tx;
             record.CommandText = "INSERT INTO schema_migrations (version, applied_at) VALUES ($v, $at)";
             record.Parameters.AddWithValue("$v", m.Version);
-            record.Parameters.AddWithValue("$at", UnixMs.From(DateTimeOffset.UtcNow));
+            record.Parameters.AddWithValue("$at", UnixMilliseconds.From(DateTimeOffset.UtcNow));
             await record.ExecuteNonQueryAsync(cancellationToken);
             await tx.CommitAsync(cancellationToken);
             log.MigrationApplied(m.Version);

@@ -1,6 +1,6 @@
 namespace AoCEditor.Infrastructure.Storage;
 
-public static class UnixMs
+public static class UnixMilliseconds
 {
     public static long From(DateTimeOffset value) => value.ToUnixTimeMilliseconds();
 

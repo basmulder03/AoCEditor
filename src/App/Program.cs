@@ -8,7 +8,7 @@ internal static class Program
     [STAThread]
     public static int Main(string[] args)
     {
-        if (SandboxHelper.RunIfRequested(args) is { } helperExit)
+        if (SandboxEntryPoint.RunIfRequested(args) is { } helperExit)
         {
             return helperExit;
         }
