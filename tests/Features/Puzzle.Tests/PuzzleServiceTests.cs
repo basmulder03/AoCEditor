@@ -77,13 +77,37 @@ public class PuzzleServiceTests
     [Fact]
     public async Task ASubmissionPostsTheLevelAndTheTrimmedAnswerOnce()
     {
-        _gateway.Reply = new GatewayResult.Ok("<article><p>That's the right answer!</p></article>");
+        _gateway.Reply = new GatewayResult.Ok("<article><p>That's not the right answer.</p></article>");
 
         var result = await _service.SubmitAsync(2020, 3, part: 2, " 42 ", CancellationToken.None);
 
-        result.Value!.Outcome.ShouldBe(SubmitOutcome.Correct);
+        result.Value!.Result.Outcome.ShouldBe(SubmitOutcome.Wrong);
         _gateway.Posts.Single().Path.ShouldBe("/2020/day/3/answer");
         _gateway.Posts.Single().Form.ShouldBe(new Dictionary<string, string> { ["level"] = "2", ["answer"] = "42" });
+    }
+
+    [Fact]
+    public async Task ACorrectPartOneRefreshesThePuzzleOnceToPickUpPartTwo()
+    {
+        _gateway.Reply = new GatewayResult.Ok("<article><p>That's the right answer!</p></article>");
+        _gateway.GetReply = new GatewayResult.Ok(PuzzleHtml + PuzzleHtml);
+
+        var result = await _service.SubmitAsync(2020, 3, part: 1, "7", CancellationToken.None);
+
+        result.Value!.Unlocked!.Parts.Count.ShouldBe(2);
+        _gateway.Gets.ShouldBe([("/2020/day/3", RequestKind.Interactive, FetchPolicy.Refresh)]);
+    }
+
+    [Theory]
+    [InlineData(1, "That's not the right answer.")]
+    [InlineData(2, "That's the right answer!")]
+    public async Task OtherSubmissionsDoNotFetchAgain(int part, string message)
+    {
+        _gateway.Reply = new GatewayResult.Ok($"<article><p>{message}</p></article>");
+
+        (await _service.SubmitAsync(2020, 3, part, "7", CancellationToken.None)).Value!.Unlocked.ShouldBeNull();
+
+        _gateway.Gets.ShouldBeEmpty();
     }
 
     [Theory]
@@ -101,6 +125,9 @@ public class PuzzleServiceTests
     {
         public GatewayResult Reply { get; set; } = new GatewayResult.NotFound();
 
+        /// <summary>Answer to GETs when different from <see cref="Reply"/>.</summary>
+        public GatewayResult? GetReply { get; set; }
+
         public List<(string Path, RequestKind Kind, FetchPolicy Policy)> Gets { get; } = [];
 
         public List<(string Path, IReadOnlyDictionary<string, string> Form)> Posts { get; } = [];
@@ -108,7 +135,7 @@ public class PuzzleServiceTests
         public Task<GatewayResult> GetAsync(string path, RequestKind kind, FetchPolicy policy, CancellationToken cancellationToken)
         {
             Gets.Add((path, kind, policy));
-            return Task.FromResult(Reply);
+            return Task.FromResult(GetReply ?? Reply);
         }
 
         public Task<GatewayResult> PostFormAsync(string path, IReadOnlyDictionary<string, string> form, CancellationToken cancellationToken)

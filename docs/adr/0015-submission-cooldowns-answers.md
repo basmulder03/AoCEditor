@@ -7,7 +7,7 @@ Proposed
 AoC rate-limits wrong answers (a wait before the next attempt) and its automation rules forbid hammering. Submits must go through the single HttpClient (0005). After a correct answer the app should know the answer for local verification (0018).
 
 ## Decision
-- Submit is always a user click; never automatic, never retried by the app.
+- Submit is always a user click; never automatic, never retried by the app. The one automatic request is a single refresh of the puzzle page right after a correct part 1, to show the newly unlocked part 2 (owner-approved).
 - A Submission slice stores per day/part: each attempt (answer, time, outcome: correct / wrong / too high / too low / rate-limited), and the cooldown end time parsed from the AoC response.
 - The submit button is disabled with a live countdown while a cooldown is active, and also while a request is in flight. The cooldown is persisted across restarts.
 - Obviously repeated answers (already tried wrong) are blocked locally with a warning, without a request.

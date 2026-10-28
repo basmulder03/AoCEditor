@@ -22,9 +22,9 @@ Rendering with Avalonia controls and fetching through the gateway come in later 
 
 - `LoadPuzzleAsync(year, day, refresh)`: `GET /{year}/day/{day}`, parsed with `PuzzleParser`.
 - `LoadInputAsync(year, day, refresh)`: `GET /{year}/day/{day}/input`, returned as raw text. The input stays in the gateway cache (app data) and never reaches the solutions folder.
-- `SubmitAsync(year, day, part, answer)`: one `POST /{year}/day/{day}/answer` with `level` and the trimmed answer, parsed with `SubmitResponseParser`. It is never retried. A part outside 1 to 2 or a blank answer throws before any request.
+- `SubmitAsync(year, day, part, answer)`: one `POST /{year}/day/{day}/answer` with `level` and the trimmed answer, parsed with `SubmitResponseParser`. It is never retried. A correct part 1 is followed by one refresh of the puzzle page (`Submission.Unlocked`) to pick up part 2; this is the only automatic request, directly caused by the user's submit, and the owner approved it. A part outside 1 to 2 or a blank answer throws before any request.
 
-Results are `Fetched<T>` with a `FetchStatus` (`Ok`, `NotSignedIn`, `RateLimited`, `NotFound`, `NetworkError`, `Unreadable`). The default is cache-first, so after a correct part 1 the caller must refresh the puzzle to pick up part 2. Locked days are not checked here, the caller must not ask for them.
+Results are `Fetched<T>` with a `FetchStatus` (`Ok`, `NotSignedIn`, `RateLimited`, `NotFound`, `NetworkError`, `Unreadable`). The default is cache-first, so any other refresh is the caller's explicit request. Locked days are not checked here, the caller must not ask for them.
 
 ## PuzzleView
 
