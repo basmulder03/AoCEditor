@@ -13,7 +13,7 @@ Status: `Accepted` = decided with the owner, `Proposed` = default chosen by the 
 | 0004 | .NET version policy | Accepted | net10 now, one-line bump to 11/12, AoT constraints |
 | 0005 | Single AoC HttpClient | Accepted | ToS enforcement, throttling, User-Agent, cache-first |
 | 0006 | Session token and secret store | Accepted | WebView SSO, token capture, OS secret stores |
-| 0007 | Local storage layout | Accepted | App-data cache/DB, never inside the solutions repo |
+| 0007 | Local storage layout | Accepted | App-data cache/DB, SQLite bundled, never inside the solutions repo |
 | 0008 | Calendar sync and native puzzle rendering | Proposed | Manual sync, per-day fetch, HTML to native view |
 | 0009 | Language plugin model | Proposed | Out-of-process manifest plugins, AoT-safe |
 | 0010 | Toolchain provisioning | Accepted | Detect, offer managed download, or guide |
@@ -32,7 +32,8 @@ Status: `Accepted` = decided with the owner, `Proposed` = default chosen by the 
 | 0023 | Testing strategy | Accepted | xUnit v3, Reqnroll BDD, E2E, TDD flow |
 | 0024 | Installer and self-update | Accepted | Velopack, per-user, unsigned at first |
 | 0025 | CI/CD and release automation | Proposed | Build/test matrix, release, gh-pages |
-| 0026 | Documentation and gh-pages | Accepted | docs folder, publish on release |
+| 0026 | Documentation and gh-pages | Accepted | DocFX, docs folder, publish on release |
 | 0027 | Issue tracking and roadmap | Accepted | Type and MoSCoW labels, roadmap, auto-issues |
 | 0028 | Code documentation standard | Accepted | Comment density, no ADR references |
 | 0029 | Agents, skills, orchestration | Accepted | Token-lean agents/skills, orchestrator rules |
+| 0030 | In-app issue reporting | Accepted | Report button, prefilled issue, GDPR-safe redaction |

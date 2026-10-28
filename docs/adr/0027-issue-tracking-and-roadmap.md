@@ -11,6 +11,8 @@ Work is split into vertical slices (ADR 0003). The owner wants every slice, bug 
 - Type labels: FEATURE, BUG, DOCS, CHORE, TEST, SECURITY, SPIKE. Every issue has exactly one.
 - Priority labels (MoSCoW): MUST, SHOULD, COULD, WONT. Every issue has exactly one.
 - When anything is found broken or missing during work, a new issue is opened instead of fixing it silently or leaving a TODO.
+- Follow-up work found while working on an issue becomes a new, prioritized issue (see above), not scope creep.
+- The app also offers a "Report a problem" button, see 0030.
 - PRs reference the issue they close.
 - A roadmap file in the repo (under /docs) lists milestones and links issues; it is updated when scope changes.
 - A SPIKE issue is time-boxed and ends with a written result, and an ADR if it changes a decision.

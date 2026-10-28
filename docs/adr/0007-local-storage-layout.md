@@ -19,5 +19,7 @@ Puzzle text and inputs are copyrighted and AoC asks that they not be redistribut
 - Users who relocate the data folder into the solutions repo are warned; the app refuses paths inside the solutions folder.
 - Backup of progress means backing up the app-data folder.
 
+- The local database is SQLite. The native SQLite library ships inside the app package, so the installer provides it when the system has none; no separate user install.
+
 ## Open questions
-- Local database engine (for example SQLite) and its AoT-safe provider are unverified.
+- The AoT-safe .NET provider (for example Microsoft.Data.Sqlite with a bundled native library) is unverified; settle in a spike.

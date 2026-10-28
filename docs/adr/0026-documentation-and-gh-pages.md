@@ -19,4 +19,4 @@ Users and contributors need docs from the start. Code comments are kept sparse (
 - The published site only changes on release; main-branch docs are read on GitHub.
 
 ## Open questions
-- Static site generator (e.g. DocFX, MkDocs, plain markdown renderer) not chosen.
+- Generator: DocFX. Chosen because it is .NET-native, can build API reference from the C# code, and is actively released (v2.81.0 in Sept 2026). MkDocs core was rejected: its last release was Aug 2024.
