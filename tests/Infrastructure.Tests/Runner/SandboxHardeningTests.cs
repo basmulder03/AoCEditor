@@ -2,11 +2,12 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.Versioning;
-using Runner.Application;
+using AoCEditor.Core.Runner.Application;
+using AoCEditor.Infrastructure.Runner;
 using Shouldly;
 using Xunit;
 
-namespace Runner.Tests;
+namespace AoCEditor.Infrastructure.Tests.Runner;
 
 [SupportedOSPlatform("linux")]
 public sealed class SandboxHardeningTests : IDisposable

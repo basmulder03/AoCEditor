@@ -1,11 +1,11 @@
-using Diagnostics.Application;
-using Diagnostics.Infrastructure;
+using AoCEditor.Core.Diagnostics.Application;
+using AoCEditor.Infrastructure.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Time.Testing;
 using Shouldly;
 using Xunit;
 
-namespace Diagnostics.Tests;
+namespace AoCEditor.Infrastructure.Tests.Diagnostics;
 
 public sealed class FileLogSinkTests : IDisposable
 {

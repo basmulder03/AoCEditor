@@ -1,7 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="using:Sync.UI"
-             x:Class="Sync.UI.CalendarView"
+             xmlns:vm="using:AoCEditor.UI.Sync"
+             x:Class="AoCEditor.UI.Sync.CalendarView"
              x:DataType="vm:CalendarViewModel">
   <UserControl.Styles>
     <Style Selector="Button.tile">

@@ -2,6 +2,6 @@ using System.Security.Cryptography;
 using System.Text;
 using Shared;
 
-namespace Editor.Application;
+namespace AoCEditor.UI.Editor;
 
 public enum SaveResult { Saved, ChangedOnDisk, NoFile }

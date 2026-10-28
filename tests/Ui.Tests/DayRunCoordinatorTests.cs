@@ -1,13 +1,13 @@
 using AoCEditor;
-using Xunit;
-using Plugins.Domain;
-using Puzzle.Application;
-using Runner.Application;
+using AoCEditor.Core.Plugins.Domain;
+using AoCEditor.Core.Puzzle.Application;
+using AoCEditor.Core.Runner.Application;
+using AoCEditor.Infrastructure.Workspace;
 using Shared.Contracts;
 using Shouldly;
-using Workspace.Application;
+using Xunit;
 
-namespace Ui.Tests;
+namespace AoCEditor.UI.Tests;
 
 public sealed class DayRunCoordinatorTests : IDisposable
 {

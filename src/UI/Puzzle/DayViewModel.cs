@@ -1,9 +1,9 @@
 using System.Globalization;
-using Puzzle.Application;
-using Puzzle.Domain;
+using AoCEditor.Core.Puzzle.Application;
+using AoCEditor.Core.Puzzle.Domain;
 using Shared;
 
-namespace Puzzle.UI;
+namespace AoCEditor.UI.Puzzle;
 
 /// <summary>State of one day's page: the unlocked puzzle parts, the input and the answer box with its cooldown.</summary>
 public sealed class DayViewModel(PuzzleService service, int year, int day, TimeProvider time, Uri? siteAddress = null) : ObservableBase

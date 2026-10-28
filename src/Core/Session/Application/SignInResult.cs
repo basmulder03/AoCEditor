@@ -1,4 +1,4 @@
-namespace Session.Application;
+namespace AoCEditor.Core.Session.Application;
 
 public abstract record SignInResult
 {

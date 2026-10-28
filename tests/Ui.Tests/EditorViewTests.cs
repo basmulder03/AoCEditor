@@ -1,14 +1,13 @@
+using AoCEditor.UI.Editor;
 using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using Avalonia.Input;
 using Avalonia.VisualTree;
 using AvaloniaEdit;
-using Editor.Application;
-using Editor.UI;
 using Shouldly;
 
-namespace Ui.Tests;
+namespace AoCEditor.UI.Tests;
 
 public sealed class EditorViewTests : IDisposable
 {

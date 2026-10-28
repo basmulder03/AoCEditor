@@ -1,9 +1,9 @@
+using AoCEditor.Core.Sync.Domain;
 using Shared.Contracts;
 using Shouldly;
-using Sync.Domain;
 using Xunit;
 
-namespace Sync.Tests;
+namespace AoCEditor.Core.Tests.Sync;
 
 public class CalendarParserTests
 {

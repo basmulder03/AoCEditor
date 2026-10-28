@@ -1,6 +1,6 @@
+using AoCEditor.UI.Sync;
 using Avalonia.Controls;
 using Microsoft.Extensions.Logging;
-using Sync.UI;
 
 namespace AoCEditor;
 

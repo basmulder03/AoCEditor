@@ -1,7 +1,7 @@
 using System.Net;
 using System.Text;
 
-namespace Puzzle.Domain;
+namespace AoCEditor.Core.Puzzle.Domain;
 
 /// <summary>Minimal forgiving HTML tree: enough for AoC pages, not a general parser.</summary>
 internal sealed class HtmlNode(string name, string? text = null)

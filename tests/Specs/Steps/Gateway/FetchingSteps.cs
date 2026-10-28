@@ -1,4 +1,3 @@
-using Gateway;
 using Reqnroll;
 using Shared.Contracts;
 using Shouldly;

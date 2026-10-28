@@ -1,8 +1,9 @@
+using AoCEditor.Core.Workspace.Application;
+using AoCEditor.Core.Workspace.Domain;
 using Shared;
 using Shared.Contracts;
-using Workspace.Domain;
 
-namespace Workspace.Application;
+namespace AoCEditor.Infrastructure.Workspace;
 
 /// <summary>The solutions workspace: its root and the files scaffolded into it on user action.</summary>
 public sealed class WorkspaceService(IKeyValueStore settings, IAppDataPaths appData)

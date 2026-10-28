@@ -1,4 +1,4 @@
-namespace Diagnostics.Application;
+namespace AoCEditor.Core.Diagnostics.Application;
 
 /// <summary>Bounded in-memory sink behind the debug view; the oldest entries fall off.</summary>
 public sealed class LogBuffer(int capacity) : ILogSink

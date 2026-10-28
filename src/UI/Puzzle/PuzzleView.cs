@@ -1,10 +1,10 @@
+using AoCEditor.Core.Puzzle.Domain;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Documents;
 using Avalonia.Media;
-using Puzzle.Domain;
 
-namespace Puzzle.UI;
+namespace AoCEditor.UI.Puzzle;
 
 /// <summary>Renders one puzzle part with native text controls; web links raise <see cref="LinkRequested"/>, other links are shown as underlined text.</summary>
 public sealed class PuzzleView : UserControl

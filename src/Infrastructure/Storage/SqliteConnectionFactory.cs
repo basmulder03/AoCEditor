@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Shared.Contracts;
 
-namespace Storage.Infrastructure;
+namespace AoCEditor.Infrastructure.Storage;
 
 public sealed class SqliteConnectionFactory(IAppDataPaths paths, ILogger? logger = null) : IConnectionFactory
 {

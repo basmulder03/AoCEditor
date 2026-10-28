@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Shared.Contracts;
 
-namespace Session.Application;
+namespace AoCEditor.Core.Session.Application;
 
 /// <summary>Obtains a session token, proves it with one request and only then stores it.</summary>
 public sealed class SignInCoordinator(

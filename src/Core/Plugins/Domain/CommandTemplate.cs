@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace Plugins.Domain;
+namespace AoCEditor.Core.Plugins.Domain;
 
 public static partial class CommandTemplate
 {

@@ -1,8 +1,8 @@
+using AoCEditor.Core.Sync.Application;
+using AoCEditor.Core.Sync.Domain;
 using Reqnroll;
 using Shouldly;
 using Specs.Drivers.Sync;
-using Sync.Application;
-using Sync.Domain;
 
 namespace Specs.Steps.Sync;
 

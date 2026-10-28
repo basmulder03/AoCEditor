@@ -1,7 +1,7 @@
 using System.Globalization;
-using Sync.Domain;
+using AoCEditor.Core.Sync.Domain;
 
-namespace Sync.UI;
+namespace AoCEditor.UI.Sync;
 
 /// <summary>One calendar day as shown in the grid; the state is always also spelled out in <see cref="Label"/>.</summary>
 public sealed class DayTile

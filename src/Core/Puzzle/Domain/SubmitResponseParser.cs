@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace Puzzle.Domain;
+namespace AoCEditor.Core.Puzzle.Domain;
 
 public static partial class SubmitResponseParser
 {

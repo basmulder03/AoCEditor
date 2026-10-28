@@ -1,6 +1,6 @@
 using Shared.Contracts;
 
-namespace Storage.Infrastructure;
+namespace AoCEditor.Infrastructure.Storage;
 
 public sealed class SqliteKeyValueStore(IConnectionFactory connections) : IKeyValueStore
 {

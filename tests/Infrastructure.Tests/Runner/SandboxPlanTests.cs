@@ -1,8 +1,9 @@
-using Runner.Application;
+using AoCEditor.Core.Runner.Application;
+using AoCEditor.Infrastructure.Runner;
 using Shouldly;
 using Xunit;
 
-namespace Runner.Tests;
+namespace AoCEditor.Infrastructure.Tests.Runner;
 
 public sealed class SandboxPlanTests
 {

@@ -1,4 +1,4 @@
-namespace Plugins.Application;
+namespace AoCEditor.Infrastructure.Plugins;
 
 /// <summary>Finds a plugin's toolchain executable on PATH; detection only, nothing is downloaded or run.</summary>
 public static class ToolchainLocator

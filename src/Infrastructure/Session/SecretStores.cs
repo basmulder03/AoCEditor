@@ -1,6 +1,7 @@
-using Session.Application;
+using AoCEditor.Core.Session.Application;
 
-namespace Session.Infrastructure;
+
+namespace AoCEditor.Infrastructure.Session;
 
 public static class SecretStores
 {

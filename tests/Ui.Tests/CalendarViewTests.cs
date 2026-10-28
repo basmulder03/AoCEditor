@@ -1,3 +1,5 @@
+using AoCEditor.Core.Sync.Application;
+using AoCEditor.UI.Sync;
 using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Headless;
@@ -7,10 +9,8 @@ using Avalonia.VisualTree;
 using Microsoft.Extensions.Time.Testing;
 using Shared.Contracts;
 using Shouldly;
-using Sync.Application;
-using Sync.UI;
 
-namespace Ui.Tests;
+namespace AoCEditor.UI.Tests;
 
 public class CalendarViewTests
 {

@@ -1,6 +1,6 @@
 using Shared.Contracts;
 
-namespace Diagnostics.Application;
+namespace AoCEditor.Core.Diagnostics.Application;
 
 /// <summary>Debug mode from the --debug flag, the AOCEDITOR_DEBUG variable or a persisted setting.</summary>
 public sealed class DebugMode

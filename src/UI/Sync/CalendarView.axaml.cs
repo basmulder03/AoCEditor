@@ -3,7 +3,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.VisualTree;
 
-namespace Sync.UI;
+namespace AoCEditor.UI.Sync;
 
 public partial class CalendarView : UserControl
 {

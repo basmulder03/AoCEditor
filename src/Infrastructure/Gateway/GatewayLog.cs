@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-namespace Gateway;
+namespace AoCEditor.Infrastructure.Gateway;
 
 internal static partial class GatewayLog
 {

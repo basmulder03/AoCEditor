@@ -1,8 +1,8 @@
-using Diagnostics.Domain;
-using Diagnostics.Infrastructure;
+using AoCEditor.Core.Diagnostics.Application;
+using AoCEditor.Core.Diagnostics.Domain;
 using Microsoft.Extensions.Logging;
 
-namespace Diagnostics.Application;
+namespace AoCEditor.Infrastructure.Diagnostics;
 
 /// <summary>Wires the logger factory with the redaction layer and the file, buffer and console sinks.</summary>
 public sealed class DiagnosticsServices : IDisposable

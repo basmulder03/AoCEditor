@@ -1,7 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="using:Puzzle.UI"
-             x:Class="Puzzle.UI.DayView"
+             xmlns:vm="using:AoCEditor.UI.Puzzle"
+             x:Class="AoCEditor.UI.Puzzle.DayView"
              x:DataType="vm:DayViewModel">
   <DockPanel>
     <StackPanel DockPanel.Dock="Top" Spacing="{DynamicResource Space1}">

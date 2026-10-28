@@ -1,4 +1,4 @@
-namespace Plugins.Domain;
+namespace AoCEditor.Core.Plugins.Domain;
 
 public sealed record PluginManifest(
     string Id,

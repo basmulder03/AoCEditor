@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-namespace Sync.UI;
+namespace AoCEditor.UI.Sync;
 
 internal static partial class CalendarLog
 {
@@ -14,7 +14,7 @@ internal static partial class CalendarLog
     public static partial void SyncAllRequested(this ILogger logger);
 
     [LoggerMessage(Level = LogLevel.Information, Message = "Sync finished: {Outcome}")]
-    public static partial void SyncFinished(this ILogger logger, Sync.Application.SyncOutcome outcome);
+    public static partial void SyncFinished(this ILogger logger, AoCEditor.Core.Sync.Application.SyncOutcome outcome);
 
     [LoggerMessage(Level = LogLevel.Information, Message = "Sync cancelled by the user")]
     public static partial void SyncCancelled(this ILogger logger);

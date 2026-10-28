@@ -1,14 +1,14 @@
+using AoCEditor.Core.Puzzle.Application;
+using AoCEditor.UI.Puzzle;
 using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using Avalonia.VisualTree;
 using Microsoft.Extensions.Time.Testing;
-using Puzzle.Application;
-using Puzzle.UI;
 using Shared.Contracts;
 using Shouldly;
 
-namespace Ui.Tests;
+namespace AoCEditor.UI.Tests;
 
 public class DayViewTests
 {

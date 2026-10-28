@@ -1,8 +1,8 @@
 using System.ComponentModel;
+using AoCEditor.Core.Sync.Application;
+using AoCEditor.UI.Sync;
 using Microsoft.Extensions.Time.Testing;
 using Shared.Contracts;
-using Sync.Application;
-using Sync.UI;
 
 namespace Specs.Drivers.Calendar;
 

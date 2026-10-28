@@ -2,10 +2,9 @@ using System.ComponentModel;
 using Avalonia.Controls;
 using Avalonia.Input;
 using AvaloniaEdit.TextMate;
-using Editor.Application;
 using TextMateSharp.Grammars;
 
-namespace Editor.UI;
+namespace AoCEditor.UI.Editor;
 
 public partial class EditorView : UserControl
 {

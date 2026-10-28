@@ -1,12 +1,12 @@
 using System.Globalization;
+using AoCEditor.Core.Sync.Application;
+using AoCEditor.Core.Sync.Domain;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Shared;
 using Shared.Contracts;
-using Sync.Application;
-using Sync.Domain;
 
-namespace Sync.UI;
+namespace AoCEditor.UI.Sync;
 
 /// <summary>State of the year calendar: the year list, the day tiles of the selected year and the user-triggered sync.</summary>
 public sealed class CalendarViewModel : ObservableBase, IDisposable

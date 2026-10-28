@@ -1,3 +1,4 @@
+using AoCEditor.Core.Session.Application;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -5,9 +6,8 @@ using Avalonia.Platform;
 using Avalonia.Threading;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Session.Application;
 
-namespace Session.UI;
+namespace AoCEditor.UI.Session;
 
 /// <summary>
 /// Signs in through the site's own login page in an embedded browser and reads the HttpOnly session cookie from its cookie store.

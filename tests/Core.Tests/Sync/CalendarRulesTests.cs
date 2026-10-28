@@ -1,8 +1,8 @@
+using AoCEditor.Core.Sync.Domain;
 using Shouldly;
-using Sync.Domain;
 using Xunit;
 
-namespace Sync.Tests;
+namespace AoCEditor.Core.Tests.Sync;
 
 public class CalendarRulesTests
 {

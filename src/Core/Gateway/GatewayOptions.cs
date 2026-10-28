@@ -1,4 +1,4 @@
-namespace Gateway;
+namespace AoCEditor.Core.Gateway;
 
 public sealed record GatewayOptions
 {

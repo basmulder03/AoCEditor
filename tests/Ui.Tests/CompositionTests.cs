@@ -1,21 +1,21 @@
 using AoCEditor;
-using Diagnostics.Application;
-using Gateway;
+using AoCEditor.Core.Diagnostics.Application;
+using AoCEditor.Core.Plugins.Domain;
+using AoCEditor.Core.Puzzle.Application;
+using AoCEditor.Core.Session.Application;
+using AoCEditor.Core.Sync.Application;
+using AoCEditor.Infrastructure.Diagnostics;
+using AoCEditor.Infrastructure.Gateway;
+using AoCEditor.Infrastructure.Storage;
+using AoCEditor.Infrastructure.Workspace;
+using AoCEditor.UI.Session;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Plugins.Domain;
-using Puzzle.Application;
-using Runner.Application;
-using Session.Application;
-using Session.UI;
 using Shared.Contracts;
 using Shouldly;
-using Storage.Infrastructure;
-using Sync.Application;
-using Workspace.Application;
 using Xunit;
 
-namespace Ui.Tests;
+namespace AoCEditor.UI.Tests;
 
 public sealed class CompositionTests : IDisposable
 {

@@ -1,8 +1,8 @@
-using Diagnostics.Domain;
+using AoCEditor.Core.Diagnostics.Domain;
 using Shouldly;
 using Xunit;
 
-namespace Diagnostics.Tests;
+namespace AoCEditor.Core.Tests.Diagnostics;
 
 public sealed class RedactorTests
 {

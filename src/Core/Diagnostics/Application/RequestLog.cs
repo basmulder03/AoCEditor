@@ -1,6 +1,6 @@
 using Shared.Contracts;
 
-namespace Diagnostics.Application;
+namespace AoCEditor.Core.Diagnostics.Application;
 
 public sealed class RequestLog(int capacity) : IRequestLog
 {

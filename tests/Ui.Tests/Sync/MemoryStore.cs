@@ -1,6 +1,6 @@
 using Shared.Contracts;
 
-namespace Sync.Tests;
+namespace AoCEditor.UI.Tests.Sync;
 
 internal sealed class MemoryStore : ISyncStateStore
 {

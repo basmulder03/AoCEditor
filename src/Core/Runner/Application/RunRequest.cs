@@ -1,4 +1,4 @@
-namespace Runner.Application;
+namespace AoCEditor.Core.Runner.Application;
 
 /// <summary>
 /// Command is the already expanded program and arguments; InputPath is piped to stdin when set.

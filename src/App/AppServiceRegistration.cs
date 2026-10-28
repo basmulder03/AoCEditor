@@ -1,18 +1,21 @@
-using Diagnostics.Application;
-using Gateway;
+using AoCEditor.Core.Diagnostics.Application;
+using AoCEditor.Core.Gateway;
+using AoCEditor.Core.Plugins.Application;
+using AoCEditor.Core.Plugins.Domain;
+using AoCEditor.Core.Puzzle.Application;
+using AoCEditor.Core.Session.Application;
+using AoCEditor.Core.Sync.Application;
+using AoCEditor.Infrastructure.Diagnostics;
+using AoCEditor.Infrastructure.Gateway;
+using AoCEditor.Infrastructure.Plugins;
+using AoCEditor.Infrastructure.Runner;
+using AoCEditor.Infrastructure.Session;
+using AoCEditor.Infrastructure.Storage;
+using AoCEditor.Infrastructure.Workspace;
+using AoCEditor.UI.Session;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Plugins.Application;
-using Plugins.Domain;
-using Puzzle.Application;
-using Runner.Application;
-using Session.Application;
-using Session.Infrastructure;
-using Session.UI;
 using Shared.Contracts;
-using Storage.Infrastructure;
-using Sync.Application;
-using Workspace.Application;
 
 namespace AoCEditor;
 

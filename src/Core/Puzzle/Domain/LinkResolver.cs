@@ -1,4 +1,4 @@
-namespace Puzzle.Domain;
+namespace AoCEditor.Core.Puzzle.Domain;
 
 public static class LinkResolver
 {

@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-namespace Sync.Application;
+namespace AoCEditor.Core.Sync.Application;
 
 internal static partial class SyncLog
 {

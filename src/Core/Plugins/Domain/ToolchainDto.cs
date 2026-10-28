@@ -1,8 +1,8 @@
-using Shared;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Shared;
 
-namespace Plugins.Domain;
+namespace AoCEditor.Core.Plugins.Domain;
 
 internal sealed class ToolchainDto
 {

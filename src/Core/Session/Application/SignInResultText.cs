@@ -1,4 +1,4 @@
-namespace Session.Application;
+namespace AoCEditor.Core.Session.Application;
 
 /// <summary>The message shown to the user for a sign-in result, with the real reason where there is one.</summary>
 public static class SignInResultText

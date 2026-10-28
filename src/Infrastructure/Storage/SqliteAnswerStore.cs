@@ -1,7 +1,7 @@
 using Microsoft.Data.Sqlite;
 using Shared.Contracts;
 
-namespace Storage.Infrastructure;
+namespace AoCEditor.Infrastructure.Storage;
 
 public sealed class SqliteAnswerStore(IConnectionFactory connections) : IAnswerStore
 {

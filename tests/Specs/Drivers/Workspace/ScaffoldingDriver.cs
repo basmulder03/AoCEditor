@@ -1,5 +1,6 @@
+using AoCEditor.Core.Workspace.Application;
+using AoCEditor.Infrastructure.Workspace;
 using Shared.Contracts;
-using Workspace.Application;
 
 namespace Specs.Drivers.Workspace;
 

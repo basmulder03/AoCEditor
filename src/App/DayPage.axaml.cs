@@ -1,7 +1,7 @@
+using AoCEditor.Core.Gateway;
+using AoCEditor.UI.Puzzle;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Gateway;
-using Puzzle.UI;
 
 namespace AoCEditor;
 

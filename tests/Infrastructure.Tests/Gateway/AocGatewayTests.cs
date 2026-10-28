@@ -1,11 +1,13 @@
 using System.Net;
+using AoCEditor.Core.Gateway;
+using AoCEditor.Infrastructure.Gateway;
 using Microsoft.Extensions.Time.Testing;
 using Shared;
 using Shared.Contracts;
 using Shouldly;
 using Xunit;
 
-namespace Gateway.Tests;
+namespace AoCEditor.Infrastructure.Tests.Gateway;
 
 public sealed class AocGatewayTests : IDisposable
 {

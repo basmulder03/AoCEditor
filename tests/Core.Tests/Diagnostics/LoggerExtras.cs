@@ -1,7 +1,6 @@
-using Diagnostics.Application;
 using Shared.Contracts;
 
-namespace Diagnostics.Tests;
+namespace AoCEditor.Core.Tests.Diagnostics;
 
 internal static class LoggerExtras
 {

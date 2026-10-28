@@ -1,7 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="using:Runner.UI"
-             x:Class="Runner.UI.ConsoleView"
+             xmlns:vm="using:AoCEditor.UI.Runner"
+             x:Class="AoCEditor.UI.Runner.ConsoleView"
              x:DataType="vm:ConsoleViewModel">
   <UserControl.Styles>
     <Style Selector="SelectableTextBlock.error">

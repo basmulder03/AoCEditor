@@ -1,4 +1,4 @@
-namespace Storage.Tests;
+namespace AoCEditor.Infrastructure.Tests.Storage;
 
 internal sealed class TempDir : IDisposable
 {

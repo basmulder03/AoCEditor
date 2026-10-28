@@ -1,8 +1,8 @@
-using Session.Application;
+using AoCEditor.Core.Session.Application;
 using Shouldly;
 using Xunit;
 
-namespace Session.Tests;
+namespace AoCEditor.Core.Tests.Session;
 
 public sealed class SignInResultTextTests
 {

@@ -1,4 +1,4 @@
-namespace Runner.Application;
+namespace AoCEditor.Infrastructure.Runner;
 
 /// <summary>
 /// Entry point of the re-executed helper: the host calls this first thing in Main. When the arguments ask for it, the

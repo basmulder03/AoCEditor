@@ -1,9 +1,10 @@
-using Diagnostics.Application;
+using AoCEditor.Core.Diagnostics.Application;
+using AoCEditor.Infrastructure.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Shouldly;
 using Xunit;
 
-namespace Diagnostics.Tests;
+namespace AoCEditor.Infrastructure.Tests.Diagnostics;
 
 public sealed class DiagnosticsServicesTests : IDisposable
 {

@@ -1,9 +1,9 @@
 using System.Globalization;
 using System.Text;
-using Diagnostics.Domain;
+using AoCEditor.Core.Diagnostics.Domain;
 using Shared.Contracts;
 
-namespace Diagnostics.Application;
+namespace AoCEditor.Core.Diagnostics.Application;
 
 /// <summary>Builds the text behind "Copy diagnostics"; the result is redacted.</summary>
 public static class DiagnosticsReport

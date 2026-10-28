@@ -2,7 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
 
-namespace Session.UI;
+namespace AoCEditor.UI.Session;
 
 /// <summary>Our own window around the embedded browser: movable, resizable, with a status line and an always-visible Cancel.</summary>
 public sealed class SignInWindow : Window

@@ -1,8 +1,8 @@
-using Shared;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Shared;
 
-namespace Plugins.Domain;
+namespace AoCEditor.Core.Plugins.Domain;
 
 /// <summary>Reads and validates a <c>plugin.json</c>; a manifest with any error is rejected whole.</summary>
 public static class ManifestParser

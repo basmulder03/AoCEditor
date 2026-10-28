@@ -1,11 +1,11 @@
+using AoCEditor.Core.Sync.Application;
+using AoCEditor.UI.Sync;
 using Microsoft.Extensions.Time.Testing;
 using Shared.Contracts;
 using Shouldly;
-using Sync.Application;
-using Sync.UI;
 using Xunit;
 
-namespace Sync.Tests;
+namespace AoCEditor.UI.Tests.Sync;
 
 public class CalendarViewModelTests
 {

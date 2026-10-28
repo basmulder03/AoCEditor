@@ -1,8 +1,8 @@
-using Session.UI;
+using AoCEditor.UI.Session;
 using Shouldly;
 using Xunit;
 
-namespace Session.Tests;
+namespace AoCEditor.UI.Tests.Session;
 
 public sealed class CookieSourceTests
 {

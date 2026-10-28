@@ -1,7 +1,7 @@
 using System.Collections.Specialized;
 using Avalonia.Controls;
 
-namespace Runner.UI;
+namespace AoCEditor.UI.Runner;
 
 public partial class ConsoleView : UserControl
 {

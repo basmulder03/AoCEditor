@@ -1,6 +1,6 @@
-using Plugins.Domain;
-using Runner.Application;
-using Runner.UI;
+using AoCEditor.Core.Plugins.Domain;
+using AoCEditor.Core.Runner.Application;
+using AoCEditor.UI.Runner;
 using Shared;
 
 namespace AoCEditor;

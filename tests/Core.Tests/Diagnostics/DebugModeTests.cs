@@ -1,8 +1,8 @@
-using Diagnostics.Application;
+using AoCEditor.Core.Diagnostics.Application;
 using Shouldly;
 using Xunit;
 
-namespace Diagnostics.Tests;
+namespace AoCEditor.Core.Tests.Diagnostics;
 
 public sealed class DebugModeTests
 {

@@ -1,9 +1,9 @@
+using AoCEditor.Core.Sync.Domain;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Shared.Contracts;
-using Sync.Domain;
 
-namespace Sync.Application;
+namespace AoCEditor.Core.Sync.Application;
 
 /// <summary>Fetches the event list and calendar pages on explicit user request, saving progress per year.</summary>
 public sealed class SyncService(IAocGateway gateway, ISyncStateStore store, TimeProvider time, ILogger? logger = null)

@@ -1,5 +1,6 @@
 using System.Net;
-using Gateway;
+using AoCEditor.Core.Gateway;
+using AoCEditor.Infrastructure.Gateway;
 using Microsoft.Extensions.Time.Testing;
 using Shared.Contracts;
 

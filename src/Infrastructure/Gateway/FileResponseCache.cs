@@ -1,7 +1,8 @@
 using System.Security.Cryptography;
 using System.Text;
+using AoCEditor.Core.Gateway;
 
-namespace Gateway;
+namespace AoCEditor.Infrastructure.Gateway;
 
 public sealed class FileResponseCache(string directory) : IResponseCache
 {

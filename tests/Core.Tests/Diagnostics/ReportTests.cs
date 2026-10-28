@@ -1,11 +1,11 @@
-using Diagnostics.Application;
-using Diagnostics.Domain;
+using AoCEditor.Core.Diagnostics.Application;
+using AoCEditor.Core.Diagnostics.Domain;
 using Microsoft.Extensions.Logging;
 using Shared.Contracts;
 using Shouldly;
 using Xunit;
 
-namespace Diagnostics.Tests;
+namespace AoCEditor.Core.Tests.Diagnostics;
 
 public sealed class ReportTests
 {

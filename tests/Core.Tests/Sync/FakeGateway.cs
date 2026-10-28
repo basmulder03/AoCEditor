@@ -1,6 +1,6 @@
 using Shared.Contracts;
 
-namespace Sync.Tests;
+namespace AoCEditor.Core.Tests.Sync;
 
 internal sealed class FakeGateway : IAocGateway
 {

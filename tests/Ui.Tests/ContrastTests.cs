@@ -3,7 +3,7 @@ using System.Xml.Linq;
 using Shouldly;
 using Xunit;
 
-namespace Ui.Tests;
+namespace AoCEditor.UI.Tests;
 
 public class ContrastTests
 {

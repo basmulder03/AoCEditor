@@ -1,9 +1,9 @@
-using Diagnostics.Application;
+using AoCEditor.Core.Diagnostics.Application;
 using Microsoft.Extensions.Logging;
 using Shouldly;
 using Xunit;
 
-namespace Diagnostics.Tests;
+namespace AoCEditor.Core.Tests.Diagnostics;
 
 public sealed class LogFilterTests
 {

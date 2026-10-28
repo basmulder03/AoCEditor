@@ -1,6 +1,7 @@
 using System.Runtime.InteropServices;
+using AoCEditor.Core.Runner.Application;
 
-namespace Runner.Application;
+namespace AoCEditor.Infrastructure.Runner;
 
 /// <summary>
 /// Linux confinement through direct syscalls: Landlock for the filesystem (and signal and abstract-socket scoping where the

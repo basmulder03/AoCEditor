@@ -1,8 +1,8 @@
 using System.Globalization;
-using Puzzle.Domain;
+using AoCEditor.Core.Puzzle.Domain;
 using Shared.Contracts;
 
-namespace Puzzle.Application;
+namespace AoCEditor.Core.Puzzle.Application;
 
 /// <summary>Puzzle text, input and answers for one day, each only on explicit user action.</summary>
 public sealed class PuzzleService(IAocGateway gateway, IAnswerStore answers, TimeProvider time)

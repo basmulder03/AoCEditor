@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-using Runner.Application;
+using AoCEditor.Infrastructure.Runner;
 
 namespace Specs;
 

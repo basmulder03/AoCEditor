@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-namespace Session.UI;
+namespace AoCEditor.UI.Session;
 
 /// <summary>
 /// Reads cookies, HttpOnly ones included, from a WebKitGTK 4.1 view. WebKit objects belong to the GTK thread, so every call is queued there

@@ -1,7 +1,7 @@
+using AoCEditor.Core.Sync.Application;
+using AoCEditor.Core.Sync.Domain;
 using Microsoft.Extensions.Time.Testing;
 using Shared.Contracts;
-using Sync.Application;
-using Sync.Domain;
 
 namespace Specs.Drivers.Sync;
 

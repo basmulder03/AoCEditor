@@ -8,7 +8,7 @@ using AvaloniaEdit;
 using Shouldly;
 using Xunit;
 
-namespace Ui.Tests;
+namespace AoCEditor.UI.Tests;
 
 public sealed class SolutionPanelTests : IDisposable
 {

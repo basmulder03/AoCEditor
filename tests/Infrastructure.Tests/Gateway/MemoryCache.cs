@@ -1,8 +1,8 @@
 using System.Net;
-using Gateway;
+using AoCEditor.Core.Gateway;
 using Shared.Contracts;
 
-namespace Gateway.Tests;
+namespace AoCEditor.Infrastructure.Tests.Gateway;
 
 internal sealed class MemoryCache : IResponseCache
 {

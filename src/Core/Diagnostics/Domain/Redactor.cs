@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace Diagnostics.Domain;
+namespace AoCEditor.Core.Diagnostics.Domain;
 
 /// <summary>Removes secrets and personal paths from text before it is stored, shown or copied.</summary>
 public sealed partial class Redactor

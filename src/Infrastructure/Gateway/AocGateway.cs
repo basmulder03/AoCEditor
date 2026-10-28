@@ -1,11 +1,12 @@
 using System.Net;
 using System.Net.Http.Headers;
+using AoCEditor.Core.Gateway;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Shared;
 using Shared.Contracts;
 
-namespace Gateway;
+namespace AoCEditor.Infrastructure.Gateway;
 
 /// <summary>The only component allowed to talk to adventofcode.com.</summary>
 public sealed class AocGateway : IAocGateway, IDisposable

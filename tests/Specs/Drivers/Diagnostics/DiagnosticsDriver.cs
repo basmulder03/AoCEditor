@@ -1,4 +1,5 @@
-using Diagnostics.Application;
+using AoCEditor.Core.Diagnostics.Application;
+using AoCEditor.Infrastructure.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Shared.Contracts;
 

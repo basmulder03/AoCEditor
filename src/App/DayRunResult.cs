@@ -1,10 +1,9 @@
 using System.Globalization;
-using Plugins.Domain;
-using Puzzle.Application;
-using Runner.Application;
+using AoCEditor.Core.Plugins.Domain;
+using AoCEditor.Core.Puzzle.Application;
+using AoCEditor.Core.Runner.Application;
+using AoCEditor.Core.Workspace.Domain;
 using Shared.Contracts;
-using Workspace.Application;
-using Workspace.Domain;
 
 namespace AoCEditor;
 

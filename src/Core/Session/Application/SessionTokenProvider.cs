@@ -1,6 +1,6 @@
 using Shared.Contracts;
 
-namespace Session.Application;
+namespace AoCEditor.Core.Session.Application;
 
 public sealed class SessionTokenProvider(ISecretStore store) : ISessionTokenProvider
 {

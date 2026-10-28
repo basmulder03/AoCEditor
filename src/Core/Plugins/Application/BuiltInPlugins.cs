@@ -1,6 +1,7 @@
-using Plugins.Domain;
+using AoCEditor.Core.Plugins.Domain;
 
-namespace Plugins.Application;
+
+namespace AoCEditor.Core.Plugins.Application;
 
 /// <summary>The manifests shipped inside the app, in the same format a third-party plugin uses.</summary>
 public static class BuiltInPlugins

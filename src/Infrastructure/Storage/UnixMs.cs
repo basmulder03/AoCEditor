@@ -1,4 +1,4 @@
-namespace Storage.Infrastructure;
+namespace AoCEditor.Infrastructure.Storage;
 
 public static class UnixMs
 {

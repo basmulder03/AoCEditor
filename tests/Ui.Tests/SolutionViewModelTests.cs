@@ -1,10 +1,10 @@
 using AoCEditor;
-using Plugins.Domain;
-using Runner.Application;
+using AoCEditor.Core.Plugins.Domain;
+using AoCEditor.Core.Runner.Application;
 using Shouldly;
 using Xunit;
 
-namespace Ui.Tests;
+namespace AoCEditor.UI.Tests;
 
 public class SolutionViewModelTests
 {

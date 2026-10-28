@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-namespace Diagnostics.Application;
+namespace AoCEditor.Core.Diagnostics.Application;
 
 public interface ILogSink
 {

@@ -1,6 +1,6 @@
 using TextMateSharp.Grammars;
 
-namespace Editor.Application;
+namespace AoCEditor.UI.Editor;
 
 public static class Highlighting
 {

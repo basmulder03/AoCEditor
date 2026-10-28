@@ -1,8 +1,8 @@
-using Puzzle.Domain;
+using AoCEditor.Core.Puzzle.Domain;
 using Shouldly;
 using Xunit;
 
-namespace Puzzle.Tests;
+namespace AoCEditor.Core.Tests.Puzzle;
 
 public class SubmitResponseParserTests
 {

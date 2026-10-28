@@ -1,3 +1,4 @@
+using AoCEditor.Infrastructure.Runner;
 using Avalonia;
 
 namespace AoCEditor;
@@ -7,7 +8,7 @@ internal static class Program
     [STAThread]
     public static int Main(string[] args)
     {
-        if (Runner.Application.SandboxHelper.RunIfRequested(args) is { } helperExit)
+        if (SandboxHelper.RunIfRequested(args) is { } helperExit)
         {
             return helperExit;
         }

@@ -1,9 +1,10 @@
+using AoCEditor.Core.Plugins.Domain;
+using AoCEditor.Core.Runner.Application;
+using AoCEditor.Core.Workspace.Application;
+using AoCEditor.UI.Editor;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
-using Editor.Application;
-using Plugins.Domain;
-using Workspace.Application;
 
 namespace AoCEditor;
 
@@ -53,7 +54,7 @@ public partial class SolutionPanel : UserControl
     void OnWindowActivated(object? sender, EventArgs e) => Editor?.CheckDisk();
 
     // The file the user is editing must be on disk before it runs; a conflicting disk change is left to the editor's banner.
-    async Task<DayRunResult> SaveThenRunAsync(int year, int day, PluginManifest plugin, bool allow, IProgress<Runner.Application.OutputLine> output, CancellationToken ct)
+    async Task<DayRunResult> SaveThenRunAsync(int year, int day, PluginManifest plugin, bool allow, IProgress<OutputLine> output, CancellationToken ct)
     {
         if (Editor is { IsDirty: true } editor && editor.Save() == SaveResult.ChangedOnDisk)
         {

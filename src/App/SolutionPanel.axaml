@@ -1,8 +1,8 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:AoCEditor"
-             xmlns:runner="using:Runner.UI"
-             xmlns:editor="using:Editor.UI"
+             xmlns:runner="using:AoCEditor.UI.Runner"
+             xmlns:editor="using:AoCEditor.UI.Editor"
              x:Class="AoCEditor.SolutionPanel"
              x:DataType="local:SolutionViewModel">
   <Grid RowDefinitions="Auto,*,*">

@@ -1,7 +1,7 @@
-using Diagnostics.Domain;
+using AoCEditor.Core.Diagnostics.Domain;
 using Microsoft.Extensions.Logging;
 
-namespace Diagnostics.Application;
+namespace AoCEditor.Core.Diagnostics.Application;
 
 /// <summary>Formats, redacts and fans out every log call; this is the only place sinks are fed.</summary>
 public sealed class DiagnosticsLoggerProvider(Redactor redactor, DebugMode debug, IEnumerable<ILogSink> sinks, TimeProvider time) : ILoggerProvider
@@ -14,11 +14,11 @@ public sealed class DiagnosticsLoggerProvider(Redactor redactor, DebugMode debug
     {
     }
 
-    // "Session.Application.SignInCoordinator" -> "Session".
+    // "AoCEditor.Core.Session.Application.SignInCoordinator" -> "Session"; other categories keep their first segment.
     private static string ShortSource(string category)
     {
-        var dot = category.IndexOf('.', StringComparison.Ordinal);
-        return dot > 0 ? category[..dot] : category;
+        var parts = category.Split('.');
+        return parts.Length > 2 && parts[0] == "AoCEditor" && parts[1] is "Core" or "Infrastructure" or "UI" ? parts[2] : parts[0];
     }
 
     private bool Enabled(LogLevel level) => level != LogLevel.None && level >= (debug.IsEnabled ? LogLevel.Debug : LogLevel.Information);

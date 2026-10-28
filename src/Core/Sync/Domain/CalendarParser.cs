@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using Shared.Contracts;
 
-namespace Sync.Domain;
+namespace AoCEditor.Core.Sync.Domain;
 
 /// <summary>Reads event years and day stars from AoC pages; returns null for markup it does not recognise.</summary>
 public static partial class CalendarParser

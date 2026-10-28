@@ -1,9 +1,9 @@
-using Runner.Application;
-using Runner.UI;
+using AoCEditor.Core.Runner.Application;
+using AoCEditor.UI.Runner;
 using Shouldly;
 using Xunit;
 
-namespace Runner.Tests;
+namespace AoCEditor.UI.Tests.Runner;
 
 public class ConsoleViewModelTests
 {

@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-namespace Session.Application;
+namespace AoCEditor.Core.Session.Application;
 
 internal static partial class SessionLog
 {

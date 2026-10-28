@@ -1,8 +1,8 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="using:Editor.Application"
+             xmlns:vm="using:AoCEditor.UI.Editor"
              xmlns:ae="using:AvaloniaEdit"
-             x:Class="Editor.UI.EditorView"
+             x:Class="AoCEditor.UI.Editor.EditorView"
              x:DataType="vm:EditorViewModel">
   <UserControl.Styles>
     <Style Selector="Border.frame:focus-within">

@@ -1,7 +1,8 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.Versioning;
-using Runner.Application;
+using AoCEditor.Core.Runner.Application;
+using AoCEditor.Infrastructure.Runner;
 
 namespace Specs.Drivers.Runner;
 

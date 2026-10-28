@@ -1,9 +1,9 @@
+using AoCEditor.UI.Session;
 using Avalonia;
-using Session.UI;
 using Shouldly;
 using Xunit;
 
-namespace Session.Tests;
+namespace AoCEditor.UI.Tests.Session;
 
 public sealed class SignInWindowPlacementTests
 {

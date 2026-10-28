@@ -2,7 +2,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Shared;
 
-namespace Editor.Application;
+namespace AoCEditor.UI.Editor;
 
 /// <summary>Edits one file inside a root folder. Saving never overwrites a file that changed on disk since it was loaded unless asked to.</summary>
 public sealed class EditorViewModel(string rootFolder) : ObservableBase

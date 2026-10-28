@@ -1,8 +1,8 @@
-using Plugins.Application;
+using AoCEditor.Infrastructure.Plugins;
 using Shouldly;
 using Xunit;
 
-namespace Plugins.Tests;
+namespace AoCEditor.Infrastructure.Tests.Plugins;
 
 public sealed class ToolchainLocatorTests : IDisposable
 {

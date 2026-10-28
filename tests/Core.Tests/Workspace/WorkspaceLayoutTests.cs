@@ -1,8 +1,8 @@
+using AoCEditor.Core.Workspace.Domain;
 using Shouldly;
-using Workspace.Domain;
 using Xunit;
 
-namespace Workspace.Tests;
+namespace AoCEditor.Core.Tests.Workspace;
 
 public class WorkspaceLayoutTests
 {

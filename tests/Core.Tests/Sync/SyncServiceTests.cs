@@ -1,10 +1,10 @@
+using AoCEditor.Core.Sync.Application;
 using Microsoft.Extensions.Time.Testing;
 using Shared.Contracts;
 using Shouldly;
-using Sync.Application;
 using Xunit;
 
-namespace Sync.Tests;
+namespace AoCEditor.Core.Tests.Sync;
 
 public class SyncServiceTests
 {

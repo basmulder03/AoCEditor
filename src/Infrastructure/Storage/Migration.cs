@@ -4,6 +4,6 @@ using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace Storage.Infrastructure;
+namespace AoCEditor.Infrastructure.Storage;
 
 public sealed record Migration(int Version, string Sql);

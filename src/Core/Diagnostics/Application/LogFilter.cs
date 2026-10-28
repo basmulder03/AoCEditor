@@ -1,7 +1,7 @@
 using System.Globalization;
 using Microsoft.Extensions.Logging;
 
-namespace Diagnostics.Application;
+namespace AoCEditor.Core.Diagnostics.Application;
 
 /// <summary>Level and source filtering for the live log list.</summary>
 public static class LogFilter

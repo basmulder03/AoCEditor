@@ -2,7 +2,7 @@ using System.Globalization;
 using Microsoft.Data.Sqlite;
 using Shared.Contracts;
 
-namespace Storage.Infrastructure;
+namespace AoCEditor.Infrastructure.Storage;
 
 public sealed class SqliteStorageStatus(IConnectionFactory connections, IAppDataPaths paths) : IStorageStatus
 {

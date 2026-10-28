@@ -1,11 +1,11 @@
+using AoCEditor.Core.Puzzle.Application;
+using AoCEditor.UI.Puzzle;
 using Microsoft.Extensions.Time.Testing;
-using Puzzle.Application;
-using Puzzle.UI;
 using Shared.Contracts;
 using Shouldly;
 using Xunit;
 
-namespace Puzzle.Tests;
+namespace AoCEditor.UI.Tests.Puzzle;
 
 public class DayViewModelTests
 {

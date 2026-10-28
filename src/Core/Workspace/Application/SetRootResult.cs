@@ -1,7 +1,7 @@
+using AoCEditor.Core.Workspace.Domain;
 using Shared;
 using Shared.Contracts;
-using Workspace.Domain;
 
-namespace Workspace.Application;
+namespace AoCEditor.Core.Workspace.Application;
 
 public enum SetRootResult { Ok, NotAbsolute, OverlapsAppData }

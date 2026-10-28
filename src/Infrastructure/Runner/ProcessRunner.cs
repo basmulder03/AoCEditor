@@ -1,8 +1,9 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
+using AoCEditor.Core.Runner.Application;
 
-namespace Runner.Application;
+namespace AoCEditor.Infrastructure.Runner;
 
 /// <summary>Runs a command without a shell, streams its output, enforces the timeout and kills the whole process tree.</summary>
 public sealed class ProcessRunner : IRunner

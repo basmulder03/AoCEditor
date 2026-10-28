@@ -1,15 +1,16 @@
 using AoCEditor;
+using AoCEditor.Core.Diagnostics.Application;
+using AoCEditor.Core.Session.Application;
+using AoCEditor.Infrastructure.Storage;
 using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using Avalonia.LogicalTree;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
-using Session.Application;
 using Shouldly;
-using Storage.Infrastructure;
 using Xunit;
 
-namespace Ui.Tests;
+namespace AoCEditor.UI.Tests;
 
 public class AccountTests
 {
@@ -85,8 +86,8 @@ public class AccountTests
         controls.OfType<Button>().Single(b => b.Name == "SignInButton").IsEnabled.ShouldBeFalse();
     }
 
-    internal static TestApp Create(Store store, Diagnostics.Application.DebugMode? debug = null) =>
-        new(new AppOverrides(store, new AppDataPaths(Path.Combine(Path.GetTempPath(), "aoceditor-ui-" + Guid.NewGuid().ToString("N"))), debug ?? Diagnostics.Application.DebugMode.FromLaunch([], _ => null)));
+    internal static TestApp Create(Store store, DebugMode? debug = null) =>
+        new(new AppOverrides(store, new AppDataPaths(Path.Combine(Path.GetTempPath(), "aoceditor-ui-" + Guid.NewGuid().ToString("N"))), debug ?? DebugMode.FromLaunch([], _ => null)));
 
     internal sealed class Store : ISecretStore
     {

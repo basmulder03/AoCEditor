@@ -1,13 +1,13 @@
 using System.Runtime.InteropServices;
+using AoCEditor.UI.Session;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
-using Session.UI;
 using Shouldly;
 using Xunit;
 
-namespace Session.Tests;
+namespace AoCEditor.Infrastructure.Tests.Session;
 
 public sealed class LinuxCookieSourceIntegrationTests
 {

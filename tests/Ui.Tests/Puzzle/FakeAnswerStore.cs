@@ -1,7 +1,7 @@
-using Puzzle.Domain;
+using AoCEditor.Core.Puzzle.Domain;
 using Shared.Contracts;
 
-namespace Puzzle.Tests;
+namespace AoCEditor.UI.Tests.Puzzle;
 
 internal sealed class FakeAnswerStore : IAnswerStore
 {

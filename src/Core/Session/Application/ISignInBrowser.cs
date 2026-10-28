@@ -1,4 +1,4 @@
-namespace Session.Application;
+namespace AoCEditor.Core.Session.Application;
 
 /// <summary>Lets the user sign in on the AoC site and hands back the resulting session token.</summary>
 public interface ISignInBrowser

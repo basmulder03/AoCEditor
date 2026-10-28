@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace Workspace.Domain;
+namespace AoCEditor.Core.Workspace.Domain;
 
 /// <summary>Where solutions live: <c>&lt;root&gt;/&lt;year&gt;/&lt;dd&gt;/&lt;language&gt;</c> and <c>&lt;root&gt;/shared/&lt;language&gt;</c>.</summary>
 public static class WorkspaceLayout

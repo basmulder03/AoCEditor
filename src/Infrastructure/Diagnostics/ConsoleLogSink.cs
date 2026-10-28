@@ -1,7 +1,7 @@
 using System.Globalization;
-using Diagnostics.Application;
+using AoCEditor.Core.Diagnostics.Application;
 
-namespace Diagnostics.Infrastructure;
+namespace AoCEditor.Infrastructure.Diagnostics;
 
 /// <summary>Writes to the console while debug mode is on.</summary>
 public sealed class ConsoleLogSink(DebugMode debug, TextWriter output) : ILogSink

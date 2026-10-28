@@ -1,6 +1,6 @@
 using Shared.Contracts;
 
-namespace Sync.Domain;
+namespace AoCEditor.Core.Sync.Domain;
 
 public static class CalendarRules
 {

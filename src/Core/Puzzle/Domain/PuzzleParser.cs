@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Puzzle.Domain;
+namespace AoCEditor.Core.Puzzle.Domain;
 
 /// <summary>Turns a puzzle page into the document model; returns null when the page has no puzzle article.</summary>
 public static class PuzzleParser

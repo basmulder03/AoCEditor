@@ -1,7 +1,8 @@
 using System.Net;
-using Gateway;
+using AoCEditor.Core.Gateway;
+using AoCEditor.Core.Session.Application;
+using AoCEditor.Infrastructure.Gateway;
 using Microsoft.Extensions.Time.Testing;
-using Session.Application;
 using Shared.Contracts;
 
 namespace Specs.Drivers.Session;

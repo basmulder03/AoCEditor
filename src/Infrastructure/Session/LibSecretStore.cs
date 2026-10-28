@@ -1,8 +1,8 @@
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
-using Session.Application;
+using AoCEditor.Core.Session.Application;
 
-namespace Session.Infrastructure;
+namespace AoCEditor.Infrastructure.Session;
 
 [SupportedOSPlatform("linux")]
 internal sealed partial class LibSecretStore : ISecretStore

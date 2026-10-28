@@ -1,9 +1,9 @@
-using Session.Application;
-using Session.Infrastructure;
+using AoCEditor.Core.Session.Application;
+using AoCEditor.Infrastructure.Session;
 using Shouldly;
 using Xunit;
 
-namespace Session.Tests;
+namespace AoCEditor.Infrastructure.Tests.Session;
 
 [Trait("Category", "Integration")]
 public sealed class PlatformSecretStoreTests

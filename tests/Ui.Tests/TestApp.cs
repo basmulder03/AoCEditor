@@ -1,7 +1,7 @@
 using AoCEditor;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Ui.Tests;
+namespace AoCEditor.UI.Tests;
 
 /// <summary>The real registrations with machine-specific parts replaced; disposing it disposes the services as the app does on exit.</summary>
 internal sealed class TestApp : IDisposable

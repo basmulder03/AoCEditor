@@ -1,7 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:AoCEditor"
-             xmlns:sync="using:Sync.UI"
+             xmlns:sync="using:AoCEditor.UI.Sync"
              x:Class="AoCEditor.CalendarPage"
              x:DataType="local:CalendarPage">
   <sync:CalendarView x:Name="View" />

@@ -1,6 +1,7 @@
 using System.Globalization;
+using AoCEditor.Core.Runner.Application;
 
-namespace Runner.Application;
+namespace AoCEditor.Infrastructure.Runner;
 
 /// <summary>
 /// What the helper process applies to itself before it executes the program. Filesystem and Network switch the

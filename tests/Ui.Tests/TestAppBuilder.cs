@@ -7,7 +7,7 @@ using Avalonia.Styling;
 using Shouldly;
 using Xunit;
 
-namespace Ui.Tests;
+namespace AoCEditor.UI.Tests;
 
 public static class TestAppBuilder
 {

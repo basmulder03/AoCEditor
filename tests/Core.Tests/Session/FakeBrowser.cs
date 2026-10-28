@@ -1,10 +1,10 @@
+using AoCEditor.Core.Session.Application;
 using Microsoft.Extensions.Time.Testing;
-using Session.Application;
 using Shared.Contracts;
 using Shouldly;
 using Xunit;
 
-namespace Session.Tests;
+namespace AoCEditor.Core.Tests.Session;
 
 internal sealed class FakeBrowser(BrowserOutcome outcome) : ISignInBrowser
 {

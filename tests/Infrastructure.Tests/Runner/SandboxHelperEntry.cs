@@ -1,8 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-using Runner.Application;
+using AoCEditor.Infrastructure.Runner;
 
-namespace Runner.Tests;
+namespace AoCEditor.Infrastructure.Tests.Runner;
 
 // The sandbox re-executes this test host as its helper, so the helper arguments must be handled before xunit starts.
 internal static class SandboxHelperEntry

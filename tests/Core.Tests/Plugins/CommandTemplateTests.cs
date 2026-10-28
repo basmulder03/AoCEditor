@@ -1,8 +1,8 @@
-using Plugins.Domain;
+using AoCEditor.Core.Plugins.Domain;
 using Shouldly;
 using Xunit;
 
-namespace Plugins.Tests;
+namespace AoCEditor.Core.Tests.Plugins;
 
 public class CommandTemplateTests
 {

@@ -1,11 +1,12 @@
 using System.ComponentModel;
 using System.Globalization;
+using AoCEditor.Core.Puzzle.Domain;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
 
-namespace Puzzle.UI;
+namespace AoCEditor.UI.Puzzle;
 
 public partial class DayView : UserControl
 {
@@ -91,7 +92,7 @@ public partial class DayView : UserControl
         Tabs.SelectedIndex = Math.Clamp(selected, 0, tabs.Count - 1);
     }
 
-    PuzzleView PuzzleViewFor(Domain.PuzzlePart part)
+    PuzzleView PuzzleViewFor(PuzzlePart part)
     {
         var view = new PuzzleView { Part = part, BaseAddress = Model?.SiteAddress };
         view.LinkRequested += async (_, uri) => await OpenLinkAsync(uri);

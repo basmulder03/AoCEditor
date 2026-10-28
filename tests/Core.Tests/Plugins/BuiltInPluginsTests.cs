@@ -1,8 +1,8 @@
-using Plugins.Application;
+using AoCEditor.Core.Plugins.Application;
 using Shouldly;
 using Xunit;
 
-namespace Plugins.Tests;
+namespace AoCEditor.Core.Tests.Plugins;
 
 public class BuiltInPluginsTests
 {

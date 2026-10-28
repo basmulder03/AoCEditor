@@ -1,7 +1,7 @@
 using System.Globalization;
-using Diagnostics.Application;
+using AoCEditor.Core.Diagnostics.Application;
 
-namespace Diagnostics.Infrastructure;
+namespace AoCEditor.Infrastructure.Diagnostics;
 
 /// <summary>Appends to <c>aoceditor.log</c>; rolls when full and keeps few, recent files.</summary>
 public sealed class FileLogSink : ILogSink

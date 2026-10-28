@@ -1,7 +1,7 @@
-using Diagnostics.Application;
+using AoCEditor.Core.Diagnostics.Application;
 using Shared.Contracts;
 
-namespace Diagnostics.Tests;
+namespace AoCEditor.Core.Tests.Diagnostics;
 
 internal sealed class ListSink : ILogSink
 {

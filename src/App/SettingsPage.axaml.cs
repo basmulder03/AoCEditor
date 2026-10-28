@@ -1,7 +1,7 @@
+using AoCEditor.Core.Session.Application;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Session.Application;
 using UiKit;
 
 namespace AoCEditor;

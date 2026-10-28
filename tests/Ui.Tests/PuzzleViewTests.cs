@@ -1,14 +1,14 @@
+using AoCEditor.Core.Puzzle.Domain;
+using AoCEditor.UI.Puzzle;
 using Avalonia.Controls;
 using Avalonia.Controls.Documents;
 using Avalonia.Headless.XUnit;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.VisualTree;
-using Puzzle.Domain;
-using Puzzle.UI;
 using Shouldly;
 
-namespace Ui.Tests;
+namespace AoCEditor.UI.Tests;
 
 public class PuzzleViewTests
 {

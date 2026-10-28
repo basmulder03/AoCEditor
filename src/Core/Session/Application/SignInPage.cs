@@ -1,4 +1,4 @@
-namespace Session.Application;
+namespace AoCEditor.Core.Session.Application;
 
 /// <summary>Decides from what the embedded browser shows whether a session token may be ready.</summary>
 public static class SignInPage

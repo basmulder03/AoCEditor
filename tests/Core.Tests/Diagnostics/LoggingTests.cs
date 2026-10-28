@@ -1,9 +1,9 @@
-using Diagnostics.Application;
+using AoCEditor.Core.Diagnostics.Application;
 using Microsoft.Extensions.Logging;
 using Shouldly;
 using Xunit;
 
-namespace Diagnostics.Tests;
+namespace AoCEditor.Core.Tests.Diagnostics;
 
 public sealed class LoggingTests
 {
@@ -11,7 +11,7 @@ public sealed class LoggingTests
     private readonly ListSink _sink = new();
 
     private ILogger Logger(DebugMode mode, string? home = "/home/alice") =>
-        new DiagnosticsLoggerProvider(new Diagnostics.Domain.Redactor(home), mode, [_sink], new Microsoft.Extensions.Time.Testing.FakeTimeProvider(Now)).CreateLogger("Session.Application.SignInCoordinator");
+        new DiagnosticsLoggerProvider(new AoCEditor.Core.Diagnostics.Domain.Redactor(home), mode, [_sink], new Microsoft.Extensions.Time.Testing.FakeTimeProvider(Now)).CreateLogger("AoCEditor.Core.Session.Application.SignInCoordinator");
 
     private static DebugMode Off() => DebugMode.FromLaunch([], _ => null);
 
@@ -80,7 +80,7 @@ public sealed class LoggingTests
     [Fact]
     public void FailingSinkDoesNotBreakTheCaller()
     {
-        var provider = new DiagnosticsLoggerProvider(new Diagnostics.Domain.Redactor(null), Off(), [new ThrowingSink(), _sink], TimeProvider.System);
+        var provider = new DiagnosticsLoggerProvider(new AoCEditor.Core.Diagnostics.Domain.Redactor(null), Off(), [new ThrowingSink(), _sink], TimeProvider.System);
 
         provider.CreateLogger("Gateway.AocGateway").Say(LogLevel.Information, "still arrives");
 

@@ -1,9 +1,10 @@
+using AoCEditor.Core.Workspace.Application;
+using AoCEditor.Infrastructure.Workspace;
 using Shared.Contracts;
 using Shouldly;
-using Workspace.Application;
 using Xunit;
 
-namespace Workspace.Tests;
+namespace AoCEditor.Infrastructure.Tests.Workspace;
 
 public sealed class WorkspaceServiceTests : IDisposable
 {

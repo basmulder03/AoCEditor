@@ -1,14 +1,14 @@
 using AoCEditor;
+using AoCEditor.Core.Diagnostics.Application;
 using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using Avalonia.LogicalTree;
 using Avalonia.Threading;
-using Diagnostics.Application;
 using Microsoft.Extensions.Logging;
 using Shouldly;
 using Xunit;
 
-namespace Ui.Tests;
+namespace AoCEditor.UI.Tests;
 
 public class DebugPageTests
 {

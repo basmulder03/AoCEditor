@@ -1,11 +1,11 @@
-using Puzzle.Application;
-using Puzzle.Domain;
-using Shared.Contracts;
+using AoCEditor.Core.Puzzle.Application;
+using AoCEditor.Core.Puzzle.Domain;
 using Microsoft.Extensions.Time.Testing;
+using Shared.Contracts;
 using Shouldly;
 using Xunit;
 
-namespace Puzzle.Tests;
+namespace AoCEditor.Core.Tests.Puzzle;
 
 public class PuzzleServiceTests
 {

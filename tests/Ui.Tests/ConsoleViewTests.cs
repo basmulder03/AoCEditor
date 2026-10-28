@@ -1,11 +1,11 @@
+using AoCEditor.Core.Runner.Application;
+using AoCEditor.UI.Runner;
 using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using Avalonia.VisualTree;
-using Runner.Application;
-using Runner.UI;
 using Shouldly;
 
-namespace Ui.Tests;
+namespace AoCEditor.UI.Tests;
 
 public class ConsoleViewTests
 {

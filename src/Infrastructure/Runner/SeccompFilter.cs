@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-namespace Runner.Application;
+namespace AoCEditor.Infrastructure.Runner;
 
 /// <summary>
 /// Builds the classic-BPF program of the sandbox. Every listed system call fails with EPERM, sockets are refused

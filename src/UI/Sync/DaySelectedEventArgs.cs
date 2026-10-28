@@ -1,7 +1,7 @@
 using System.Globalization;
-using Sync.Domain;
+using AoCEditor.Core.Sync.Domain;
 
-namespace Sync.UI;
+namespace AoCEditor.UI.Sync;
 
 public sealed class DaySelectedEventArgs(int year, int day) : EventArgs
 {

@@ -1,8 +1,8 @@
+using AoCEditor.Core.Diagnostics.Application;
 using Avalonia.Controls;
 using Avalonia.Input.Platform;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
-using Diagnostics.Application;
 using Microsoft.Extensions.Logging;
 
 namespace AoCEditor;

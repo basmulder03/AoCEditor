@@ -1,9 +1,9 @@
-using Diagnostics.Application;
+using AoCEditor.Core.Diagnostics.Application;
 using Shared.Contracts;
 using Shouldly;
 using Xunit;
 
-namespace Diagnostics.Tests;
+namespace AoCEditor.Core.Tests.Diagnostics;
 
 public sealed class RequestLogTests
 {

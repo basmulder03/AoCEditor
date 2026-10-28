@@ -1,8 +1,8 @@
-using Shouldly;
 using Shared;
+using Shouldly;
 using Xunit;
 
-namespace Storage.Tests;
+namespace AoCEditor.Infrastructure.Tests.Storage;
 
 public class DataRootValidatorTests
 {

@@ -1,4 +1,4 @@
-namespace Runner.Application;
+namespace AoCEditor.Core.Runner.Application;
 
 /// <summary>The protections a run gets: resource limits, filesystem confinement and no network. <see cref="Full"/> is the only level that needs no consent.</summary>
 [Flags]

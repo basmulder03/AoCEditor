@@ -1,9 +1,9 @@
 using System.Text;
-using Editor.Application;
+using AoCEditor.UI.Editor;
 using Shouldly;
 using Xunit;
 
-namespace Editor.Tests;
+namespace AoCEditor.UI.Tests.Editor;
 
 public sealed class EditorViewModelTests : IDisposable
 {

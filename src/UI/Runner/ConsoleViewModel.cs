@@ -1,9 +1,9 @@
 using System.Collections.ObjectModel;
 using System.Globalization;
-using Runner.Application;
+using AoCEditor.Core.Runner.Application;
 using Shared;
 
-namespace Runner.UI;
+namespace AoCEditor.UI.Runner;
 
 /// <summary>Output of the latest run plus a one-line status; the line count is capped so a program that prints forever cannot exhaust memory.</summary>
 public sealed class ConsoleViewModel(int maxLines = 10_000) : ObservableBase

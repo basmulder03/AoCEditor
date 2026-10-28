@@ -2,7 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
 
-namespace Puzzle.UI;
+namespace AoCEditor.UI.Puzzle;
 
 internal static class ConfirmDialog
 {

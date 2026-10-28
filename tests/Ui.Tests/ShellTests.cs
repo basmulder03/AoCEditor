@@ -7,9 +7,9 @@ using Avalonia.Styling;
 using Shouldly;
 using Xunit;
 
-[assembly: AvaloniaTestApplication(typeof(Ui.Tests.TestAppBuilder))]
+[assembly: AvaloniaTestApplication(typeof(AoCEditor.UI.Tests.TestAppBuilder))]
 
-namespace Ui.Tests;
+namespace AoCEditor.UI.Tests;
 
 public class ShellTests
 {

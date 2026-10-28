@@ -1,6 +1,6 @@
 using Avalonia;
 
-namespace Session.UI;
+namespace AoCEditor.UI.Session;
 
 public static class SignInWindowPlacement
 {

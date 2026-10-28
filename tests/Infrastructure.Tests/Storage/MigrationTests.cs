@@ -1,9 +1,9 @@
+using AoCEditor.Infrastructure.Storage;
 using Microsoft.Data.Sqlite;
 using Shouldly;
-using Storage.Infrastructure;
 using Xunit;
 
-namespace Storage.Tests;
+namespace AoCEditor.Infrastructure.Tests.Storage;
 
 public class MigrationTests
 {

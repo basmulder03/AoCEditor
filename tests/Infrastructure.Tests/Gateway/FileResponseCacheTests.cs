@@ -1,7 +1,8 @@
+using AoCEditor.Infrastructure.Gateway;
 using Shouldly;
 using Xunit;
 
-namespace Gateway.Tests;
+namespace AoCEditor.Infrastructure.Tests.Gateway;
 
 public sealed class FileResponseCacheTests : IDisposable
 {
