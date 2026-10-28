@@ -51,7 +51,7 @@ public sealed class DebugModeTests
     {
         var store = new MemoryStore();
         var mode = DebugMode.FromLaunch([], _ => null);
-        mode.AttachStore(store);
+        await mode.LoadAsync(store, Ct);
         var raised = 0;
         mode.Changed += (_, _) => raised++;
 
@@ -71,7 +71,7 @@ public sealed class DebugModeTests
     {
         var store = new MemoryStore();
         var mode = DebugMode.FromLaunch(["--debug"], _ => null);
-        mode.AttachStore(store);
+        await mode.LoadAsync(store, Ct);
 
         await mode.SetAsync(false, Ct);
 

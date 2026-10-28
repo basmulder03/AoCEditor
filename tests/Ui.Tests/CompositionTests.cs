@@ -4,7 +4,6 @@ using AoCEditor.Core.Plugins.Domain;
 using AoCEditor.Core.Puzzle.Application;
 using AoCEditor.Core.Session.Application;
 using AoCEditor.Core.Sync.Application;
-using AoCEditor.Infrastructure.Diagnostics;
 using AoCEditor.Infrastructure.Gateway;
 using AoCEditor.Infrastructure.Storage;
 using AoCEditor.Infrastructure.Workspace;
@@ -30,7 +29,7 @@ public sealed class CompositionTests : IDisposable
 
     public static TheoryData<Type> Registrations() =>
     [
-        typeof(TimeProvider), typeof(IAppDataPaths), typeof(DebugMode), typeof(DiagnosticsServices), typeof(ILoggerFactory),
+        typeof(TimeProvider), typeof(IAppDataPaths), typeof(DebugMode), typeof(DiagnosticsView), typeof(ILoggerFactory),
         typeof(IConnectionFactory), typeof(ISyncStateStore), typeof(IAnswerStore), typeof(IKeyValueStore), typeof(IStorageStatus),
         typeof(SessionTokenProvider), typeof(SessionEvents), typeof(AocGateway), typeof(IAocGateway), typeof(WebViewSignInBrowser),
         typeof(SignInCoordinator), typeof(SyncService), typeof(PuzzleService), typeof(WorkspaceService),
@@ -45,6 +44,10 @@ public sealed class CompositionTests : IDisposable
     [MemberData(nameof(Registrations))]
     public void SharedStateIsOneInstance(Type service) =>
         _provider.GetRequiredService(service).ShouldBeSameAs(_provider.GetRequiredService(service));
+
+    [Fact]
+    public void EveryLoggerProviderRedactsBeforeItWrites() =>
+        _provider.GetServices<ILoggerProvider>().ShouldAllBe(p => p is RedactingLoggerProvider);
 
     [Fact]
     public void GatewayAbstractionAndConcreteTypeAreTheSameInstance() =>

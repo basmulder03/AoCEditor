@@ -2,15 +2,15 @@
 
 The `Diagnostics` slice (`src/Core/Diagnostics`, sinks and wiring in `src/Infrastructure/Diagnostics`) owns logging. Other slices depend only on `Microsoft.Extensions.Logging.Abstractions` and log through `[LoggerMessage]` source-generated methods (no reflection, AoT safe).
 
-## Sinks
+## Providers
 
-Every log call goes through `DiagnosticsLoggerProvider`, which formats the message, **redacts it** and only then hands it to the sinks:
+Logging uses standard `ILoggerProvider`s, registered by `AddDiagnostics` (`src/App/DiagnosticsRegistration.cs`). Every provider is wrapped in `RedactingLoggerProvider`, which formats the message, appends the exception text, **redacts the whole string** and only then hands it on, so no provider ever sees unredacted text. A test builds the real service provider and fails if a registered provider is not wrapped. A failing provider (full disk) never breaks the app or the other providers.
 
-- Rolling file `<app data>/logs/aoceditor.log` (`FileLogSink`). It rolls at 2 MB, keeps at most 5 files and deletes files older than 7 days (constants in `DiagnosticsServices`).
-- In-memory ring buffer of the last 1000 entries (`LogBuffer`), which feeds the Debug page.
-- Console (stderr), only while debug mode is on.
+- Rolling file `<app data>/logs/aoceditor.log` (`FileLoggerProvider`). It rolls at 2 MB, keeps at most 5 files and deletes files older than 7 days (constants in `DiagnosticsRegistration`).
+- In-memory ring buffer of the last 1000 entries (`BufferLoggerProvider`), which feeds the Debug page.
+- Console (stderr) through the built-in `Microsoft.Extensions.Logging.Console` simple formatter (single line, `HH:mm:ss.fff`), only while debug mode is on (`ConsoleLogging`). It is AoT clean.
 
-A failing sink (full disk) never breaks the app.
+The minimum level is a filter callback that reads debug mode on every call: Information normally, Debug while debug mode is on.
 
 ## Redaction
 

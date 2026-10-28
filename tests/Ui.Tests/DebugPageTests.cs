@@ -66,7 +66,7 @@ public class DebugPageTests
         var services = app.Services;
         var shell = new ShellWindow(services);
         shell.Show();
-        var log = services.Diagnostics.LoggerFactory.CreateLogger("Gateway.AocGateway");
+        var log = services.LoggerFactory.CreateLogger("Gateway.AocGateway");
         log.Log(LogLevel.Information, default, "hello session=abc123", null, static (s, _) => s);
         log.Log(LogLevel.Error, default, "broken", null, static (s, _) => s);
         shell.NavigateTo("Debug");
@@ -107,7 +107,7 @@ public class DebugPageTests
         var services = app.Services;
         var shell = new ShellWindow(services);
         shell.Show();
-        services.Diagnostics.LoggerFactory.CreateLogger("Session.SignIn").Log(LogLevel.Warning, default, "cookie: session=abc123", null, static (s, _) => s);
+        services.LoggerFactory.CreateLogger("Session.SignIn").Log(LogLevel.Warning, default, "cookie: session=abc123", null, static (s, _) => s);
         shell.NavigateTo("Debug");
         var page = shell.CurrentPage.ShouldBeOfType<DebugPage>();
 

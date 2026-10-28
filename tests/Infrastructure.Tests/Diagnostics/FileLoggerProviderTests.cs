@@ -1,4 +1,3 @@
-using AoCEditor.Core.Diagnostics.Application;
 using AoCEditor.Infrastructure.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Time.Testing;
@@ -7,24 +6,27 @@ using Xunit;
 
 namespace AoCEditor.Infrastructure.Tests.Diagnostics;
 
-public sealed class FileLogSinkTests : IDisposable
+public sealed class FileLoggerProviderTests : IDisposable
 {
     private readonly string _dir = Path.Combine(Path.GetTempPath(), "aoc-diag-" + Guid.NewGuid().ToString("N"), "logs");
     private readonly FakeTimeProvider _time = new(new DateTimeOffset(2026, 3, 1, 12, 0, 0, TimeSpan.Zero));
 
     public void Dispose() => Directory.Delete(Path.GetDirectoryName(_dir)!, recursive: true);
 
-    private static LogEntry Entry(string message) => new(new DateTimeOffset(2026, 3, 1, 12, 0, 0, TimeSpan.Zero), LogLevel.Information, "Gateway", message);
+    private ILogger Logger(int maxBytes = 10_000, int maxFiles = 5) =>
+        new FileLoggerProvider(_dir, _time, maxBytes, maxFiles, TimeSpan.FromDays(7)).CreateLogger("AoCEditor.Infrastructure.Gateway.AocGateway");
+
+    private static void Write(ILogger logger, string message) => logger.Say(LogLevel.Information, message);
 
     [Fact]
     public void WritesOneLinePerEntryAndCreatesTheFolder()
     {
-        var sink = new FileLogSink(_dir, _time, 10_000, 5, TimeSpan.FromDays(7));
+        var sink = Logger();
 
-        sink.Write(Entry("hello"));
-        sink.Write(Entry("world"));
+        Write(sink, "hello");
+        Write(sink, "world");
 
-        var lines = File.ReadAllLines(Path.Combine(_dir, FileLogSink.CurrentFileName));
+        var lines = File.ReadAllLines(Path.Combine(_dir, FileLoggerProvider.CurrentFileName));
         lines.Length.ShouldBe(2);
         lines[0].ShouldContain("hello");
         lines[0].ShouldContain("Information");
@@ -32,24 +34,33 @@ public sealed class FileLogSinkTests : IDisposable
     }
 
     [Fact]
+    public void AFullOrUnwritableDiskNeverThrows()
+    {
+        var sink = Logger();
+        Directory.CreateDirectory(Path.Combine(_dir, FileLoggerProvider.CurrentFileName));
+
+        Should.NotThrow(() => Write(sink, "lost"));
+    }
+
+    [Fact]
     public void MultilineMessagesStayOnTheirOwnIndentedLines()
     {
-        var sink = new FileLogSink(_dir, _time, 10_000, 5, TimeSpan.FromDays(7));
+        var sink = Logger();
 
-        sink.Write(Entry("first\nsecond"));
+        Write(sink, "first\nsecond");
 
-        File.ReadAllLines(Path.Combine(_dir, FileLogSink.CurrentFileName))[1].ShouldBe("    second");
+        File.ReadAllLines(Path.Combine(_dir, FileLoggerProvider.CurrentFileName))[1].ShouldBe("    second");
     }
 
     [Fact]
     public void RollsWhenTheFileIsFullAndKeepsOnlyTheNewestFiles()
     {
-        var sink = new FileLogSink(_dir, _time, 200, 3, TimeSpan.FromDays(7));
+        var sink = Logger(200, 3);
 
         for (var i = 0; i < 60; i++)
         {
             _time.Advance(TimeSpan.FromSeconds(1));
-            sink.Write(Entry(new string('x', 50)));
+            Write(sink, new string('x', 50));
         }
 
         var files = Directory.GetFiles(_dir);
@@ -69,7 +80,7 @@ public sealed class FileLogSinkTests : IDisposable
         File.WriteAllText(fresh, "fresh");
         File.SetLastWriteTimeUtc(fresh, _time.GetUtcNow().UtcDateTime - TimeSpan.FromDays(1));
 
-        _ = new FileLogSink(_dir, _time, 10_000, 5, TimeSpan.FromDays(7));
+        _ = new FileLoggerProvider(_dir, _time, 10_000, 5, TimeSpan.FromDays(7));
 
         File.Exists(old).ShouldBeFalse();
         File.Exists(fresh).ShouldBeTrue();
@@ -83,7 +94,7 @@ public sealed class FileLogSinkTests : IDisposable
         File.WriteAllText(other, "mine");
         File.SetLastWriteTimeUtc(other, _time.GetUtcNow().UtcDateTime - TimeSpan.FromDays(100));
 
-        _ = new FileLogSink(_dir, _time, 10_000, 5, TimeSpan.FromDays(7));
+        _ = new FileLoggerProvider(_dir, _time, 10_000, 5, TimeSpan.FromDays(7));
 
         File.Exists(other).ShouldBeTrue();
     }

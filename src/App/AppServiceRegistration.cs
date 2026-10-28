@@ -5,7 +5,6 @@ using AoCEditor.Core.Plugins.Domain;
 using AoCEditor.Core.Puzzle.Application;
 using AoCEditor.Core.Session.Application;
 using AoCEditor.Core.Sync.Application;
-using AoCEditor.Infrastructure.Diagnostics;
 using AoCEditor.Infrastructure.Gateway;
 using AoCEditor.Infrastructure.Plugins;
 using AoCEditor.Infrastructure.Runner;
@@ -27,7 +26,7 @@ public static class AppServiceRegistration
         overrides ??= new AppOverrides();
         return services
             .AddPlatform(overrides)
-            .AddDiagnostics(overrides)
+            .AddDiagnostics(overrides.Debug)
             .AddStorage()
             .AddGatewayAndSession(overrides)
             .AddSlices()
@@ -37,15 +36,6 @@ public static class AppServiceRegistration
     private static IServiceCollection AddPlatform(this IServiceCollection services, AppOverrides overrides) => services
         .AddSingleton(TimeProvider.System)
         .AddSingleton<IAppDataPaths>(_ => overrides.Paths ?? new AppDataPaths());
-
-    private static IServiceCollection AddDiagnostics(this IServiceCollection services, AppOverrides overrides) => services
-        .AddSingleton(_ => overrides.Debug ?? DebugMode.FromLaunch(Environment.GetCommandLineArgs(), Environment.GetEnvironmentVariable))
-        .AddSingleton(sp => DiagnosticsServices.Create(
-            sp.GetRequiredService<IAppDataPaths>().Root,
-            sp.GetRequiredService<DebugMode>(),
-            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-            sp.GetRequiredService<TimeProvider>()))
-        .AddSingleton(sp => sp.GetRequiredService<DiagnosticsServices>().LoggerFactory);
 
     private static IServiceCollection AddStorage(this IServiceCollection services) => services
         .AddSingleton<IConnectionFactory>(sp => new SqliteConnectionFactory(
@@ -63,7 +53,7 @@ public static class AppServiceRegistration
             new FileResponseCache(sp.GetRequiredService<IAppDataPaths>().Cache),
             events: sp.GetRequiredService<SessionEvents>(),
             logger: sp.GetRequiredService<ILoggerFactory>().CreateLogger("Gateway.AocGateway"),
-            requests: sp.GetRequiredService<DiagnosticsServices>().Requests))
+            requests: sp.GetRequiredService<RequestLog>()))
         .AddSingleton<IAocGateway>(sp => sp.GetRequiredService<AocGateway>())
         .AddSingleton(sp => new WebViewSignInBrowser(
             new Uri(new GatewayOptions().BaseAddress, "auth/login"),
@@ -104,7 +94,8 @@ public static class AppServiceRegistration
         .AddSingleton(sp => new AppServices(
             sp.GetRequiredService<IAppDataPaths>(),
             sp.GetRequiredService<SessionEvents>(),
-            sp.GetRequiredService<DiagnosticsServices>(),
+            sp.GetRequiredService<DiagnosticsView>(),
+            sp.GetRequiredService<ILoggerFactory>(),
             sp.GetRequiredService<IConnectionFactory>(),
             sp.GetRequiredService<ISyncStateStore>(),
             sp.GetRequiredService<IAnswerStore>(),

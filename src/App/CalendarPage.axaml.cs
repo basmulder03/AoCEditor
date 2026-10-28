@@ -20,7 +20,7 @@ public partial class CalendarPage : UserControl
             return;
         }
 
-        var model = new CalendarViewModel(services.Sync, services.SyncState, TimeProvider.System, services.Diagnostics.LoggerFactory.CreateLogger("Sync.Calendar"));
+        var model = new CalendarViewModel(services.Sync, services.SyncState, TimeProvider.System, services.LoggerFactory.CreateLogger("Sync.Calendar"));
         model.DaySelected += (_, e) => DaySelected?.Invoke(this, e);
         model.AccountRequested += (_, e) => AccountRequested?.Invoke(this, e);
         View.DataContext = model;

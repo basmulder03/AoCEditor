@@ -4,7 +4,6 @@ using AoCEditor.Core.Plugins.Domain;
 using AoCEditor.Core.Puzzle.Application;
 using AoCEditor.Core.Session.Application;
 using AoCEditor.Core.Sync.Application;
-using AoCEditor.Infrastructure.Diagnostics;
 using AoCEditor.Infrastructure.Session;
 using AoCEditor.Infrastructure.Storage;
 using AoCEditor.Infrastructure.Workspace;
@@ -24,7 +23,8 @@ public sealed class AppServices
     public AppServices(
         IAppDataPaths paths,
         SessionEvents events,
-        DiagnosticsServices diagnostics,
+        DiagnosticsView diagnostics,
+        ILoggerFactory loggerFactory,
         IConnectionFactory connections,
         ISyncStateStore syncState,
         IAnswerStore answers,
@@ -41,6 +41,7 @@ public sealed class AppServices
         Paths = paths;
         Events = events;
         Diagnostics = diagnostics;
+        LoggerFactory = loggerFactory;
         _connections = connections;
         SyncState = syncState;
         Answers = answers;
@@ -53,8 +54,7 @@ public sealed class AppServices
         Workspace = workspace;
         Plugins = plugins;
         Coordinator = coordinator;
-        Diagnostics.Debug.AttachStore(Settings);
-        Diagnostics.LoggerFactory.CreateLogger("App").AppStarted(Shared.AppInfo.Version, Diagnostics.Debug.IsEnabled);
+        LoggerFactory.CreateLogger("App").AppStarted(Shared.AppInfo.Version, Diagnostics.Debug.IsEnabled);
     }
 
     public event EventHandler? SignedIn;
@@ -69,7 +69,9 @@ public sealed class AppServices
 
     public IAnswerStore Answers { get; }
 
-    public DiagnosticsServices Diagnostics { get; }
+    public DiagnosticsView Diagnostics { get; }
+
+    public ILoggerFactory LoggerFactory { get; }
 
     public IKeyValueStore Settings { get; }
 

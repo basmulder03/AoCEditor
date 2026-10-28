@@ -1,5 +1,7 @@
 using AoCEditor.Core.Diagnostics.Application;
-using AoCEditor.Infrastructure.Diagnostics;
+using AoCEditor;
+using AoCEditor.Infrastructure.Storage;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Shared.Contracts;
 
@@ -12,17 +14,19 @@ public sealed class DiagnosticsDriver : IDisposable
     private readonly string _root = Path.Combine(Path.GetTempPath(), "aoc-spec-" + Guid.NewGuid().ToString("N"));
     private readonly Store _store = new();
     private DebugMode _mode = DebugMode.FromLaunch([], _ => null);
-    private DiagnosticsServices? _services;
+    private ServiceProvider? _services;
 
     public string? Report { get; private set; }
 
-    public bool DebugIsOn => Services.Debug.IsEnabled;
+    public bool DebugIsOn => View.Debug.IsEnabled;
 
-    public IReadOnlyList<string> Messages => [.. Services.Buffer.Snapshot().Select(e => e.Message)];
+    public IReadOnlyList<string> Messages => [.. View.Buffer.Snapshot().Select(e => e.Message)];
 
     public string LogFile => File.ReadAllText(Path.Combine(_root, "logs", "aoceditor.log"));
 
-    private DiagnosticsServices Services => _services ??= Start();
+    private ServiceProvider Services => _services ??= Start();
+
+    private DiagnosticsView View => Services.GetRequiredService<DiagnosticsView>();
 
     public void Dispose()
     {
@@ -40,7 +44,7 @@ public sealed class DiagnosticsDriver : IDisposable
     public async Task SwitchDebugOnAsync()
     {
         _ = Services;
-        await Services.Debug.SetAsync(true, CancellationToken.None);
+        await View.Debug.SetAsync(true, CancellationToken.None);
     }
 
     public async Task RestartAsync()
@@ -48,7 +52,7 @@ public sealed class DiagnosticsDriver : IDisposable
         _services?.Dispose();
         _services = null;
         _mode = DebugMode.FromLaunch([], _ => null);
-        await Services.Debug.LoadAsync(_store, CancellationToken.None);
+        await View.Debug.LoadAsync(_store, CancellationToken.None);
     }
 
     public void RecordDetailedMessage() => Log(LogLevel.Debug, "detailed step");
@@ -59,19 +63,24 @@ public sealed class DiagnosticsDriver : IDisposable
 
     public async Task AskForDiagnosticsAsync()
     {
-        var snapshot = new DiagnosticsSnapshot("0.0.0", "TestOS", ".NET", "Signed out", new StorageStatus("db", 1, 1), [], Services.Buffer.Snapshot());
-        Report = DiagnosticsReport.Build(snapshot, Services.Redactor);
+        var snapshot = new DiagnosticsSnapshot("0.0.0", "TestOS", ".NET", "Signed out", new StorageStatus("db", 1, 1), [], View.Buffer.Snapshot());
+        Report = DiagnosticsReport.Build(snapshot, View.Redactor);
         await Task.CompletedTask;
     }
 
-    private DiagnosticsServices Start()
+    private ServiceProvider Start()
     {
-        _mode.AttachStore(_store);
-        return DiagnosticsServices.Create(_root, _mode, Home, TimeProvider.System, TextWriter.Null);
+        var provider = new ServiceCollection()
+            .AddSingleton(TimeProvider.System)
+            .AddSingleton<IAppDataPaths>(new AppDataPaths(_root))
+            .AddDiagnostics(_mode, Home)
+            .BuildServiceProvider();
+        provider.GetRequiredService<DiagnosticsView>().Debug.LoadAsync(_store, CancellationToken.None).GetAwaiter().GetResult();
+        return provider;
     }
 
     private void Log(LogLevel level, string message) =>
-        Services.LoggerFactory.CreateLogger("Gateway.AocGateway").Log(level, default, message, null, static (s, _) => s);
+        Services.GetRequiredService<ILoggerFactory>().CreateLogger("Gateway.AocGateway").Log(level, default, message, null, static (s, _) => s);
 
     private sealed class Store : IKeyValueStore
     {

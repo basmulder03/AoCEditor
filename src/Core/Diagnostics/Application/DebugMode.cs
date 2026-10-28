@@ -29,8 +29,7 @@ public sealed class DebugMode
         return new DebugMode(forced);
     }
 
-    public void AttachStore(IKeyValueStore store) => _store = store;
-
+    /// <summary>Attaches the store that persists the setting and applies the stored value.</summary>
     public async Task LoadAsync(IKeyValueStore store, CancellationToken cancellationToken)
     {
         _store = store;
@@ -40,6 +39,7 @@ public sealed class DebugMode
 
     public async Task SetAsync(bool enabled, CancellationToken cancellationToken)
     {
+        // Before LoadAsync there is no store yet and the change only applies to this run.
         if (_store is not null)
         {
             await _store.SetAsync(SettingKey, enabled ? "true" : "false", cancellationToken);
