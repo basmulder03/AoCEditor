@@ -1,0 +1,16 @@
+{
+  "metadata": [
+    {
+      "src": [{ "files": ["src/**/*.csproj"], "exclude": ["**/bin/**", "**/obj/**"] }],
+      "dest": "docs/api"
+    }
+  ],
+  "build": {
+    "content": [
+      { "files": ["docs/**/*.md", "docs/**/toc.yml", "docs/api/**/*.yml"], "exclude": ["docs/api/.manifest"] },
+      { "files": ["toc.yml"] }
+    ],
+    "output": "_site",
+    "globalMetadata": { "_appTitle": "AoCEditor", "_enableSearch": true }
+  }
+}

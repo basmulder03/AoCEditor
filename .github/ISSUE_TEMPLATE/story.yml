@@ -1,0 +1,16 @@
+name: Story
+description: Create a STORY issue
+labels: ["STORY"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Do not include session tokens, puzzle text or puzzle inputs.
+    validations: {required: true}
+  - type: dropdown
+    id: moscow
+    attributes:
+      label: MoSCoW
+      options: [MUST, SHOULD, COULD, WONT]
+    validations: {required: true}

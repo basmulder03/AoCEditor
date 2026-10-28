@@ -1,0 +1,29 @@
+name: label-check
+on:
+  issues:
+    types: [opened, edited, labeled]
+permissions:
+  issues: write
+jobs:
+  moscow:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v9.0.0
+        with:
+          script: |
+            const M = ['MUST', 'SHOULD', 'COULD', 'WONT'];
+            const issue = context.payload.issue;
+            const names = () => issue.labels.map(l => l.name);
+            // Forms cannot set labels from a dropdown: map the answer to a label.
+            if (context.payload.action !== 'labeled' && !names().some(n => M.includes(n))) {
+              const m = /### MoSCoW\s+(MUST|SHOULD|COULD|WONT)\b/.exec(issue.body || '');
+              if (m) {
+                const r = await github.rest.issues.addLabels({ ...context.repo, issue_number: issue.number, labels: [m[1]] });
+                issue.labels = r.data;
+              }
+            }
+            const n = names().filter(x => M.includes(x)).length;
+            if (n !== 1) {
+              await github.rest.issues.createComment({ ...context.repo, issue_number: issue.number,
+                body: `This issue needs exactly one MoSCoW label (${M.join(', ')}); it has ${n}.` });
+            }
