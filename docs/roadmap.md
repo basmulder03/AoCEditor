@@ -23,6 +23,7 @@ Snapshot of the GitHub issues, which are the source of truth. Hierarchy: Epic > 
   - [x] TASK #124 [SHOULD] One top-level type per file
   - [ ] TASK #125 [SHOULD] Consolidate slice projects into Core, Infrastructure and UI projects
   - [ ] TASK #128 [SHOULD] Replace the hand-written logging sink layer with ILoggerProviders
+  - [ ] TASK #130 [SHOULD] Inject a required ILogger<T>; remove optional loggers and NullLogger fallbacks
   - [ ] TASK #129 [SHOULD] Naming conventions and renames (ADR 0035)
   - [ ] TASK #126 [SHOULD] XML docs describe functionality: summary, params, returns, exceptions
 - [x] FEATURE #11 [MUST] Test infrastructure: xUnit v3, Reqnroll, E2E harness
