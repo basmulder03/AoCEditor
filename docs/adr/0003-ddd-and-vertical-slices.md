@@ -13,7 +13,7 @@ Work is tracked as GitHub issues per slice and delivered by agents with small co
 - Composition root wires slices; no service locator, no reflection-based DI scanning (AoT).
 - Architecture tests (xUnit, see 0023) enforce the dependency rules.
 
-- Granularity: one project per slice (`src/Features/<Slice>/<Slice>.csproj`) with Domain, Application, Infrastructure and UI folders inside. Slices reference only `Shared`, never each other, so the compiler enforces the boundary.
+- Granularity: one project per slice (`src/Features/<Slice>/<Slice>.csproj`) with Domain, Application, Infrastructure and UI folders inside. Slices reference only `Shared`, never each other, so the compiler enforces the boundary. Superseded by 0034: projects are now split by layer and an architecture test enforces slice isolation.
 
 ## Consequences
 - A slice maps to one issue and one agent task with a small read set.
