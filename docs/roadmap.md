@@ -19,13 +19,14 @@ Snapshot of the GitHub issues, which are the source of truth. Hierarchy: Epic > 
   - [x] SPIKE #49 [MUST] Spike: Avalonia AoT plus AvaloniaEdit compatibility
   - [x] TASK #64 [MUST] Create the .NET 10 solution and project structure
   - [x] TASK #65 [MUST] Add LICENSE headers policy, editorconfig and analyzers
+  - [ ] TASK #131 [MUST] Unit tests follow Arrange-Act-Assert and use fixtures at the lowest needed scope and visibility
   - [ ] TASK #123 [MUST] Adopt Microsoft.Extensions.DependencyInjection with explicit registrations
   - [x] TASK #124 [SHOULD] One top-level type per file
   - [ ] TASK #125 [SHOULD] Consolidate slice projects into Core, Infrastructure and UI projects
   - [ ] TASK #128 [SHOULD] Replace the hand-written logging sink layer with ILoggerProviders
   - [ ] TASK #130 [SHOULD] Inject a required ILogger<T>; remove optional loggers and NullLogger fallbacks
   - [ ] TASK #129 [SHOULD] Naming conventions and renames (ADR 0035)
-  - [ ] TASK #126 [SHOULD] XML docs describe functionality: summary, params, returns, exceptions
+  - [ ] TASK #126 [SHOULD] XML docs describe functionality: summary, params, returns, exceptions (blocked by #131)
 - [x] FEATURE #11 [MUST] Test infrastructure: xUnit v3, Reqnroll, E2E harness
 - [x] FEATURE #12 [MUST] CI: build and test matrix on Linux and Windows
 - [x] FEATURE #13 [SHOULD] DocFX documentation skeleton
