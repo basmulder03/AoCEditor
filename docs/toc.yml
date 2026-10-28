@@ -20,5 +20,7 @@
   href: sync.md
 - name: Year calendar
   href: calendar.md
+- name: Puzzle parsing
+  href: puzzle.md
 - name: Diagnostics
   href: diagnostics.md

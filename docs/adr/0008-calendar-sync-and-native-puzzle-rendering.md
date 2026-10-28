@@ -20,5 +20,5 @@ The home view shows a calendar per year the event has run, 25 days each, with st
 - Parser needs fixtures built from saved sample HTML kept out of the repo if it is puzzle text (see 0007); synthetic fixtures are used instead.
 
 ## Open questions
-- HTML parser library (AoT-safe) is unverified; a hand-written parser may be needed.
+- HTML parser: a small hand-written reader (`HtmlNode`) is used; no library was needed.
 - How to detect "locked" vs "unlocked but not yet synced" for the current year is not designed.
