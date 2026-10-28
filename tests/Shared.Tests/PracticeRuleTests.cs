@@ -98,4 +98,36 @@ public sealed class PracticeRuleTests : IDisposable
 
         exit.ShouldBe(0);
     }
+
+    [Theory(Skip = "Practice script runs on Linux only", SkipUnless = nameof(RunsHere), SkipType = typeof(PracticeRuleTests))]
+    [InlineData("    public Task<int> Load() => Task.FromResult(1);")]
+    [InlineData("    private static async Task Pump(int a)\n    {\n    }")]
+    [InlineData("    Task Open(int a);")]
+    public void TaskMethodsWithoutAsyncSuffixAreFlagged(string code)
+    {
+        var (exit, output) = Run(code);
+
+        exit.ShouldBe(1);
+        output.ShouldContain("must end in Async");
+    }
+
+    [Fact(Skip = "Practice script runs on Linux only", SkipUnless = nameof(RunsHere), SkipType = typeof(PracticeRuleTests))]
+    public void ACancellationTokenParameterNamedCtIsFlagged()
+    {
+        var (exit, output) = Run("    Task OpenAsync(CancellationToken ct);");
+
+        exit.ShouldBe(1);
+        output.ShouldContain("must be named cancellationToken");
+    }
+
+    [Theory(Skip = "Practice script runs on Linux only", SkipUnless = nameof(RunsHere), SkipType = typeof(PracticeRuleTests))]
+    [InlineData("    public Task<int> LoadAsync() => Task.FromResult(1);")]
+    [InlineData("    [Fact]\n    public async Task ItWorks()\n    {\n    }")]
+    [InlineData("public delegate Task<int> Sample(string a);")]
+    public void AsyncSuffixedAttributedOrDelegateMethodsPass(string code)
+    {
+        var (exit, _) = Run(code);
+
+        exit.ShouldBe(0);
+    }
 }

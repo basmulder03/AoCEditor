@@ -18,6 +18,22 @@ check "ADR or issue references in comments" '//.*(ADR[ -]?[0-9]+|#[0-9]{1,4}\b)'
 check "Swallowed exceptions" 'catch\s*(\([^)]*\))?\s*\{\s*\}'
 check "Logging calls or log parameters named like secrets" '\b_?(log|logger)\.[A-Za-z]+\(.*(token|cookie|secret|password|session)|partial void [A-Za-z]+\(.*(token|cookie|secret|password|session)' -i
 check "Optional logger or NullLogger fallback (take a required ILogger<T>)" 'ILogger(<[^>]*>)?\? |NullLogger(<[^>]*>)?\.Instance'
+check "Cancellation token parameter must be named cancellationToken" '\bct\b'
+# Task-returning methods end in Async; attributed methods (tests, steps, hooks) are exempt.
+out=$(for r in ${CHECK_ROOT:-src tests}; do find "$r" -name '*.cs' ! -name '*.g.cs' ! -name '*.feature.cs' ! -path '*/obj/*' ! -path '*/bin/*' 2>/dev/null; done | sort | while read -r f; do
+  awk -v file="$f" '
+    /^[ \t]*((public|internal|private|protected|static|async|override|virtual|abstract|sealed|new)[ \t]+)*(Task|ValueTask)[<?  \t]/ {
+      if (prev !~ /^[ \t]*\[/) {
+        m = $0; sub(/^[ \t]*((public|internal|private|protected|static|async|override|virtual|abstract|sealed|new)[ \t]+)*(Task|ValueTask)/, "", m)
+        d = 0; r = ""
+        for (i = 1; i <= length(m); i++) { c = substr(m, i, 1); if (c == "<") d++; else if (c == ">") d--; else if (d == 0) r = r c }
+        sub(/^[ \t?]+/, "", r)
+        if (match(r, /^[A-Za-z_][A-Za-z_0-9]*[ \t]*(\(|=>)/)) { sub(/[ \t]*(\(|=>)$/, "", r); n = substr(r, 1, RLENGTH); sub(/[ \t]*(\(|=>)$/, "", n); if (n !~ /Async$/) print file ":" NR ": " n }
+      }
+    }
+    $0 !~ /^[ \t]*$/ { prev = $0 }' "$f"
+done)
+[ -n "$out" ] && { echo "## Methods returning Task must end in Async"; echo "$out"; fail=1; }
 # One top-level type per file, named after the file. Top level = least-indented declaration in the file.
 mods='((public|internal|private|protected|static|sealed|abstract|partial|readonly|unsafe|file|ref|new)[ \t]+)*'
 out=$(for r in ${CHECK_ROOT:-src tests}; do find "$r" -name '*.cs' ! -name '*.g.cs' ! -name '*.feature.cs' ! -path '*/obj/*' ! -path '*/bin/*' 2>/dev/null; done | sort | while read -r f; do

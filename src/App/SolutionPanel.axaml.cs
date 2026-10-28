@@ -24,7 +24,7 @@ public partial class SolutionPanel : UserControl
         _day = day;
         var model = new SolutionViewModel(
             services.Plugins,
-            (plugin, allow, output, ct) => SaveThenRunAsync(year, day, plugin, allow, output, ct),
+            (plugin, allow, output, cancellationToken) => SaveThenRunAsync(year, day, plugin, allow, output, cancellationToken),
             ConfirmUnsandboxedAsync,
             action => Dispatcher.UIThread.Post(action));
         DataContext = model;
@@ -54,14 +54,14 @@ public partial class SolutionPanel : UserControl
     void OnWindowActivated(object? sender, EventArgs e) => Editor?.CheckDisk();
 
     // The file the user is editing must be on disk before it runs; a conflicting disk change is left to the editor's banner.
-    async Task<DayRunResult> SaveThenRunAsync(int year, int day, PluginManifest plugin, bool allow, IProgress<OutputLine> output, CancellationToken ct)
+    async Task<DayRunResult> SaveThenRunAsync(int year, int day, PluginManifest plugin, bool allow, IProgress<OutputLine> output, CancellationToken cancellationToken)
     {
         if (Editor is { IsDirty: true } editor && editor.Save() == SaveResult.ChangedOnDisk)
         {
             return new DayRunResult(DayRunKind.SourceChanged, Detail: "The file changed on disk. Reload it or save anyway in the editor, then run again.");
         }
 
-        return await _services!.Coordinator.RunAsync(year, day, plugin, output, allow, ct);
+        return await _services!.Coordinator.RunAsync(year, day, plugin, output, allow, cancellationToken);
     }
 
     bool CanLeaveFile() => Editor is not { IsDirty: true } editor || editor.Save() != SaveResult.ChangedOnDisk;

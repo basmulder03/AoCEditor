@@ -7,15 +7,15 @@ namespace AoCEditor.Infrastructure.Storage;
 
 public static class Migrator
 {
-    public static async Task ApplyAsync(SqliteConnection connection, IReadOnlyList<Migration> migrations, ILogger log, CancellationToken ct)
+    public static async Task ApplyAsync(SqliteConnection connection, IReadOnlyList<Migration> migrations, ILogger log, CancellationToken cancellationToken)
     {
-        await Run(connection, null, "CREATE TABLE IF NOT EXISTS schema_migrations (version INTEGER NOT NULL PRIMARY KEY, applied_at INTEGER NOT NULL)", ct);
+        await RunAsync(connection, null, "CREATE TABLE IF NOT EXISTS schema_migrations (version INTEGER NOT NULL PRIMARY KEY, applied_at INTEGER NOT NULL)", cancellationToken);
         var applied = new HashSet<int>();
         await using (var cmd = connection.CreateCommand())
         {
             cmd.CommandText = "SELECT version FROM schema_migrations";
-            await using var reader = await cmd.ExecuteReaderAsync(ct);
-            while (await reader.ReadAsync(ct))
+            await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
+            while (await reader.ReadAsync(cancellationToken))
             {
                 applied.Add(reader.GetInt32(0));
             }
@@ -26,10 +26,10 @@ public static class Migrator
         foreach (var m in pending)
         {
             log.MigrationApplying(m.Version);
-            await using var tx = (SqliteTransaction)await connection.BeginTransactionAsync(ct);
+            await using var tx = (SqliteTransaction)await connection.BeginTransactionAsync(cancellationToken);
             try
             {
-                await Run(connection, tx, m.Sql, ct);
+                await RunAsync(connection, tx, m.Sql, cancellationToken);
             }
             catch (SqliteException ex)
             {
@@ -42,8 +42,8 @@ public static class Migrator
             record.CommandText = "INSERT INTO schema_migrations (version, applied_at) VALUES ($v, $at)";
             record.Parameters.AddWithValue("$v", m.Version);
             record.Parameters.AddWithValue("$at", UnixMs.From(DateTimeOffset.UtcNow));
-            await record.ExecuteNonQueryAsync(ct);
-            await tx.CommitAsync(ct);
+            await record.ExecuteNonQueryAsync(cancellationToken);
+            await tx.CommitAsync(cancellationToken);
             log.MigrationApplied(m.Version);
         }
     }
@@ -64,11 +64,11 @@ public static class Migrator
         return reader.ReadToEnd();
     }
 
-    private static async Task Run(SqliteConnection connection, SqliteTransaction? tx, string sql, CancellationToken ct)
+    private static async Task RunAsync(SqliteConnection connection, SqliteTransaction? tx, string sql, CancellationToken cancellationToken)
     {
         await using var cmd = connection.CreateCommand();
         cmd.Transaction = tx;
         cmd.CommandText = sql;
-        await cmd.ExecuteNonQueryAsync(ct);
+        await cmd.ExecuteNonQueryAsync(cancellationToken);
     }
 }

@@ -8,5 +8,5 @@ namespace AoCEditor.Infrastructure.Storage;
 public interface IConnectionFactory
 {
     /// <summary>Opens a migrated connection with WAL and foreign keys on.</summary>
-    Task<SqliteConnection> OpenAsync(CancellationToken ct);
+    Task<SqliteConnection> OpenAsync(CancellationToken cancellationToken);
 }

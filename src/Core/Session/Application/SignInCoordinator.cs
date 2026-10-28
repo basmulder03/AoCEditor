@@ -31,9 +31,9 @@ public sealed class SignInCoordinator(
         using var linked = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, limit.Token);
         string? accepted = null;
         var outcome = await browser.AcquireTokenAsync(
-            async (candidate, ct) =>
+            async (candidate, cancellationToken) =>
             {
-                var verdict = ToVerdict(await gateway.CheckTokenAsync(candidate, ct));
+                var verdict = ToVerdict(await gateway.CheckTokenAsync(candidate, cancellationToken));
                 _log.CandidateChecked(verdict);
                 if (verdict == CandidateVerdict.Accepted)
                 {

@@ -8,14 +8,14 @@ namespace AoCEditor.Infrastructure.Tests.Storage;
 
 public class MigrationTests
 {
-    private static async Task<long> Scalar(SqliteConnection c, string sql)
+    private static async Task<long> ScalarAsync(SqliteConnection c, string sql)
     {
         await using var cmd = c.CreateCommand();
         cmd.CommandText = sql;
         return Convert.ToInt64(await cmd.ExecuteScalarAsync(TestContext.Current.CancellationToken), System.Globalization.CultureInfo.InvariantCulture);
     }
 
-    private static async Task Exec(SqliteConnection c, string sql)
+    private static async Task ExecAsync(SqliteConnection c, string sql)
     {
         await using var cmd = c.CreateCommand();
         cmd.CommandText = sql;
@@ -32,9 +32,9 @@ public class MigrationTests
         await using (await factory.OpenAsync(ct)) { }
         await using var conn = await factory.OpenAsync(ct);
 
-        (await Scalar(conn, "SELECT COUNT(*) FROM schema_migrations")).ShouldBe(2);
-        (await Scalar(conn, "SELECT COUNT(*) FROM sqlite_master WHERE name IN ('sync_state','kv')")).ShouldBe(2);
-        (await Scalar(conn, "PRAGMA foreign_keys")).ShouldBe(1);
+        (await ScalarAsync(conn, "SELECT COUNT(*) FROM schema_migrations")).ShouldBe(2);
+        (await ScalarAsync(conn, "SELECT COUNT(*) FROM sqlite_master WHERE name IN ('sync_state','kv')")).ShouldBe(2);
+        (await ScalarAsync(conn, "PRAGMA foreign_keys")).ShouldBe(1);
         await using var cmd = conn.CreateCommand();
         cmd.CommandText = "PRAGMA journal_mode";
         ((string?)await cmd.ExecuteScalarAsync(ct)).ShouldBe("wal");
@@ -54,10 +54,10 @@ public class MigrationTests
 
         await Should.ThrowAsync<SqliteException>(() => Migrator.ApplyAsync(conn, [ok, bad], NullLogger.Instance, ct));
 
-        (await Scalar(conn, "SELECT COUNT(*) FROM schema_migrations")).ShouldBe(1);
-        (await Scalar(conn, "SELECT COUNT(*) FROM sqlite_master WHERE name='b'")).ShouldBe(0);
+        (await ScalarAsync(conn, "SELECT COUNT(*) FROM schema_migrations")).ShouldBe(1);
+        (await ScalarAsync(conn, "SELECT COUNT(*) FROM sqlite_master WHERE name='b'")).ShouldBe(0);
         await Migrator.ApplyAsync(conn, [ok], NullLogger.Instance, ct);
-        (await Scalar(conn, "SELECT COUNT(*) FROM schema_migrations")).ShouldBe(1);
+        (await ScalarAsync(conn, "SELECT COUNT(*) FROM schema_migrations")).ShouldBe(1);
     }
 
     [Fact]

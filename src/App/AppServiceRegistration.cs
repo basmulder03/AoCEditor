@@ -84,7 +84,7 @@ public static class AppServiceRegistration
             var puzzle = sp.GetRequiredService<PuzzleService>();
             return new DayRunCoordinator(
                 sp.GetRequiredService<WorkspaceService>(),
-                (year, day, ct) => puzzle.LoadInputAsync(year, day, false, ct),
+                (year, day, cancellationToken) => puzzle.LoadInputAsync(year, day, false, cancellationToken),
                 new ProcessRunner([paths.Root]),
                 paths,
                 plugin => ToolchainLocator.Find(plugin.ToolchainExecutables, Environment.GetEnvironmentVariable("PATH")));

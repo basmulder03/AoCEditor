@@ -26,7 +26,7 @@ internal static class CookieSources
         () => OperatingSystem.IsLinux() && web.TryGetPlatformHandle() is IGtkWebViewPlatformHandle gtk ? new LinuxCookieSource(gtk.WebKitWebView) : null);
 
     /// <summary>Turns a hang or failure of a native read into an Unsupported result instead of an exception.</summary>
-    internal static async Task<CookieRead> Guard(Func<CancellationToken, Task<CookieRead>> read, TimeSpan timeout, CancellationToken cancellationToken)
+    internal static async Task<CookieRead> GuardAsync(Func<CancellationToken, Task<CookieRead>> read, TimeSpan timeout, CancellationToken cancellationToken)
     {
         try
         {

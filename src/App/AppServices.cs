@@ -110,14 +110,14 @@ public sealed class AppServices
     public Task<SessionStatus> GetStatusAsync(CancellationToken cancellationToken) => _signIn.GetStatusAsync(cancellationToken);
 
     public Task<SignInResult> SignInWithBrowserAsync(CancellationToken cancellationToken) =>
-        Announce(_signIn.SignInWithBrowserAsync(_browser, cancellationToken));
+        AnnounceAsync(_signIn.SignInWithBrowserAsync(_browser, cancellationToken));
 
     public Task<SignInResult> SignInWithPastedTokenAsync(string token, CancellationToken cancellationToken) =>
-        Announce(_signIn.SignInWithPastedTokenAsync(token, cancellationToken));
+        AnnounceAsync(_signIn.SignInWithPastedTokenAsync(token, cancellationToken));
 
     public Task<SecretResult> SignOutAsync(CancellationToken cancellationToken) => _signIn.SignOutAsync(cancellationToken);
 
-    private async Task<SignInResult> Announce(Task<SignInResult> signIn)
+    private async Task<SignInResult> AnnounceAsync(Task<SignInResult> signIn)
     {
         var result = await signIn;
         if (result is SignInResult.SignedIn)

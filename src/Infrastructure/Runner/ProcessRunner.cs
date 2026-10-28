@@ -81,9 +81,9 @@ public sealed class ProcessRunner : IRunner
 
         var budget = new OutputBudget();
         var pumps = Task.WhenAll(
-            Pump(process.StandardOutput, OutputChannel.Stdout, output, budget),
-            Pump(process.StandardError, OutputChannel.Stderr, output, budget),
-            Feed(process, request.InputPath));
+            PumpAsync(process.StandardOutput, OutputChannel.Stdout, output, budget),
+            PumpAsync(process.StandardError, OutputChannel.Stderr, output, budget),
+            FeedAsync(process, request.InputPath));
         using var timeout = new CancellationTokenSource(request.Timeout);
         using var stop = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeout.Token);
         var status = RunStatus.Completed;
@@ -291,7 +291,7 @@ public sealed class ProcessRunner : IRunner
 
     // Output is read in chunks so a program printing a huge line or endless output cannot exhaust memory;
     // past the total cap the pipe is still drained (so the program is not blocked) but nothing is reported.
-    private static async Task Pump(StreamReader reader, OutputChannel stream, IProgress<OutputLine> output, OutputBudget budget)
+    private static async Task PumpAsync(StreamReader reader, OutputChannel stream, IProgress<OutputLine> output, OutputBudget budget)
     {
         var buffer = new char[4096];
         var line = new StringBuilder();
@@ -374,7 +374,7 @@ public sealed class ProcessRunner : IRunner
         }
     }
 
-    private static async Task Feed(Process process, string? inputPath)
+    private static async Task FeedAsync(Process process, string? inputPath)
     {
         if (inputPath is null)
         {

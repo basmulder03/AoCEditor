@@ -10,7 +10,7 @@ internal sealed partial class LibSecretStore : ISecretStore
     private const string Unavailable = "Secret Service is not available.";
 
     public Task<SecretResult> GetAsync(string name, CancellationToken cancellationToken) =>
-        Run(() => Native(name, (schema, attrs) =>
+        RunAsync(() => Native(name, (schema, attrs) =>
         {
             var password = secret_password_lookupv_sync(schema, attrs, IntPtr.Zero, out var error);
             if (error != IntPtr.Zero)
@@ -35,7 +35,7 @@ internal sealed partial class LibSecretStore : ISecretStore
         }), cancellationToken);
 
     public Task<SecretResult> SetAsync(string name, string value, CancellationToken cancellationToken) =>
-        Run(() => Native(name, (schema, attrs) =>
+        RunAsync(() => Native(name, (schema, attrs) =>
         {
             var stored = secret_password_storev_sync(schema, attrs, "default", "AoCEditor " + name, value, IntPtr.Zero, out var error);
             if (error != IntPtr.Zero)
@@ -47,7 +47,7 @@ internal sealed partial class LibSecretStore : ISecretStore
         }), cancellationToken);
 
     public Task<SecretResult> DeleteAsync(string name, CancellationToken cancellationToken) =>
-        Run(() => Native(name, (schema, attrs) =>
+        RunAsync(() => Native(name, (schema, attrs) =>
         {
             var removed = secret_password_clearv_sync(schema, attrs, IntPtr.Zero, out var error);
             if (error != IntPtr.Zero)
@@ -59,7 +59,7 @@ internal sealed partial class LibSecretStore : ISecretStore
             return removed ? new SecretResult.Ok() : new SecretResult.NotFound();
         }), cancellationToken);
 
-    private static Task<SecretResult> Run(Func<SecretResult> work, CancellationToken cancellationToken) =>
+    private static Task<SecretResult> RunAsync(Func<SecretResult> work, CancellationToken cancellationToken) =>
         Task.Run(() =>
         {
             try

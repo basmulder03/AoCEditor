@@ -42,7 +42,7 @@ public sealed class CookieSourceTests
     {
         var never = new FakeSource(_ => new TaskCompletionSource<CookieRead>().Task);
 
-        var result = await CookieSources.Guard(ct => never.ReadAsync(new Uri("https://x.test/"), ct), TimeSpan.FromMilliseconds(50), CancellationToken.None);
+        var result = await CookieSources.GuardAsync(cancellationToken => never.ReadAsync(new Uri("https://x.test/"), cancellationToken), TimeSpan.FromMilliseconds(50), CancellationToken.None);
 
         result.ShouldBeOfType<CookieRead.Unsupported>().Reason.ShouldNotBeEmpty();
     }
@@ -52,7 +52,7 @@ public sealed class CookieSourceTests
     {
         var quick = new FakeSource(_ => Task.FromResult<CookieRead>(new CookieRead.Cookies([new BrowserCookie("a", "x", "v")])));
 
-        var result = await CookieSources.Guard(ct => quick.ReadAsync(new Uri("https://x.test/"), ct), TimeSpan.FromSeconds(5), CancellationToken.None);
+        var result = await CookieSources.GuardAsync(cancellationToken => quick.ReadAsync(new Uri("https://x.test/"), cancellationToken), TimeSpan.FromSeconds(5), CancellationToken.None);
 
         result.ShouldBeOfType<CookieRead.Cookies>().Items.Count.ShouldBe(1);
     }

@@ -110,14 +110,14 @@ public sealed class CalendarViewModel : ObservableBase, IDisposable
     {
         var year = _selectedYear;
         _log.SyncYearRequested(year);
-        return RunAsync((progress, ct) => _sync.SyncYearAsync(year, refresh: true, progress, ct));
+        return RunAsync((progress, cancellationToken) => _sync.SyncYearAsync(year, refresh: true, progress, cancellationToken));
     }
 
     public Task SyncAllAsync()
     {
         _log.SyncAllRequested();
         var latest = CalendarRules.LatestEventYear(_time.GetUtcNow());
-        return RunAsync((progress, ct) => _sync.SyncAllAsync([latest], progress, ct));
+        return RunAsync((progress, cancellationToken) => _sync.SyncAllAsync([latest], progress, cancellationToken));
     }
 
     public void Cancel() => _cancel?.Cancel();

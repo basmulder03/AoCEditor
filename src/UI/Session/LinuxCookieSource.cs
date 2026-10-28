@@ -21,11 +21,11 @@ internal sealed unsafe partial class LinuxCookieSource(IntPtr view) : ICookieSou
         (Glib, ["g_list_length", "g_list_nth_data", "g_list_free", "g_error_free", "g_main_context_invoke"]),
     ];
 
-    public Task<CookieRead> ReadAsync(Uri site, CancellationToken cancellationToken) => Query(site, null, cancellationToken);
+    public Task<CookieRead> ReadAsync(Uri site, CancellationToken cancellationToken) => QueryAsync(site, null, cancellationToken);
 
-    public Task DeleteAsync(Uri site, string name, CancellationToken cancellationToken) => Query(site, name, cancellationToken);
+    public Task DeleteAsync(Uri site, string name, CancellationToken cancellationToken) => QueryAsync(site, name, cancellationToken);
 
-    private Task<CookieRead> Query(Uri site, string? deleteName, CancellationToken cancellationToken)
+    private Task<CookieRead> QueryAsync(Uri site, string? deleteName, CancellationToken cancellationToken)
     {
         if (view == IntPtr.Zero)
         {
@@ -37,7 +37,7 @@ internal sealed unsafe partial class LinuxCookieSource(IntPtr view) : ICookieSou
             return Task.FromResult<CookieRead>(new CookieRead.Unsupported(missing));
         }
 
-        return CookieSources.Guard(_ =>
+        return CookieSources.GuardAsync(_ =>
         {
             var state = new Request(view, site.GetLeftPart(UriPartial.Path), deleteName);
             state.Handle = GCHandle.ToIntPtr(GCHandle.Alloc(state));
