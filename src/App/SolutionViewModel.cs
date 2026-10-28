@@ -10,7 +10,7 @@ public sealed class SolutionViewModel : ObservableBase
 {
     private readonly IReadOnlyList<PluginManifest> _plugins;
     private readonly Func<PluginManifest, bool, IProgress<OutputLine>, CancellationToken, Task<DayRunResult>> _run;
-    private readonly Func<Task<bool>> _confirmUnsandboxed;
+    private readonly Func<string, Task<bool>> _confirmUnsandboxed;
     private readonly Action<Action> _post;
     private PluginManifest? _selected;
     private bool _running;
@@ -20,7 +20,7 @@ public sealed class SolutionViewModel : ObservableBase
     public SolutionViewModel(
         IReadOnlyList<PluginManifest> plugins,
         Func<PluginManifest, bool, IProgress<OutputLine>, CancellationToken, Task<DayRunResult>> run,
-        Func<Task<bool>> confirmUnsandboxed,
+        Func<string, Task<bool>> confirmUnsandboxed,
         Action<Action> post)
     {
         _plugins = plugins;
@@ -63,13 +63,13 @@ public sealed class SolutionViewModel : ObservableBase
             var result = await RunOnceAsync(allowUnsandboxed: false, cancel.Token);
             if (result.Kind == DayRunKind.SandboxRefused)
             {
-                if (await _confirmUnsandboxed())
+                if (await _confirmUnsandboxed(result.Detail ?? string.Empty))
                 {
                     result = await RunOnceAsync(allowUnsandboxed: true, cancel.Token);
                 }
                 else
                 {
-                    Console.Fail("The solution was not run because no sandbox is available.");
+                    Console.Fail("The solution was not run because the sandbox is incomplete.");
                     return;
                 }
             }

@@ -12,12 +12,13 @@ public class SolutionViewModelTests
     private static readonly PluginManifest Dotnet = Plugin("dotnet", ".NET");
 
     private readonly List<bool> _allowed = [];
+    private readonly List<string> _asked = [];
     private DayRunResult _next = new(DayRunKind.Ran, new RunResult(RunStatus.Completed, 0, TimeSpan.FromSeconds(1)));
     private bool _consent = true;
     private readonly SolutionViewModel _model;
 
     public SolutionViewModelTests() =>
-        _model = new SolutionViewModel([Python, Dotnet], RunAsync, () => Task.FromResult(_consent), a => a());
+        _model = new SolutionViewModel([Python, Dotnet], RunAsync, detail => { _asked.Add(detail); return Task.FromResult(_consent); }, a => a());
 
     private static CancellationToken Ct => TestContext.Current.CancellationToken;
 
@@ -76,6 +77,16 @@ public class SolutionViewModelTests
     }
 
     [Fact]
+    public async Task TheUserIsToldWhichProtectionsAreMissing()
+    {
+        _next = new DayRunResult(DayRunKind.SandboxRefused, null, "Missing: network isolation.");
+
+        await _model.RunAsync(Ct);
+
+        _asked.ShouldBe(["Missing: network isolation."]);
+    }
+
+    [Fact]
     public async Task ANoToTheSandboxQuestionDoesNotRunAnything()
     {
         _consent = false;
@@ -91,7 +102,7 @@ public class SolutionViewModelTests
     public async Task OnlyOneRunAtATime()
     {
         var gate = new TaskCompletionSource<DayRunResult>();
-        var model = new SolutionViewModel([Python], (_, _, _, _) => gate.Task, () => Task.FromResult(true), a => a());
+        var model = new SolutionViewModel([Python], (_, _, _, _) => gate.Task, _ => Task.FromResult(true), a => a());
 
         var first = model.RunAsync(Ct);
         model.CanRun.ShouldBeFalse();
@@ -109,7 +120,7 @@ public class SolutionViewModelTests
         {
             await Task.Delay(Timeout.Infinite, ct);
             return _next;
-        }, () => Task.FromResult(true), a => a());
+        }, _ => Task.FromResult(true), a => a());
 
         var run = model.RunAsync(Ct);
         model.Stop();
@@ -132,7 +143,7 @@ public class SolutionViewModelTests
             }
 
             return Task.FromResult(_next);
-        }, () => Task.FromResult(true), a => { posts++; a(); });
+        }, _ => Task.FromResult(true), a => { posts++; a(); });
 
         await model.RunAsync(Ct);
 

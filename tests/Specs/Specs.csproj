@@ -14,5 +14,6 @@
     <ProjectReference Include="../../src/Features/Storage/Storage.csproj" />
     <ProjectReference Include="../../src/Features/Sync/Sync.csproj" />
     <ProjectReference Include="../../src/Features/Workspace/Workspace.csproj" />
+    <ProjectReference Include="../../src/Features/Runner/Runner.csproj" />
   </ItemGroup>
 </Project>

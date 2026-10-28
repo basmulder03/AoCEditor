@@ -1,10 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <IsAotCompatible>true</IsAotCompatible>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia" />
     <ProjectReference Include="../../Shared/Shared.csproj" />
     <InternalsVisibleTo Include="Runner.Tests" />
+    <InternalsVisibleTo Include="Specs" />
   </ItemGroup>
 </Project>

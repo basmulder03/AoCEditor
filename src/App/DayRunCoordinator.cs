@@ -74,7 +74,8 @@ public sealed class DayRunCoordinator(
 
         if (plugin.Compile is { } compile)
         {
-            var built = await runner.RunAsync(new RunRequest(CommandTemplate.Expand(compile.Command, values), folder, null, CompileTimeout, allowUnsandboxed), output, cancellationToken);
+            // Package restore needs the network and the build writes into the day folder, so only this step gets both.
+            var built = await runner.RunAsync(new RunRequest(CommandTemplate.Expand(compile.Command, values), folder, null, CompileTimeout, allowUnsandboxed, [inputPath], [folder], AllowNetwork: true), output, cancellationToken);
             if (built.Status == RunStatus.SandboxUnavailable)
             {
                 return new DayRunResult(DayRunKind.SandboxRefused, built, built.Error);
@@ -87,7 +88,7 @@ public sealed class DayRunCoordinator(
         }
 
         var piped = plugin.Run.Input == InputMode.Stdin ? inputPath : null;
-        var run = await runner.RunAsync(new RunRequest(CommandTemplate.Expand(plugin.Run.Command, values), folder, piped, RunTimeout, allowUnsandboxed), output, cancellationToken);
+        var run = await runner.RunAsync(new RunRequest(CommandTemplate.Expand(plugin.Run.Command, values), folder, piped, RunTimeout, allowUnsandboxed, [inputPath]), output, cancellationToken);
         return run.Status == RunStatus.SandboxUnavailable
             ? new DayRunResult(DayRunKind.SandboxRefused, run, run.Error)
             : new DayRunResult(DayRunKind.Ran, run);

@@ -7,6 +7,11 @@ internal static class Program
     [STAThread]
     public static int Main(string[] args)
     {
+        if (Runner.Application.SandboxHelper.RunIfRequested(args) is { } helperExit)
+        {
+            return helperExit;
+        }
+
         if (args.Contains("--version"))
         {
             Console.WriteLine($"AoCEditor {Shared.AppInfo.Version}");

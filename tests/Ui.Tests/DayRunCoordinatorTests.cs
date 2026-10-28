@@ -145,6 +145,34 @@ public sealed class DayRunCoordinatorTests : IDisposable
     }
 
     [Fact]
+    public async Task OnlyTheBuildStepMayUseTheNetworkAndWriteItsFolder()
+    {
+        await _workspace.SetRootAsync(Solutions, Ct);
+
+        await Create().RunAsync(2024, 3, Compiled, new Progress<OutputLine>(), false, Ct);
+
+        var folder = Path.Combine(Solutions, "2024", "03", "dotnet");
+        var input = Path.Combine(_paths.Root, "inputs", "2024", "03.txt");
+        var (build, run) = (_runner.Requests[0], _runner.Requests[1]);
+        build.AllowNetwork.ShouldBeTrue();
+        build.WritablePaths.ShouldBe([folder]);
+        run.AllowNetwork.ShouldBeFalse();
+        run.WritablePaths.ShouldBeNull();
+        run.ReadablePaths.ShouldBe([input]);
+    }
+
+    [Fact]
+    public async Task ARefusedSandboxPassesOnWhatIsMissing()
+    {
+        await _workspace.SetRootAsync(Solutions, Ct);
+        _runner.Next = new RunResult(RunStatus.SandboxUnavailable, null, TimeSpan.Zero, "network isolation is missing");
+
+        var result = await Create().RunAsync(2024, 3, Python, new Progress<OutputLine>(), false, Ct);
+
+        result.Detail.ShouldBe("network isolation is missing");
+    }
+
+    [Fact]
     public async Task ScaffoldingWithoutAWorkspaceIsAResultNotAnException()
     {
         var result = await Create().ScaffoldAsync(2024, 3, Python, Ct);

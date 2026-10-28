@@ -10,11 +10,32 @@
 - **Environment** is cleared and only a short allow-list (PATH, HOME, TEMP, LANG, DOTNET_ROOT and a few more) is passed on, so the solution does not see other variables of the app's environment.
 - **Start failures** (program not found) come back as `FailedToStart` with the reason instead of an exception.
 
-## Sandbox status
+## Sandbox
 
-The OS sandboxes of ADR 0011 (Landlock, seccomp and cgroups on Linux; Job Object and restricted token on Windows) are not built yet (issues for the Linux and Windows sandboxed runners). Until then `Level` is `SandboxLevel.None`, and `RunAsync` returns `SandboxUnavailable` without starting anything unless the caller sets `AllowUnsandboxed`, which the UI may only do after asking the user. Memory and CPU limits are not enforced yet either.
+On Linux the runner confines the user's program. `ProcessRunner` does not start the program directly: it starts the app itself with a hidden first argument (`--aoc-sandbox-exec`, handled first thing in `Program.Main` through `SandboxHelper.RunIfRequested`). That helper applies the protections to itself with direct syscalls (AoT-safe `LibraryImport`) and then `execvp`s the command, so nothing but the program runs afterwards. If any protection cannot be applied, the program does not start (exit code 125 with a message). Test hosts call the same entry from a module initializer.
 
-The tests start real processes through `sh` and run on Linux only; the Windows behaviour (tree kill, environment) is untested until the Windows runner work.
+`SandboxLevel` is a flag set, detected at startup, and `Level` reports what this computer can enforce:
+
+- **Limits** (always on Linux): `setrlimit` for writable memory (`RLIMIT_DATA`, 4 GiB by default; address space is not used because .NET reserves huge ranges), CPU seconds, file size, core dumps off, and the number of processes and threads (`RLIMIT_NPROC`, set to the user's current task count plus 512, because the kernel counts all tasks of the user).
+- **Filesystem** (Landlock, any ABI >= 1): read-only `/usr /lib /bin /sbin /etc /opt /sys` (those that exist), the PATH folders (except the home folder or its parents), the folder of the toolchain executable, the working (solution) folder, the paths in `RunRequest.ReadablePaths` (the coordinator passes the input file), and a few `/proc` and `/dev` entries. Writable: only a private per-run folder in the temp directory, plus `RunRequest.WritablePaths`. The rest of the home folder, the app-data folder, `~/.ssh`, `~/.config` and keyring sockets are not reachable. `HOME`, `TMPDIR`, `TMP`, `TEMP`, `DOTNET_CLI_HOME` and `XDG_CACHE_HOME` point at the private folder, which is deleted after the run.
+- **Network** (seccomp): a filter makes `socket()` and `io_uring_setup()` fail with EACCES (and any syscall of a foreign ABI). This is used instead of Landlock's TCP rules because those leave UDP and abstract unix sockets open. Supported on x64 and arm64.
+
+Only `Full` runs without asking. Below it `RunAsync` returns `SandboxUnavailable` with the missing protections named (`SandboxLevel.Missing()`) unless the caller sets `AllowUnsandboxed`; the UI then shows that text in the consent dialog, and the run gets whatever protections exist. Windows has no sandbox yet (`Level` is `None`).
+
+The whole process group is killed on timeout, cancel and after the run, so background children do not survive.
+
+### Build steps
+
+Package restore needs the network and a build writes into the day folder, so the coordinator's compile step runs with `AllowNetwork` and the day folder writable. Filesystem confinement and limits still apply; the run step gets neither exception. Because `HOME` is the private folder, `dotnet build` restores packages into it on every build (slow, needs the network, and nothing is cached between runs). This exception is a documented property of the sandbox and not reflected in `Level`.
+
+### Limitations
+
+- No cgroups: memory is capped per process (`RLIMIT_DATA`), not for the whole tree, and the task cap is only as exact as the count taken at start.
+- Toolchains installed in the home folder are readable only through the folder of the executable (or PATH entries); layouts with shims elsewhere need `ReadablePaths`.
+- Signals to and from other processes of the user, and pathname unix sockets reachable by inherited descriptors, are not restricted; `/proc/self` only is exposed, but other readable system folders stay world-readable.
+- Kernels without Landlock (or with it disabled) report `Limits`; seccomp-less or non-x64/arm64 systems report no `Network`.
+
+The tests start real processes through `sh`/`python3` and run on Linux only; sandbox tests skip with a reason when Landlock or seccomp are missing.
 
 ## Run coordination
 
@@ -33,6 +54,6 @@ The tests start real processes through `sh` and run on Linux only; the Windows b
 
 ## Day page
 
-The day page splits into the puzzle (left) and the solution panel (right, `SolutionPanel` in `src/App`): a language picker, Run and Stop, the solutions folder with a chooser, and the console. Run goes through `DayRunCoordinator`. While no sandbox exists, the first run asks for confirmation ("Run without a sandbox?") and only then runs with the user's normal rights. A solutions folder that overlaps the app-data folder is refused with a message.
+The day page splits into the puzzle (left) and the solution panel (right, `SolutionPanel` in `src/App`): a language picker, Run and Stop, the solutions folder with a chooser, and the console. Run goes through `DayRunCoordinator`. When the sandbox is incomplete, the first run asks for confirmation ("Run with an incomplete sandbox?") naming the missing protections, and only then runs. A solutions folder that overlaps the app-data folder is refused with a message.
 
 The panel also holds the code editor (`docs/editor.md`) between the folder controls and the console. When the page opens, the language changes or a folder is chosen, `DayRunCoordinator.ScaffoldAsync` creates the day's template files (no input needed; `NoWorkspace` is a result, not an exception) and the source file opens in an `EditorViewModel` rooted at the day folder. Run first saves a dirty editor; if the file changed on disk the run does not start (`SourceChanged`) and the editor's banner offers Reload or Save anyway. Switching language or choosing a folder saves a dirty file first; if it changed on disk the switch is cancelled, the language box returns to the previous language and the editor's banner stays so the user can Reload or Save anyway.

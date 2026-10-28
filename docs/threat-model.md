@@ -5,7 +5,7 @@ Short and practical; update when a slice adds a trust boundary.
 | Asset | Threat | Control |
 |---|---|---|
 | AoC session token | Leaks through logs, reports, MCP, child processes or the solutions repo | OS secret store only; redaction before every log sink; allow-listed child environment; diagnostics and issue reports exclude it |
-| User's machine | A solution, plugin or language server runs hostile or buggy code | Solutions run in the OS-native sandbox with limits and timeouts; plugins are data, never loaded in-process; first-use confirmation; no shell strings |
+| User's machine | A solution, plugin or language server runs hostile or buggy code | Solutions run in the OS-native sandbox (Linux: Landlock, seccomp network filter, rlimits; see runner.md for gaps and the build-step network exception) with limits and timeouts; plugins are data, never loaded in-process; first-use confirmation; no shell strings |
 | Files outside the workspace | Path traversal or symlink escape via plugin, MCP or network input | Canonicalize and check containment; data root never inside the solutions folder |
 | Puzzle text and inputs | Published by accident | Stored in app-data only; the git integration never stages them |
 | AoC servers | Abuse from the tool | One gateway; two throttle classes; cache first; no polling |

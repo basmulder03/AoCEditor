@@ -84,12 +84,12 @@ public partial class SolutionPanel : UserControl
 
     private SolutionViewModel? Model => DataContext as SolutionViewModel;
 
-    async Task<bool> ConfirmUnsandboxedAsync() =>
+    async Task<bool> ConfirmUnsandboxedAsync(string detail) =>
         TopLevel.GetTopLevel(this) is Window window
         && await ConfirmDialog.AskAsync(
             window,
-            "Run without a sandbox?",
-            "This version cannot isolate your solution yet. It will run with your normal user rights and could read or change your files. Only run code you trust.",
+            "Run with an incomplete sandbox?",
+            $"{detail} Without these protections your solution runs with your normal user rights where they are missing and could read or change your files or use the network. Only run code you trust.",
             "Run anyway");
 
     async Task ShowFolderAsync() =>

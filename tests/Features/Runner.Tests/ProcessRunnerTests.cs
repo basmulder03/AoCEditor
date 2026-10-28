@@ -8,7 +8,7 @@ namespace Runner.Tests;
 public sealed class ProcessRunnerTests : IDisposable
 {
     private readonly string _dir = Path.Combine(Path.GetTempPath(), "aoc-run-" + Guid.NewGuid().ToString("N"));
-    private readonly ProcessRunner _runner = new();
+    private readonly ProcessRunner _runner = new(SandboxLevel.None);
     private readonly List<OutputLine> _lines = [];
 
     public ProcessRunnerTests() => Directory.CreateDirectory(_dir);
@@ -140,7 +140,7 @@ public sealed class ProcessRunnerTests : IDisposable
         _lines.Count(l => l.Stream == OutputChannel.Stderr && l.Text.Contains("limit", StringComparison.OrdinalIgnoreCase)).ShouldBe(1);
     }
 
-    private sealed class SyncProgress(List<OutputLine> sink) : IProgress<OutputLine>
+    internal sealed class SyncProgress(List<OutputLine> sink) : IProgress<OutputLine>
     {
         public void Report(OutputLine value)
         {
