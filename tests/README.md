@@ -19,10 +19,10 @@ Filter by category in a mixed run: `dotnet test --solution AoCEditor.slnx --filt
 
 ## Reqnroll practices
 
-- Layout follows the slices: `Features/<Slice>/*.feature` with step bindings in `Steps/`, named after the feature they serve. Steps shared by several features live in `Steps/Common`.
+- Layout follows the slices: `Features/<Slice>/*.feature`, `Steps/<Slice>/*Steps.cs` (namespace `Specs.Steps.<Slice>`) and `Drivers/<Slice>/*Driver.cs` (namespace `Specs.Drivers.<Slice>`). Genuinely shared code goes in `Steps/Common` and `Drivers/Common`.
 - A feature opens with the business reason (`In order to / As a / I want`). A scenario describes one behaviour in the language of the user, never in terms of controls, classes or endpoints (declarative, not imperative).
 - Given sets up state, When performs one action, Then observes the outcome. Assertions (Shouldly) belong only in Then steps. Keep scenarios short; use `Background` for Givens shared by every scenario of a feature and `Scenario Outline` with `Examples` for data variations.
-- Bindings are thin: they call the application code of the slice and hold no business logic. A binding class is created per scenario, so its fields are safe scenario state. Share state between binding classes through constructor injection of a small context class, never through static fields or `ScenarioContext` string keys.
+- Driver pattern: step classes are thin glue that translate Gherkin into driver calls and run Shouldly assertions in Then steps on values the driver exposes; they hold no setup and never call application code. Drivers own how the system is driven (slice objects, fake time/cache/token, temp dirs), expose results, contain no assertions, are constructor-injected (per-scenario lifetime, reusable by steps and hooks) and dispose temp resources via `IDisposable`. Never share state through static fields or `ScenarioContext` string keys.
 - Prefer Cucumber expressions (`{int}`, `{string}`) over regular expressions. Step text has no tech terms and is reused across scenarios rather than duplicated.
 - Scenarios must be independent and parallel-safe: no shared files, ports or ordering. Use per-scenario temporary folders.
 - Tags classify scenarios (`@e2e`, `@ui`, `@slow`); hooks (`[BeforeScenario]`) are scoped with tags, not global.

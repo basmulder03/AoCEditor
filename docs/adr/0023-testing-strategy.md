@@ -17,7 +17,7 @@ The project is developed test-first, with human-readable behavior specs, and shi
 - A bug fix starts with a failing test.
 
 - Assertions use Shouldly only. `Xunit.Assert` is banned in `tests/` through BannedApiAnalyzers (`tests/BannedSymbols.txt`), so the build fails on violations. Guidelines are in `tests/README.md`.
-- Reqnroll features follow the practices in `tests/README.md` (declarative scenarios, thin bindings, context injection, parallel-safe).
+- Reqnroll features follow the practices in `tests/README.md` (declarative scenarios, thin steps over per-slice drivers (`Steps/<Slice>`, `Drivers/<Slice>`), parallel-safe).
 - Reqnroll code-behind (`*.feature.cs`) is generated at build and not committed.
 
 ## Consequences
