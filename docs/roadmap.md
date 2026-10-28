@@ -51,13 +51,13 @@ Snapshot of the GitHub issues, which are the source of truth. Hierarchy: Epic > 
 ## Day workspace: puzzle, input, console, submit
 
 - [ ] FEATURE #22 [MUST] Day page split layout
-- [ ] FEATURE #23 [MUST] Native puzzle rendering with part tabs
-  - [ ] SPIKE #52 [MUST] Spike: HTML to native puzzle rendering
-- [ ] FEATURE #24 [MUST] Puzzle input tab
+- [x] FEATURE #23 [MUST] Native puzzle rendering with part tabs
+  - [x] SPIKE #52 [MUST] Spike: HTML to native puzzle rendering
+- [x] FEATURE #24 [MUST] Puzzle input tab
 - [ ] FEATURE #25 [MUST] Console output panel
-- [ ] FEATURE #26 [MUST] Answer submission with cooldown tracking
-  - [ ] STORY #61 [MUST] Show submission cooldown countdown
-  - [ ] STORY #62 [MUST] Store correct answers locally
+- [x] FEATURE #26 [MUST] Answer submission with cooldown tracking
+  - [x] STORY #61 [MUST] Show submission cooldown countdown
+  - [x] STORY #62 [MUST] Store correct answers locally
 - [ ] FEATURE #74 [SHOULD] Puzzle examples: select from the puzzle or create your own, with expected answers
   - [ ] STORY #75 [SHOULD] Select text in the puzzle and save it as an example input
   - [ ] STORY #76 [SHOULD] Create your own example with expected answers per part
