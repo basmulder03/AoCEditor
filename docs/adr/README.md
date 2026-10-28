@@ -34,7 +34,7 @@ Status: `Accepted` = decided with the owner, `Proposed` = default chosen by the 
 | 0025 | CI/CD and release automation | Accepted | Build/test matrix, release, gh-pages |
 | 0026 | Documentation and gh-pages | Accepted | DocFX, docs folder, publish on release |
 | 0027 | Issue tracking and roadmap | Accepted | Type and MoSCoW labels, roadmap, auto-issues |
-| 0028 | Code documentation standard | Accepted | Comment density, no ADR references |
+| 0028 | Code documentation standard | Accepted | Comment density, no ADR references, functional XML docs on public API, doc warnings as errors |
 | 0029 | Agents, skills, orchestration | Accepted | Token-lean agents/skills, orchestrator rules |
 | 0030 | In-app issue reporting | Accepted | Report button, prefilled issue, GDPR-safe redaction |
 | 0031 | Puzzle examples | Proposed | Select from puzzle, custom examples, expected answers |
