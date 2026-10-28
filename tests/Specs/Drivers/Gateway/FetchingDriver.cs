@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging.Abstractions;
 using System.Net;
 using AoCEditor.Core.Gateway;
 using AoCEditor.Infrastructure.Gateway;
@@ -19,7 +20,7 @@ public sealed class FetchingDriver : IDisposable
     public FetchingDriver()
     {
         _cache = new FileResponseCache(_dir);
-        _gateway = new AocGateway(new Handler(this), new Token(), _cache, new GatewayOptions { InteractiveInterval = TimeSpan.FromSeconds(5) }, _time);
+        _gateway = new AocGateway(new Handler(this), new Token(), _cache, NullLogger<AocGateway>.Instance, new GatewayOptions { InteractiveInterval = TimeSpan.FromSeconds(5) }, _time);
     }
 
     public List<string> Requests { get; } = [];

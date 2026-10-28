@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging.Abstractions;
 using System.ComponentModel;
 using AoCEditor.Core.Sync.Application;
 using AoCEditor.UI.Sync;
@@ -31,7 +32,7 @@ public sealed class CalendarDriver
     public async Task OpenAsync()
     {
         var store = new MemoryStore(_stored);
-        Model = new CalendarViewModel(new SyncService(new Gateway(this), store, _time), store, _time);
+        Model = new CalendarViewModel(new SyncService(new Gateway(this), store, _time, NullLogger<SyncService>.Instance), store, _time, NullLogger<CalendarViewModel>.Instance);
         Model.PropertyChanged += OnChanged;
         await Model.LoadAsync(CancellationToken.None);
     }

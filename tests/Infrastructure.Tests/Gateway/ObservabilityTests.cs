@@ -13,13 +13,13 @@ public sealed class ObservabilityTests : IDisposable
     private const string Secret = "s3cr3t-token-value";
     private readonly FakeHandler _handler = new();
     private readonly FakeTimeProvider _time = new();
-    private readonly CapturingLogger _log = new();
+    private readonly CapturingLogger<AocGateway> _log = new();
     private readonly ListRequestLog _requests = new();
     private static CancellationToken Ct => TestContext.Current.CancellationToken;
 
     public void Dispose() => _handler.Dispose();
 
-    private AocGateway Create() => new(_handler, new FakeTokens(Secret), new MemoryCache(), new GatewayOptions { InteractiveInterval = TimeSpan.FromSeconds(5) }, _time, null, _log, _requests);
+    private AocGateway Create() => new(_handler, new FakeTokens(Secret), new MemoryCache(), _log, new GatewayOptions { InteractiveInterval = TimeSpan.FromSeconds(5) }, _time, null, _requests);
 
     [Fact]
     public async Task EachRequestIsRecordedWithMethodPathStatusAndTimings()

@@ -1,14 +1,13 @@
 using AoCEditor.Core.Sync.Domain;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using Shared.Contracts;
 
 namespace AoCEditor.Core.Sync.Application;
 
 /// <summary>Fetches the event list and calendar pages on explicit user request, saving progress per year.</summary>
-public sealed class SyncService(IAocGateway gateway, ISyncStateStore store, TimeProvider time, ILogger? logger = null)
+public sealed class SyncService(IAocGateway gateway, ISyncStateStore store, TimeProvider time, ILogger<SyncService> log)
 {
-    private readonly ILogger _log = logger ?? NullLogger.Instance;
+    private readonly ILogger _log = log;
 
     /// <summary>Syncs one year; an already synced year is left alone unless <paramref name="refresh"/> is set.</summary>
     public async Task<SyncSummary> SyncYearAsync(int year, bool refresh, IProgress<SyncProgress> progress, CancellationToken cancellationToken)

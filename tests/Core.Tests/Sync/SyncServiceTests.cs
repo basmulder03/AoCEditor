@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging.Abstractions;
 using AoCEditor.Core.Sync.Application;
 using Microsoft.Extensions.Time.Testing;
 using Shared.Contracts;
@@ -13,7 +14,7 @@ public class SyncServiceTests
     private readonly FakeTimeProvider _time = new(new DateTimeOffset(2026, 10, 28, 0, 0, 0, TimeSpan.Zero));
     private static CancellationToken Ct => TestContext.Current.CancellationToken;
 
-    private SyncService Create() => new(_gateway, _store, _time);
+    private SyncService Create() => new(_gateway, _store, _time, NullLogger<SyncService>.Instance);
 
     private void Page(string path, string html) => _gateway.Pages[path] = new GatewayResult.Ok(html);
 

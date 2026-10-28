@@ -45,6 +45,26 @@ public sealed class PracticeRuleTests : IDisposable
     }
 
     [Theory(Skip = "Practice script runs on Linux only", SkipUnless = nameof(RunsHere), SkipType = typeof(PracticeRuleTests))]
+    [InlineData("public Sample(ILogger? logger = null) { }")]
+    [InlineData("private readonly ILogger _log = logger ?? NullLogger.Instance;")]
+    [InlineData("var log = NullLogger<Sample>.Instance;")]
+    public void OptionalLoggersAndNullLoggerFallbacksAreFlagged(string line)
+    {
+        var (exit, output) = Run(line);
+
+        exit.ShouldBe(1);
+        output.ShouldContain("Optional logger or NullLogger fallback");
+    }
+
+    [Fact(Skip = "Practice script runs on Linux only", SkipUnless = nameof(RunsHere), SkipType = typeof(PracticeRuleTests))]
+    public void ARequiredTypedLoggerPasses()
+    {
+        var (exit, _) = Run("public Sample(ILogger<Sample> logger) { }");
+
+        exit.ShouldBe(0);
+    }
+
+    [Theory(Skip = "Practice script runs on Linux only", SkipUnless = nameof(RunsHere), SkipType = typeof(PracticeRuleTests))]
     [InlineData("_log.Attempt(page, 1);")]
     [InlineData("_log.SignedOut();")]
     [InlineData("var factory = logs.CreateLogger(\"Session.SignIn\");")]

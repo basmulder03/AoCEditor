@@ -2,15 +2,13 @@ using System.Globalization;
 using System.Reflection;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 
 namespace AoCEditor.Infrastructure.Storage;
 
 public static class Migrator
 {
-    public static async Task ApplyAsync(SqliteConnection connection, IReadOnlyList<Migration> migrations, CancellationToken ct, ILogger? logger = null)
+    public static async Task ApplyAsync(SqliteConnection connection, IReadOnlyList<Migration> migrations, ILogger log, CancellationToken ct)
     {
-        var log = logger ?? NullLogger.Instance;
         await Run(connection, null, "CREATE TABLE IF NOT EXISTS schema_migrations (version INTEGER NOT NULL PRIMARY KEY, applied_at INTEGER NOT NULL)", ct);
         var applied = new HashSet<int>();
         await using (var cmd = connection.CreateCommand())

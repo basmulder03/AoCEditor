@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging.Abstractions;
 using System.Net;
 using AoCEditor.Core.Gateway;
 using AoCEditor.Infrastructure.Gateway;
@@ -18,7 +19,7 @@ public sealed class AocGatewayTests : IDisposable
 
     public void Dispose() => _handler.Dispose();
 
-    private AocGateway Create(string? token = "secret") => new(_handler, new FakeTokens(token), _cache, new GatewayOptions { InteractiveInterval = TimeSpan.FromSeconds(5) }, _time);
+    private AocGateway Create(string? token = "secret") => new(_handler, new FakeTokens(token), _cache, NullLogger<AocGateway>.Instance, new GatewayOptions { InteractiveInterval = TimeSpan.FromSeconds(5) }, _time);
 
     [Fact]
     public async Task RequestIdentifiesTheAppAndCarriesTheSessionCookie()
@@ -213,7 +214,7 @@ public sealed class AocGatewayTests : IDisposable
     [Fact]
     public async Task ALowerConfiguredStatisticsSpacingIsRaisedToThreeMinutes()
     {
-        using var gateway = new AocGateway(_handler, new FakeTokens("secret"), _cache, new GatewayOptions { StatisticsInterval = TimeSpan.FromSeconds(10) }, _time);
+        using var gateway = new AocGateway(_handler, new FakeTokens("secret"), _cache, NullLogger<AocGateway>.Instance, new GatewayOptions { StatisticsInterval = TimeSpan.FromSeconds(10) }, _time);
         await gateway.GetAsync("/events", RequestKind.Statistics, FetchPolicy.Refresh, Ct);
 
         var second = gateway.GetAsync("/2024", RequestKind.Statistics, FetchPolicy.Refresh, Ct);
@@ -228,7 +229,7 @@ public sealed class AocGatewayTests : IDisposable
     [Fact]
     public async Task ALowerConfiguredInteractiveSpacingIsRaisedToOneSecond()
     {
-        using var gateway = new AocGateway(_handler, new FakeTokens("secret"), _cache, new GatewayOptions { InteractiveInterval = TimeSpan.Zero }, _time);
+        using var gateway = new AocGateway(_handler, new FakeTokens("secret"), _cache, NullLogger<AocGateway>.Instance, new GatewayOptions { InteractiveInterval = TimeSpan.Zero }, _time);
         await gateway.GetAsync("/a", RequestKind.Interactive, FetchPolicy.Refresh, Ct);
 
         var second = gateway.GetAsync("/b", RequestKind.Interactive, FetchPolicy.Refresh, Ct);

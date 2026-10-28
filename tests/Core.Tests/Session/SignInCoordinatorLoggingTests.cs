@@ -9,11 +9,11 @@ namespace AoCEditor.Core.Tests.Session;
 public sealed class SignInCoordinatorLoggingTests
 {
     private const string Token = "0123abcdef-secret";
-    private readonly CapturingLogger _log = new();
+    private readonly CapturingLogger<SignInCoordinator> _log = new();
     private readonly FakeGateway _gateway = new();
     private static CancellationToken Ct => TestContext.Current.CancellationToken;
 
-    private SignInCoordinator Create() => new(new SessionTokenProvider(new FakeSecretStore()), _gateway, null, null, null, _log);
+    private SignInCoordinator Create() => new(new SessionTokenProvider(new FakeSecretStore()), _gateway, _log);
 
     [Fact]
     public async Task UnsupportedBrowserIsLoggedWithItsReason()

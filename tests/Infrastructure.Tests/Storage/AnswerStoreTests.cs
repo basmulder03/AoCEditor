@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging.Abstractions;
 using AoCEditor.Infrastructure.Storage;
 using Shared.Contracts;
 using Shouldly;
@@ -11,7 +12,7 @@ public class AnswerStoreTests
 
     private static readonly DateTimeOffset T0 = new(2026, 12, 3, 10, 0, 0, TimeSpan.Zero);
 
-    private static SqliteAnswerStore Create(TempDir temp) => new(new SqliteConnectionFactory(new AppDataPaths(temp.Path)));
+    private static SqliteAnswerStore Create(TempDir temp) => new(new SqliteConnectionFactory(new AppDataPaths(temp.Path), NullLogger<SqliteConnectionFactory>.Instance));
 
     [Fact]
     public async Task AttemptsComeBackOldestFirstPerPuzzlePart()

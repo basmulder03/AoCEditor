@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging.Abstractions;
 using AoCEditor.Core.Session.Application;
 using Microsoft.Extensions.Time.Testing;
 using Shared.Contracts;
@@ -18,7 +19,7 @@ public sealed class SignInCoordinatorTests
     public SignInCoordinatorTests() => _tokens = new SessionTokenProvider(_store);
 
     private SignInCoordinator Create(FakeSecretStore? store = null) =>
-        new(store is null ? _tokens : new SessionTokenProvider(store), _gateway, () => _profileCleared = true);
+        new(store is null ? _tokens : new SessionTokenProvider(store), _gateway, NullLogger<SignInCoordinator>.Instance, () => _profileCleared = true);
 
     [Fact]
     public async Task BrowserTokenThatTheSiteAcceptsIsSaved()
@@ -71,7 +72,7 @@ public sealed class SignInCoordinatorTests
     {
         var time = new FakeTimeProvider();
         var browser = new FakeBrowser(new BrowserOutcome.Cancelled()) { WaitsForCancel = true };
-        var coordinator = new SignInCoordinator(_tokens, _gateway, null, time, TimeSpan.FromMinutes(10));
+        var coordinator = new SignInCoordinator(_tokens, _gateway, NullLogger<SignInCoordinator>.Instance, null, time, TimeSpan.FromMinutes(10));
 
         var pending = coordinator.SignInWithBrowserAsync(browser, Ct);
         while (!browser.Opened)

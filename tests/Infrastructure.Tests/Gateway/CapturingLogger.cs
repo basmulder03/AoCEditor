@@ -3,7 +3,7 @@ using Shared.Contracts;
 
 namespace AoCEditor.Infrastructure.Tests.Gateway;
 
-internal sealed class CapturingLogger : Microsoft.Extensions.Logging.ILogger
+internal sealed class CapturingLogger<T> : Microsoft.Extensions.Logging.ILogger<T>
 {
     public List<string> Lines { get; } = [];
 

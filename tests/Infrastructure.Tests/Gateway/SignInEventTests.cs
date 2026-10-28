@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging.Abstractions;
 using System.Net;
 using AoCEditor.Core.Gateway;
 using AoCEditor.Infrastructure.Gateway;
@@ -18,7 +19,7 @@ public sealed class SignInEventTests : IDisposable
     public void Dispose() => _handler.Dispose();
 
     private AocGateway Create(string? token = "secret") =>
-        new(_handler, new FakeTokens(token), new MemoryCache(), new GatewayOptions { InteractiveInterval = TimeSpan.FromSeconds(1) }, _time, _events);
+        new(_handler, new FakeTokens(token), new MemoryCache(), NullLogger<AocGateway>.Instance, new GatewayOptions { InteractiveInterval = TimeSpan.FromSeconds(1) }, _time, _events);
 
     [Fact]
     public async Task RejectedTokenAsksForSignIn()

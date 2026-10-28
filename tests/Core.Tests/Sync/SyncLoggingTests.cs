@@ -16,7 +16,7 @@ public class SyncLoggingTests
         var gateway = new FakeGateway();
         gateway.Pages["/events"] = new GatewayResult.Ok(Html.Events("/2024"));
         gateway.Pages["/2024"] = new GatewayResult.NetworkError("HTTP 500");
-        var log = new CapturingLogger();
+        var log = new CapturingLogger<SyncService>();
         var service = new SyncService(gateway, new MemoryStore(), new FakeTimeProvider(), log);
 
         var summary = await service.SyncAllAsync([], new Progress<SyncProgress>(), Ct);
@@ -30,7 +30,7 @@ public class SyncLoggingTests
     {
         var gateway = new FakeGateway();
         gateway.Pages["/events"] = new GatewayResult.NetworkError("NameResolutionError");
-        var log = new CapturingLogger();
+        var log = new CapturingLogger<SyncService>();
 
         await new SyncService(gateway, new MemoryStore(), new FakeTimeProvider(), log).SyncAllAsync([], new Progress<SyncProgress>(), Ct);
 

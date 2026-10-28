@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging.Abstractions;
 using AoCEditor.Infrastructure.Storage;
 using Shared.Contracts;
 using Shouldly;
@@ -9,7 +10,7 @@ public class SyncStateStoreTests
 {
     private static CancellationToken Ct => TestContext.Current.CancellationToken;
 
-    private static SqliteSyncStateStore Create(TempDir temp) => new(new SqliteConnectionFactory(new AppDataPaths(temp.Path)));
+    private static SqliteSyncStateStore Create(TempDir temp) => new(new SqliteConnectionFactory(new AppDataPaths(temp.Path), NullLogger<SqliteConnectionFactory>.Instance));
 
     [Fact]
     public async Task ReplacingAYearKeepsOnlyTheNewDaysAndRemembersWhenItWasSynced()

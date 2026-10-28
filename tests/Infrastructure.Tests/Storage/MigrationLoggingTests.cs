@@ -7,7 +7,7 @@ namespace AoCEditor.Infrastructure.Tests.Storage;
 
 public class MigrationLoggingTests
 {
-    private sealed class Capture : Microsoft.Extensions.Logging.ILogger
+    private sealed class Capture : Microsoft.Extensions.Logging.ILogger<SqliteConnectionFactory>
     {
         public List<string> Lines { get; } = [];
 
@@ -39,7 +39,7 @@ public class MigrationLoggingTests
         await using var conn = new SqliteConnection("Data Source=:memory:");
         await conn.OpenAsync(TestContext.Current.CancellationToken);
 
-        await Should.ThrowAsync<SqliteException>(() => Migrator.ApplyAsync(conn, [new Migration(1, "NOT SQL")], TestContext.Current.CancellationToken, log));
+        await Should.ThrowAsync<SqliteException>(() => Migrator.ApplyAsync(conn, [new Migration(1, "NOT SQL")], log, TestContext.Current.CancellationToken));
 
         log.Lines.ShouldContain(l => l.StartsWith("Error Migration 1 failed", StringComparison.Ordinal));
     }

@@ -1,13 +1,11 @@
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using Shared.Contracts;
 
 namespace AoCEditor.Infrastructure.Storage;
 
-public sealed class SqliteConnectionFactory(IAppDataPaths paths, ILogger? logger = null) : IConnectionFactory
+public sealed class SqliteConnectionFactory(IAppDataPaths paths, ILogger<SqliteConnectionFactory> log) : IConnectionFactory
 {
-    private readonly ILogger _log = logger ?? NullLogger.Instance;
 
     public async Task<SqliteConnection> OpenAsync(CancellationToken ct)
     {
@@ -18,12 +16,12 @@ public sealed class SqliteConnectionFactory(IAppDataPaths paths, ILogger? logger
             await using var pragma = connection.CreateCommand();
             pragma.CommandText = "PRAGMA journal_mode=WAL; PRAGMA foreign_keys=ON;";
             await pragma.ExecuteNonQueryAsync(ct);
-            await Migrator.ApplyAsync(connection, Migrator.Embedded(), ct, _log);
+            await Migrator.ApplyAsync(connection, Migrator.Embedded(), log, ct);
             return connection;
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
-            _log.OpenFailed(ex.Message);
+            log.OpenFailed(ex.Message);
             await connection.DisposeAsync();
             throw;
         }

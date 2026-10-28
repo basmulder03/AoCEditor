@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging.Abstractions;
 using System.Net;
 using AoCEditor.Core.Gateway;
 using AoCEditor.Core.Session.Application;
@@ -25,8 +26,8 @@ public sealed class SignInDriver : IDisposable
     public SignInDriver()
     {
         _tokens = new SessionTokenProvider(_store);
-        _gateway = new AocGateway(_handler, _tokens, new NoCache(), new GatewayOptions { InteractiveInterval = TimeSpan.FromSeconds(1) }, _time, _events);
-        _coordinator = new SignInCoordinator(_tokens, _gateway, () => ProfileCleared = true, _time, TimeSpan.FromMinutes(10));
+        _gateway = new AocGateway(_handler, _tokens, new NoCache(), NullLogger<AocGateway>.Instance, new GatewayOptions { InteractiveInterval = TimeSpan.FromSeconds(1) }, _time, _events);
+        _coordinator = new SignInCoordinator(_tokens, _gateway, NullLogger<SignInCoordinator>.Instance, () => ProfileCleared = true, _time, TimeSpan.FromMinutes(10));
         _events.SignInRequired += (_, _) => _prompts++;
     }
 

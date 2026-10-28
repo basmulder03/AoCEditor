@@ -5,7 +5,6 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform;
 using Avalonia.Threading;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 
 namespace AoCEditor.UI.Session;
 
@@ -13,9 +12,9 @@ namespace AoCEditor.UI.Session;
 /// Signs in through the site's own login page in an embedded browser and reads the HttpOnly session cookie from its cookie store.
 /// The profile folder keeps provider logins between sign-ins.
 /// </summary>
-public sealed class WebViewSignInBrowser(Uri loginUrl, string profileFolder, ILogger? logger = null) : ISignInBrowser
+public sealed class WebViewSignInBrowser(Uri loginUrl, string profileFolder, ILogger<WebViewSignInBrowser> log) : ISignInBrowser
 {
-    private readonly ILogger _log = logger ?? NullLogger.Instance;
+    private readonly ILogger _log = log;
     private readonly string _loginPage = SignInPage.HostAndPath(loginUrl);
     private const string CookieName = "session";
     private const string NoCookieAccess = "The embedded browser on this system does not give access to its cookies, so the session cannot be read from it.";

@@ -17,6 +17,7 @@ check "Reflection that breaks AoT" 'Activator\.CreateInstance|Assembly\.Load|Typ
 check "ADR or issue references in comments" '//.*(ADR[ -]?[0-9]+|#[0-9]{1,4}\b)'
 check "Swallowed exceptions" 'catch\s*(\([^)]*\))?\s*\{\s*\}'
 check "Logging calls or log parameters named like secrets" '\b_?(log|logger)\.[A-Za-z]+\(.*(token|cookie|secret|password|session)|partial void [A-Za-z]+\(.*(token|cookie|secret|password|session)' -i
+check "Optional logger or NullLogger fallback (take a required ILogger<T>)" 'ILogger(<[^>]*>)?\? |NullLogger(<[^>]*>)?\.Instance'
 # One top-level type per file, named after the file. Top level = least-indented declaration in the file.
 mods='((public|internal|private|protected|static|sealed|abstract|partial|readonly|unsafe|file|ref|new)[ \t]+)*'
 out=$(for r in ${CHECK_ROOT:-src tests}; do find "$r" -name '*.cs' ! -name '*.g.cs' ! -name '*.feature.cs' ! -path '*/obj/*' ! -path '*/bin/*' 2>/dev/null; done | sort | while read -r f; do

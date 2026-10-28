@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging.Abstractions;
 using AoCEditor.Core.Sync.Application;
 using AoCEditor.Core.Sync.Domain;
 using Microsoft.Extensions.Time.Testing;
@@ -48,7 +49,7 @@ public sealed class CalendarSyncDriver
     {
         var events = string.Concat(_years.OrderDescending().Select(y => $"<div class=\"eventlist-event\"><a href=\"/{y}\">[{y}]</a></div>"));
         _pages["/events"] = new GatewayResult.Ok(events);
-        Summary = await new SyncService(_gateway, _store, _time).SyncAllAsync([], new Progress<SyncProgress>(), CancellationToken.None);
+        Summary = await new SyncService(_gateway, _store, _time, NullLogger<SyncService>.Instance).SyncAllAsync([], new Progress<SyncProgress>(), CancellationToken.None);
     }
 
     public DayState StateOf(int year, int day) =>

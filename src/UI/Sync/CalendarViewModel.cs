@@ -2,7 +2,6 @@ using System.Globalization;
 using AoCEditor.Core.Sync.Application;
 using AoCEditor.Core.Sync.Domain;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using Shared;
 using Shared.Contracts;
 
@@ -35,12 +34,12 @@ public sealed class CalendarViewModel : ObservableBase, IDisposable
     private IReadOnlyList<string> _errorLines = [];
     private bool _needsSignIn;
 
-    public CalendarViewModel(SyncService sync, ISyncStateStore store, TimeProvider time, ILogger? logger = null)
+    public CalendarViewModel(SyncService sync, ISyncStateStore store, TimeProvider time, ILogger<CalendarViewModel> logger)
     {
         _sync = sync;
         _store = store;
         _time = time;
-        _log = logger ?? NullLogger.Instance;
+        _log = logger;
     }
 
     public event EventHandler<DaySelectedEventArgs>? DaySelected;

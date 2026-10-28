@@ -39,7 +39,7 @@ public static class AppServiceRegistration
 
     private static IServiceCollection AddStorage(this IServiceCollection services) => services
         .AddSingleton<IConnectionFactory>(sp => new SqliteConnectionFactory(
-            sp.GetRequiredService<IAppDataPaths>(), sp.GetRequiredService<ILoggerFactory>().CreateLogger("Storage.Connection")))
+            sp.GetRequiredService<IAppDataPaths>(), sp.GetRequiredService<ILogger<SqliteConnectionFactory>>()))
         .AddSingleton<ISyncStateStore>(sp => new SqliteSyncStateStore(sp.GetRequiredService<IConnectionFactory>()))
         .AddSingleton<IAnswerStore>(sp => new SqliteAnswerStore(sp.GetRequiredService<IConnectionFactory>()))
         .AddSingleton<IKeyValueStore>(sp => new SqliteKeyValueStore(sp.GetRequiredService<IConnectionFactory>()))
@@ -51,22 +51,22 @@ public static class AppServiceRegistration
         .AddSingleton<AocGateway>(sp => new AocGateway(
             sp.GetRequiredService<SessionTokenProvider>(),
             new FileResponseCache(sp.GetRequiredService<IAppDataPaths>().Cache),
+            sp.GetRequiredService<ILogger<AocGateway>>(),
             events: sp.GetRequiredService<SessionEvents>(),
-            logger: sp.GetRequiredService<ILoggerFactory>().CreateLogger("Gateway.AocGateway"),
             requests: sp.GetRequiredService<RequestLog>()))
         .AddSingleton<IAocGateway>(sp => sp.GetRequiredService<AocGateway>())
         .AddSingleton(sp => new WebViewSignInBrowser(
             new Uri(new GatewayOptions().BaseAddress, "auth/login"),
             Path.Combine(sp.GetRequiredService<IAppDataPaths>().Root, "webview"),
-            sp.GetRequiredService<ILoggerFactory>().CreateLogger("Session.WebView")))
+            sp.GetRequiredService<ILogger<WebViewSignInBrowser>>()))
         .AddSingleton(sp =>
         {
             var browser = sp.GetRequiredService<WebViewSignInBrowser>();
             return new SignInCoordinator(
                 sp.GetRequiredService<SessionTokenProvider>(),
                 sp.GetRequiredService<IAocGateway>(),
-                () => browser.TryClearProfile(),
-                logger: sp.GetRequiredService<ILoggerFactory>().CreateLogger("Session.SignIn"));
+                sp.GetRequiredService<ILogger<SignInCoordinator>>(),
+                () => browser.TryClearProfile());
         });
 
     private static IServiceCollection AddSlices(this IServiceCollection services) => services
@@ -74,7 +74,7 @@ public static class AppServiceRegistration
             sp.GetRequiredService<IAocGateway>(),
             sp.GetRequiredService<ISyncStateStore>(),
             sp.GetRequiredService<TimeProvider>(),
-            sp.GetRequiredService<ILoggerFactory>().CreateLogger("Sync.SyncService")))
+            sp.GetRequiredService<ILogger<SyncService>>()))
         .AddSingleton(sp => new PuzzleService(sp.GetRequiredService<IAocGateway>(), sp.GetRequiredService<IAnswerStore>(), sp.GetRequiredService<TimeProvider>()))
         .AddSingleton(sp => new WorkspaceService(sp.GetRequiredService<IKeyValueStore>(), sp.GetRequiredService<IAppDataPaths>()))
         .AddSingleton<IReadOnlyList<PluginManifest>>(_ => BuiltInPlugins.Load())

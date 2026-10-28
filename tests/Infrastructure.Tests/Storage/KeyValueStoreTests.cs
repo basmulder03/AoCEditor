@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging.Abstractions;
 using AoCEditor.Infrastructure.Storage;
 using Shouldly;
 using Xunit;
@@ -12,7 +13,7 @@ public class KeyValueStoreTests
     public async Task ValuesRoundTripAndOverwrite()
     {
         using var temp = new TempDir();
-        var store = new SqliteKeyValueStore(new SqliteConnectionFactory(new AppDataPaths(temp.Path)));
+        var store = new SqliteKeyValueStore(new SqliteConnectionFactory(new AppDataPaths(temp.Path), NullLogger<SqliteConnectionFactory>.Instance));
 
         (await store.GetAsync("a", Ct)).ShouldBeNull();
         await store.SetAsync("a", "1", Ct);
@@ -27,7 +28,7 @@ public class KeyValueStoreTests
         using var temp = new TempDir();
         var paths = new AppDataPaths(temp.Path);
 
-        var status = await new SqliteStorageStatus(new SqliteConnectionFactory(paths), paths).GetAsync(Ct);
+        var status = await new SqliteStorageStatus(new SqliteConnectionFactory(paths, NullLogger<SqliteConnectionFactory>.Instance), paths).GetAsync(Ct);
 
         status.SchemaVersion.ShouldBe(2);
         status.MigrationsApplied.ShouldBe(2);
@@ -42,7 +43,7 @@ public class KeyValueStoreTests
         var paths = new AppDataPaths(temp.Path);
         await File.WriteAllTextAsync(paths.Database, "this is not a database, just text padded to be long enough to look wrong" + new string('x', 300), Ct);
 
-        var status = await new SqliteStorageStatus(new SqliteConnectionFactory(paths), paths).GetAsync(Ct);
+        var status = await new SqliteStorageStatus(new SqliteConnectionFactory(paths, NullLogger<SqliteConnectionFactory>.Instance), paths).GetAsync(Ct);
 
         status.Error.ShouldNotBeNullOrEmpty();
     }

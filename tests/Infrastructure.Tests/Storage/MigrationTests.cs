@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging.Abstractions;
 using AoCEditor.Infrastructure.Storage;
 using Microsoft.Data.Sqlite;
 using Shouldly;
@@ -25,7 +26,7 @@ public class MigrationTests
     public async Task OpeningTwiceAppliesTheEmbeddedMigrationsOnceAndConfiguresTheConnection()
     {
         using var temp = new TempDir();
-        var factory = new SqliteConnectionFactory(new AppDataPaths(temp.Path));
+        var factory = new SqliteConnectionFactory(new AppDataPaths(temp.Path), NullLogger<SqliteConnectionFactory>.Instance);
         var ct = TestContext.Current.CancellationToken;
 
         await using (await factory.OpenAsync(ct)) { }
@@ -51,11 +52,11 @@ public class MigrationTests
         var ok = new Migration(1, "CREATE TABLE a(x INTEGER);");
         var bad = new Migration(2, "CREATE TABLE b(x INTEGER); INSERT INTO nope VALUES (1);");
 
-        await Should.ThrowAsync<SqliteException>(() => Migrator.ApplyAsync(conn, [ok, bad], ct));
+        await Should.ThrowAsync<SqliteException>(() => Migrator.ApplyAsync(conn, [ok, bad], NullLogger.Instance, ct));
 
         (await Scalar(conn, "SELECT COUNT(*) FROM schema_migrations")).ShouldBe(1);
         (await Scalar(conn, "SELECT COUNT(*) FROM sqlite_master WHERE name='b'")).ShouldBe(0);
-        await Migrator.ApplyAsync(conn, [ok], ct);
+        await Migrator.ApplyAsync(conn, [ok], NullLogger.Instance, ct);
         (await Scalar(conn, "SELECT COUNT(*) FROM schema_migrations")).ShouldBe(1);
     }
 

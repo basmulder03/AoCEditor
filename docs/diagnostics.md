@@ -12,6 +12,10 @@ Logging uses standard `ILoggerProvider`s, registered by `AddDiagnostics` (`src/A
 
 The minimum level is a filter callback that reads debug mode on every call: Information normally, Debug while debug mode is on.
 
+## Getting a logger
+
+Every class that logs takes a required `ILogger<T>` (T = the class) constructor parameter, resolved from the container by `AppServiceRegistration`. There is no optional logger and no `NullLogger` fallback in `src/`; `scripts/check-practices.sh` flags `ILogger? ` and `NullLogger.Instance`. Tests pass `NullLogger<T>.Instance` or a capturing `ILogger<T>`. The category is the full type name, and the log source shown on the Debug page is its slice segment (`AoCEditor.Core.Sync.Application.SyncService` gives `Sync`). `Migrator` is static, so it takes a plain `ILogger` from its caller and logs under the caller's category.
+
 ## Redaction
 
 `Redactor` removes before anything is stored or shown: values of `session=`, `token=` and `cookie=` pairs, whole `Cookie`, `Set-Cookie` and `Authorization` header lines, JSON `"session"`/`"token"`/`"cookie"` values, hex strings of 32 or more characters, and the home folder (replaced by `~`, either slash style). Gateway requests are logged as method, path, status and timing only. Sign-in navigation is logged as host and path only (no query or fragment).

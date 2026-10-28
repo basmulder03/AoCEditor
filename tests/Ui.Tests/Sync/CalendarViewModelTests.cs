@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging.Abstractions;
 using AoCEditor.Core.Sync.Application;
 using AoCEditor.UI.Sync;
 using Microsoft.Extensions.Time.Testing;
@@ -12,9 +13,9 @@ public class CalendarViewModelTests
     private readonly FakeTimeProvider _time = new(new DateTimeOffset(2026, 10, 28, 12, 0, 0, TimeSpan.Zero));
     private readonly FakeGateway _gateway = new();
     private readonly MemoryStore _store = new();
-    private readonly CapturingLogger _log = new();
+    private readonly CapturingLogger<CalendarViewModel> _log = new();
 
-    private CalendarViewModel Create() => new(new SyncService(_gateway, _store, _time), _store, _time, _log);
+    private CalendarViewModel Create() => new(new SyncService(_gateway, _store, _time, NullLogger<SyncService>.Instance), _store, _time, _log);
 
     private static List<SyncedDay> Days(int count, params (int Day, int Stars)[] stars) =>
         [.. Enumerable.Range(1, count).Select(d => new SyncedDay(d, stars.FirstOrDefault(s => s.Day == d).Stars))];

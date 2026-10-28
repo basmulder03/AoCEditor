@@ -2,7 +2,7 @@ using Shared.Contracts;
 
 namespace AoCEditor.UI.Tests.Sync;
 
-internal sealed class CapturingLogger : Microsoft.Extensions.Logging.ILogger
+internal sealed class CapturingLogger<T> : Microsoft.Extensions.Logging.ILogger<T>
 {
     public List<string> Lines { get; } = [];
 

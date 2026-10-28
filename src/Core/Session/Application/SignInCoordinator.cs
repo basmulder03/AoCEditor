@@ -1,5 +1,4 @@
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using Shared.Contracts;
 
 namespace AoCEditor.Core.Session.Application;
@@ -8,12 +7,12 @@ namespace AoCEditor.Core.Session.Application;
 public sealed class SignInCoordinator(
     SessionTokenProvider tokens,
     IAocGateway gateway,
+    ILogger<SignInCoordinator> log,
     Action? clearBrowserProfile = null,
     TimeProvider? time = null,
-    TimeSpan? browserTimeout = null,
-    ILogger? logger = null)
+    TimeSpan? browserTimeout = null)
 {
-    private readonly ILogger _log = logger ?? NullLogger.Instance;
+    private readonly ILogger _log = log;
 
     public static readonly TimeSpan DefaultBrowserTimeout = TimeSpan.FromMinutes(10);
 

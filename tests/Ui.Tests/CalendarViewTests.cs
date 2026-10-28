@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging.Abstractions;
 using AoCEditor.Core.Sync.Application;
 using AoCEditor.UI.Sync;
 using Avalonia.Automation;
@@ -18,7 +19,7 @@ public class CalendarViewTests
     {
         var time = new FakeTimeProvider(new DateTimeOffset(year, 12, 3, 12, 0, 0, TimeSpan.Zero));
         var store = new Store(year, days);
-        var model = new CalendarViewModel(new SyncService(new Gateway(), store, time), store, time);
+        var model = new CalendarViewModel(new SyncService(new Gateway(), store, time, NullLogger<SyncService>.Instance), store, time, NullLogger<CalendarViewModel>.Instance);
         await model.LoadAsync(CancellationToken.None);
         var view = new CalendarView { DataContext = model };
         var window = new Window { Content = view, Width = 800, Height = 700 };

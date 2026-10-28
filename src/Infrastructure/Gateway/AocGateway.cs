@@ -2,7 +2,6 @@ using System.Net;
 using System.Net.Http.Headers;
 using AoCEditor.Core.Gateway;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using Shared;
 using Shared.Contracts;
 
@@ -23,14 +22,14 @@ public sealed class AocGateway : IAocGateway, IDisposable
     private readonly IRequestLog? _requests;
     private long? _lastPrompt;
 
-    public AocGateway(ISessionTokenProvider tokens, IResponseCache cache, GatewayOptions? options = null, TimeProvider? time = null, ISessionEvents? events = null, ILogger? logger = null, IRequestLog? requests = null)
-        : this(new SocketsHttpHandler { AllowAutoRedirect = false, UseCookies = false }, tokens, cache, options, time, events, logger, requests)
+    public AocGateway(ISessionTokenProvider tokens, IResponseCache cache, ILogger<AocGateway> logger, GatewayOptions? options = null, TimeProvider? time = null, ISessionEvents? events = null, IRequestLog? requests = null)
+        : this(new SocketsHttpHandler { AllowAutoRedirect = false, UseCookies = false }, tokens, cache, logger, options, time, events, requests)
     {
     }
 
-    public AocGateway(HttpMessageHandler handler, ISessionTokenProvider tokens, IResponseCache cache, GatewayOptions? options = null, TimeProvider? time = null, ISessionEvents? events = null, ILogger? logger = null, IRequestLog? requests = null)
+    public AocGateway(HttpMessageHandler handler, ISessionTokenProvider tokens, IResponseCache cache, ILogger<AocGateway> logger, GatewayOptions? options = null, TimeProvider? time = null, ISessionEvents? events = null, IRequestLog? requests = null)
     {
-        _log = logger ?? NullLogger.Instance;
+        _log = logger;
         _requests = requests;
         _events = events;
         _options = options ?? new GatewayOptions();
