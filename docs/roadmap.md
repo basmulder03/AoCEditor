@@ -1,6 +1,6 @@
 # Roadmap
 
-Issues are the source of truth; this page is a snapshot. Hierarchy: Epic > Feature > Story/Task/Spike (GitHub sub-issues). Order is enforced with `blocked by` links.
+Snapshot of the GitHub issues, which are the source of truth. Hierarchy: Epic > Feature > Story/Task/Spike (sub-issues); ordering uses `blocked by` links. Closed items are checked.
 
 | Milestone | Epics |
 |---|---|
@@ -13,87 +13,100 @@ Issues are the source of truth; this page is a snapshot. Hierarchy: Epic > Featu
 | M7 Integrations | #8 |
 | M8 Distribution and release | #9 |
 
-## Foundation: solution, tests, CI, design system (#1, MUST)
+## Foundation: solution, tests, CI, design system
 
-- [MUST] #10 Solution scaffold with vertical slices and AoT build
-  - SPIKE #49 Spike: Avalonia AoT plus AvaloniaEdit compatibility
-  - TASK #64 Create the .NET 10 solution and project structure
-  - TASK #65 Add LICENSE headers policy, editorconfig and analyzers
-- [MUST] #11 Test infrastructure: xUnit v3, Reqnroll, E2E harness
-- [MUST] #12 CI: build and test matrix on Linux and Windows
-- [SHOULD] #13 DocFX documentation skeleton
-  - SPIKE #55 Spike: DocFX publish to gh-pages
-- [MUST] #14 Design system and app shell
-  - STORY #63 High-contrast theme and keyboard-only navigation
-- [SHOULD] #66 Issue and PR templates enforcing type and MoSCoW labels
-- [MUST] #67 Add GitHub Project Kanban board and automation
+- [ ] FEATURE #10 [MUST] Solution scaffold with vertical slices and AoT build
+  - [x] SPIKE #49 [MUST] Spike: Avalonia AoT plus AvaloniaEdit compatibility
+  - [x] TASK #64 [MUST] Create the .NET 10 solution and project structure
+  - [x] TASK #65 [MUST] Add LICENSE headers policy, editorconfig and analyzers
+- [x] FEATURE #11 [MUST] Test infrastructure: xUnit v3, Reqnroll, E2E harness
+- [x] FEATURE #12 [MUST] CI: build and test matrix on Linux and Windows
+- [x] FEATURE #13 [SHOULD] DocFX documentation skeleton
+  - [ ] SPIKE #55 [SHOULD] Spike: DocFX publish to gh-pages
+- [x] FEATURE #14 [MUST] Design system and app shell
+  - [ ] STORY #63 [SHOULD] High-contrast theme and keyboard-only navigation
+- [x] TASK #66 [SHOULD] Issue and PR templates enforcing type and MoSCoW labels
+- [ ] TASK #67 [MUST] Add GitHub Project Kanban board and automation
 
-## AoC access: gateway, sign-in, storage, sync (#2, MUST)
+## AoC access: gateway, sign-in, storage, sync
 
-- [MUST] #15 AoC gateway: single ToS-enforcing HttpClient
-  - STORY #56 Identify the app to AoC with a contact User-Agent
-  - STORY #57 Throttle and serialize AoC requests
-  - STORY #58 Cache-first fetch
-- [MUST] #16 Sign-in via WebView and token capture
-  - SPIKE #50 Spike: reading the session cookie from NativeWebView
-  - STORY #59 Detect expired session and trigger sign-in
-- [MUST] #17 OS secret store for session token
-- [MUST] #18 Local storage and SQLite database
-  - SPIKE #51 Spike: AoT-safe SQLite provider
-- [MUST] #19 Manual calendar sync
+- [x] FEATURE #15 [MUST] AoC gateway: single ToS-enforcing HttpClient
+  - [x] STORY #56 [MUST] Identify the app to AoC with a contact User-Agent
+  - [x] STORY #57 [MUST] Throttle and serialize AoC requests
+  - [x] STORY #58 [MUST] Cache-first fetch
+- [ ] FEATURE #16 [MUST] Sign-in via WebView and token capture
+  - [x] SPIKE #50 [MUST] Spike: reading the session cookie from NativeWebView
+  - [ ] STORY #59 [MUST] Detect expired session and trigger sign-in
+- [x] FEATURE #17 [MUST] OS secret store for session token
+- [x] FEATURE #18 [MUST] Local storage and SQLite database
+  - [x] SPIKE #51 [MUST] Spike: AoT-safe SQLite provider
+- [x] FEATURE #19 [MUST] Manual calendar sync
 
-## Calendar views (#3, MUST)
+## Calendar views
 
-- [MUST] #20 Year calendar view
-  - STORY #60 Show which days are completed, partial or locked
-- [MUST] #21 Year switcher
+- [ ] FEATURE #20 [MUST] Year calendar view
+  - [ ] STORY #60 [MUST] Show which days are completed, partial or locked
+- [ ] FEATURE #21 [MUST] Year switcher
 
-## Day workspace: puzzle, input, console, submit (#4, MUST)
+## Day workspace: puzzle, input, console, submit
 
-- [MUST] #22 Day page split layout
-- [MUST] #23 Native puzzle rendering with part tabs
-  - SPIKE #52 Spike: HTML to native puzzle rendering
-- [MUST] #24 Puzzle input tab
-- [MUST] #25 Console output panel
-- [MUST] #26 Answer submission with cooldown tracking
-  - STORY #61 Show submission cooldown countdown
-  - STORY #62 Store correct answers locally
+- [ ] FEATURE #22 [MUST] Day page split layout
+- [ ] FEATURE #23 [MUST] Native puzzle rendering with part tabs
+  - [ ] SPIKE #52 [MUST] Spike: HTML to native puzzle rendering
+- [ ] FEATURE #24 [MUST] Puzzle input tab
+- [ ] FEATURE #25 [MUST] Console output panel
+- [ ] FEATURE #26 [MUST] Answer submission with cooldown tracking
+  - [ ] STORY #61 [MUST] Show submission cooldown countdown
+  - [ ] STORY #62 [MUST] Store correct answers locally
+- [ ] FEATURE #74 [SHOULD] Puzzle examples: select from the puzzle or create your own, with expected answers
+  - [ ] STORY #75 [SHOULD] Select text in the puzzle and save it as an example input
+  - [ ] STORY #76 [SHOULD] Create your own example with expected answers per part
+  - [ ] STORY #77 [SHOULD] Run against examples and show pass/fail per example and part
+  - [ ] STORY #78 [SHOULD] Manage examples: rename, edit, enable/disable, delete
+  - [ ] STORY #79 [COULD] Suggest expected answers from the puzzle text
 
-## Languages, toolchains and sandboxed execution (#5, MUST)
+## Languages, toolchains and sandboxed execution
 
-- [MUST] #27 Language plugin model
-- [MUST] #28 Toolchain detection and provisioning
-- [MUST] #29 Linux sandboxed runner
-  - SPIKE #53 Spike: Landlock/seccomp from .NET AoT
-- [MUST] #30 Windows sandboxed runner
-  - SPIKE #54 Spike: Windows AppContainer vs restricted token
-- [MUST] #31 Python language plugin
-- [MUST] #32 .NET language plugin
-- [MUST] #33 Run lifecycle management
+- [ ] FEATURE #27 [MUST] Language plugin model
+- [ ] FEATURE #28 [MUST] Toolchain detection and provisioning
+- [ ] FEATURE #29 [MUST] Linux sandboxed runner
+  - [ ] SPIKE #53 [MUST] Spike: Landlock/seccomp from .NET AoT
+- [ ] FEATURE #30 [MUST] Windows sandboxed runner
+  - [ ] SPIKE #54 [SHOULD] Spike: Windows AppContainer vs restricted token
+- [ ] FEATURE #31 [MUST] Python language plugin
+- [ ] FEATURE #32 [MUST] .NET language plugin
+- [ ] FEATURE #33 [MUST] Run lifecycle management
 
-## Editor intelligence: LSP, debugging, terminal (#6, SHOULD)
+## Editor intelligence: LSP, debugging, terminal
 
-- [SHOULD] #34 Code editor control
-- [SHOULD] #35 LSP client
-- [SHOULD] #36 Debugging via DAP
-- [SHOULD] #37 Integrated terminal
+- [ ] FEATURE #34 [SHOULD] Code editor control
+- [ ] FEATURE #35 [SHOULD] LSP client
+- [ ] FEATURE #36 [SHOULD] Debugging via DAP
+- [ ] FEATURE #37 [SHOULD] Integrated terminal
 
-## Solutions workspace, Git and statistics (#7, SHOULD)
+## Solutions workspace, Git and statistics
 
-- [SHOULD] #38 Solutions workspace with multi-year layout and shared helpers
-- [SHOULD] #39 Git and gh integration with auto-commit
-- [SHOULD] #40 Performance tracking
-- [COULD] #41 Statistics markdown templating
+- [ ] FEATURE #38 [SHOULD] Solutions workspace with multi-year layout and shared helpers
+- [ ] FEATURE #39 [SHOULD] Git and gh integration with auto-commit
+- [ ] FEATURE #40 [SHOULD] Performance tracking
+- [ ] FEATURE #41 [COULD] Statistics markdown templating
+  - [ ] SECURITY #68 [SHOULD] Verify AoC policy on publishing puzzle titles in stats
+  - [ ] STORY #80 [SHOULD] Per-year table placeholder: all days with stars, language and time
+  - [ ] STORY #81 [SHOULD] All-years overview matrix across every year
+  - [ ] STORY #82 [SHOULD] Selectable icon sets for day states
+  - [ ] STORY #83 [SHOULD] Built-in README template gallery
+  - [ ] STORY #84 [COULD] Extra stats: per-language breakdown, streaks and totals
+  - [ ] STORY #85 [COULD] Generated badges and charts as images
 
-## Integrations: MCP, external IDE, issue reporting (#8, COULD)
+## Integrations: MCP, external IDE, issue reporting
 
-- [COULD] #42 MCP server
-- [COULD] #43 External IDE mode
-- [SHOULD] #44 In-app problem reporting
+- [ ] FEATURE #42 [COULD] MCP server
+- [ ] FEATURE #43 [COULD] External IDE mode
+- [ ] FEATURE #44 [SHOULD] In-app problem reporting
 
-## Distribution: installer, updates, releases, docs (#9, MUST)
+## Distribution: installer, updates, releases, docs
 
-- [MUST] #45 Velopack installer (per-user, unsigned)
-- [MUST] #46 In-place self-update
-- [MUST] #47 Release automation
-- [SHOULD] #48 Publish docs to gh-pages on release
+- [ ] FEATURE #45 [MUST] Velopack installer (per-user, unsigned)
+- [ ] FEATURE #46 [MUST] In-place self-update
+- [ ] FEATURE #47 [MUST] Release automation
+- [ ] FEATURE #48 [SHOULD] Publish docs to gh-pages on release
