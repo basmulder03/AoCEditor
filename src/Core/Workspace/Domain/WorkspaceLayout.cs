@@ -1,15 +1,14 @@
 using System.Globalization;
+using Shared;
 
 namespace AoCEditor.Core.Workspace.Domain;
 
 /// <summary>Where solutions live: <c>&lt;root&gt;/&lt;year&gt;/&lt;dd&gt;/&lt;language&gt;</c> and <c>&lt;root&gt;/shared/&lt;language&gt;</c>.</summary>
 public static class WorkspaceLayout
 {
-    public const int FirstYear = 2015;
-
     public static string DayFolder(string root, int year, int day, string language)
     {
-        ArgumentOutOfRangeException.ThrowIfLessThan(year, FirstYear);
+        ArgumentOutOfRangeException.ThrowIfLessThan(year, AocEvent.FirstYear);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(year, 9999);
         ArgumentOutOfRangeException.ThrowIfLessThan(day, 1);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(day, 25);

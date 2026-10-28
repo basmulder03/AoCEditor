@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
+using Shared;
 using Shared.Contracts;
 
 namespace AoCEditor.Core.Sync.Domain;
@@ -8,7 +9,6 @@ namespace AoCEditor.Core.Sync.Domain;
 public static partial class CalendarParser
 {
     private const int MaxDay = 25;
-    private static readonly TimeSpan EventOffset = TimeSpan.FromHours(-5);
 
     [GeneratedRegex(@"eventlist-event[^>]*>\s*<a\s[^>]*?href=""/(\d{4})?""[^>]*>", RegexOptions.CultureInvariant, matchTimeoutMilliseconds: 1000)]
     private static partial Regex EventLink();
@@ -25,7 +25,7 @@ public static partial class CalendarParser
     /// <summary>The newest event is linked as the home page, so its year comes from the clock.</summary>
     public static IReadOnlyList<int>? ParseEvents(string html, DateTimeOffset now)
     {
-        var local = now.ToOffset(EventOffset);
+        var local = now.ToOffset(AocEvent.UnlockOffset);
         var latest = local.Month == 12 ? local.Year : local.Year - 1;
         var years = EventLink().Matches(html)
             .Select(m => m.Groups[1].Success ? int.Parse(m.Groups[1].Value, CultureInfo.InvariantCulture) : latest)

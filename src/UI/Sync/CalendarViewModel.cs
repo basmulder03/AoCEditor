@@ -143,7 +143,7 @@ public sealed class CalendarViewModel : ObservableBase, IDisposable
     {
         var synced = await _store.SyncedYearsAsync(cancellationToken);
         var latest = Math.Max(CalendarRules.LatestEventYear(_time.GetUtcNow()), synced.DefaultIfEmpty().Max());
-        var years = Enumerable.Range(CalendarRules.FirstEventYear, latest - CalendarRules.FirstEventYear + 1).Union(synced).OrderDescending().ToList();
+        var years = Enumerable.Range(AocEvent.FirstYear, latest - AocEvent.FirstYear + 1).Union(synced).OrderDescending().ToList();
         if (!years.SequenceEqual(Years))
         {
             Years = years;
