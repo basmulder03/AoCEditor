@@ -10,7 +10,7 @@
     <EmbeddedResource Include="Plugins/BuiltIn/*.json" LogicalName="BuiltIn/%(Filename)%(Extension)" />
     <InternalsVisibleTo Include="AoCEditor.Core.Tests" />
     <InternalsVisibleTo Include="AoCEditor.UI" />
-    <InternalsVisibleTo Include="Ui.Tests" />
+    <InternalsVisibleTo Include="UI.Tests" />
     <InternalsVisibleTo Include="Specs" />
   </ItemGroup>
 </Project>

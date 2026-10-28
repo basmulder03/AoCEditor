@@ -15,7 +15,7 @@
     <PackageReference Include="Avalonia.Controls.WebView" />
     <ProjectReference Include="../Shared/Shared.csproj" />
     <ProjectReference Include="../Core/Core.csproj" />
-    <InternalsVisibleTo Include="Ui.Tests" />
+    <InternalsVisibleTo Include="UI.Tests" />
     <InternalsVisibleTo Include="AoCEditor.Infrastructure.Tests" />
   </ItemGroup>
 </Project>

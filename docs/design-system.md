@@ -16,7 +16,7 @@ The `src/UiKit` project holds all design tokens and base control styles. Feature
 
 ## Add a token
 
-Add the color to all three theme dictionaries in `Colors.axaml`, add its brush in `Brushes.axaml`, and if it is text or UI, add its pair to `Pairs` in `tests/Ui.Tests/ContrastTests.cs`. Metrics go in `Metrics.axaml`.
+Add the color to all three theme dictionaries in `Colors.axaml`, add its brush in `Brushes.axaml`, and if it is text or UI, add its pair to `Pairs` in `tests/UI.Tests/ContrastTests.cs`. Metrics go in `Metrics.axaml`.
 
 ## Add a theme
 

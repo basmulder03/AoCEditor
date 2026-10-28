@@ -10,7 +10,7 @@
   <Folder Name="/tests/">
     <Project Path="tests/Core.Tests/Core.Tests.csproj" />
     <Project Path="tests/Infrastructure.Tests/Infrastructure.Tests.csproj" />
-    <Project Path="tests/Ui.Tests/Ui.Tests.csproj" />
+    <Project Path="tests/UI.Tests/UI.Tests.csproj" />
     <Project Path="tests/Shared.Tests/Shared.Tests.csproj" />
     <Project Path="tests/Specs/Specs.csproj" />
     <Project Path="tests/E2E/E2E.csproj" />
