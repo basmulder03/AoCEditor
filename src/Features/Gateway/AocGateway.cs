@@ -1,5 +1,7 @@
 using System.Net;
 using System.Net.Http.Headers;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Shared;
 using Shared.Contracts;
 
@@ -16,15 +18,19 @@ public sealed class AocGateway : IAocGateway, IDisposable
     private readonly SemaphoreSlim _gate = new(1, 1);
     private readonly Dictionary<RequestKind, long> _lastRequest = [];
     private readonly ISessionEvents? _events;
+    private readonly ILogger _log;
+    private readonly IRequestLog? _requests;
     private long? _lastPrompt;
 
-    public AocGateway(ISessionTokenProvider tokens, IResponseCache cache, GatewayOptions? options = null, TimeProvider? time = null, ISessionEvents? events = null)
-        : this(new SocketsHttpHandler { AllowAutoRedirect = false, UseCookies = false }, tokens, cache, options, time, events)
+    public AocGateway(ISessionTokenProvider tokens, IResponseCache cache, GatewayOptions? options = null, TimeProvider? time = null, ISessionEvents? events = null, ILogger? logger = null, IRequestLog? requests = null)
+        : this(new SocketsHttpHandler { AllowAutoRedirect = false, UseCookies = false }, tokens, cache, options, time, events, logger, requests)
     {
     }
 
-    public AocGateway(HttpMessageHandler handler, ISessionTokenProvider tokens, IResponseCache cache, GatewayOptions? options = null, TimeProvider? time = null, ISessionEvents? events = null)
+    public AocGateway(HttpMessageHandler handler, ISessionTokenProvider tokens, IResponseCache cache, GatewayOptions? options = null, TimeProvider? time = null, ISessionEvents? events = null, ILogger? logger = null, IRequestLog? requests = null)
     {
+        _log = logger ?? NullLogger.Instance;
+        _requests = requests;
         _events = events;
         _options = options ?? new GatewayOptions();
         _tokens = tokens;
@@ -37,6 +43,7 @@ public sealed class AocGateway : IAocGateway, IDisposable
     {
         if (policy == FetchPolicy.CacheFirst && await _cache.TryGetAsync(path, cancellationToken) is { } cached)
         {
+            _log.CacheHit(path);
             return new GatewayResult.Ok(cached);
         }
 
@@ -66,10 +73,16 @@ public sealed class AocGateway : IAocGateway, IDisposable
         var token = candidateToken ?? await _tokens.GetAsync(cancellationToken);
         if (string.IsNullOrEmpty(token))
         {
+            _log.NoToken(method.Method, path);
             return SignInRequired();
         }
 
+        var waitStart = _time.GetTimestamp();
         await AcquireAsync(kind, cancellationToken);
+        var waited = _time.GetElapsedTime(waitStart);
+        var sendStart = _time.GetTimestamp();
+        int? status = null;
+        string? failure = null;
         try
         {
             using var request = new HttpRequestMessage(method, path.TrimStart('/'));
@@ -84,19 +97,33 @@ public sealed class AocGateway : IAocGateway, IDisposable
             try
             {
                 using var response = await _http.SendAsync(request, cancellationToken);
+                status = (int)response.StatusCode;
                 var result = await MapAsync(response, cancellationToken);
                 return result is GatewayResult.NotSignedIn && candidateToken is null ? SignInRequired() : result;
             }
-            catch (HttpRequestException)
+            catch (HttpRequestException ex)
             {
-                return new GatewayResult.NetworkError();
+                failure = ex.HttpRequestError.ToString();
+                return new GatewayResult.NetworkError(failure);
             }
             catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
             {
-                return new GatewayResult.NetworkError();
+                failure = "Timed out";
+                return new GatewayResult.NetworkError(failure);
             }
             finally
             {
+                var took = _time.GetElapsedTime(sendStart);
+                _requests?.Record(new GatewayRequestEntry(_time.GetUtcNow(), method.Method, path, status, took, waited));
+                if (failure is not null)
+                {
+                    _log.RequestFailed(method.Method, path, failure, (long)took.TotalMilliseconds);
+                }
+                else
+                {
+                    _log.RequestDone(method.Method, path, status, (long)took.TotalMilliseconds, (long)waited.TotalMilliseconds);
+                }
+
                 lock (_lastRequest)
                 {
                     _lastRequest[kind] = _time.GetTimestamp();
@@ -124,6 +151,7 @@ public sealed class AocGateway : IAocGateway, IDisposable
 
         if (raise)
         {
+            _log.SignInPrompted();
             _events?.NotifySignInRequired();
         }
 
@@ -181,7 +209,7 @@ public sealed class AocGateway : IAocGateway, IDisposable
             >= 300 and < 400 or 400 or 401 or 403 => new GatewayResult.NotSignedIn(),
             429 => new GatewayResult.RateLimited(),
             404 => new GatewayResult.NotFound(),
-            _ => new GatewayResult.NetworkError(),
+            _ => new GatewayResult.NetworkError($"HTTP {(int)status}"),
         };
     }
 }

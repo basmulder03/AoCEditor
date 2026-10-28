@@ -18,3 +18,5 @@
   href: sign-in.md
 - name: Calendar sync
   href: sync.md
+- name: Diagnostics
+  href: diagnostics.md

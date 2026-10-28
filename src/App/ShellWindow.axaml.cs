@@ -21,6 +21,8 @@ public partial class ShellWindow : Window
         {
             services.Events.SignInRequired += (_, _) => Dispatcher.UIThread.Post(() => SignInPrompt.IsVisible = true);
             services.SignedIn += (_, _) => Dispatcher.UIThread.Post(() => SignInPrompt.IsVisible = false);
+            services.Diagnostics.Debug.Changed += (_, _) => Dispatcher.UIThread.Post(SyncDebugEntry);
+            SyncDebugEntry();
             Opened += async (_, _) => await services.InitializeAsync(CancellationToken.None);
         }
     }
@@ -28,6 +30,8 @@ public partial class ShellWindow : Window
     public Control? CurrentPage => Host.Content as Control;
 
     public bool IsSignInPromptVisible => SignInPrompt.IsVisible;
+
+    public bool HasNavigationEntry(string page) => Nav.Items.OfType<ListBoxItem>().Any(i => (string?)i.Tag == page);
 
     public void NavigateTo(string page) =>
         Nav.SelectedItem = Nav.Items.OfType<ListBoxItem>().Single(i => (string?)i.Tag == page);
@@ -44,9 +48,35 @@ public partial class ShellWindow : Window
         {
             Host.Content = new SettingsPage(_services);
         }
+        else if (Nav.SelectedItem is ListBoxItem { Tag: "Debug" })
+        {
+            Host.Content = new DebugPage(_services);
+        }
         else if (Nav.SelectedItem is ListBoxItem)
         {
             Host.Content = new CalendarPage();
+        }
+    }
+
+    // The Debug entry exists only while debug mode is on; leaving it shows the calendar.
+    void SyncDebugEntry()
+    {
+        var enabled = _services!.Diagnostics.Debug.IsEnabled;
+        var entry = Nav.Items.OfType<ListBoxItem>().FirstOrDefault(i => (string?)i.Tag == "Debug");
+        if (enabled && entry is null)
+        {
+            var item = new ListBoxItem { Tag = "Debug", Content = "Debug" };
+            Avalonia.Automation.AutomationProperties.SetName(item, "Debug");
+            Nav.Items.Add(item);
+        }
+        else if (!enabled && entry is not null)
+        {
+            if (Nav.SelectedItem == entry)
+            {
+                Nav.SelectedIndex = 0;
+            }
+
+            Nav.Items.Remove(entry);
         }
     }
 

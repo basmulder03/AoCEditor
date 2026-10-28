@@ -2,6 +2,7 @@
   <Folder Name="/src/">
     <Project Path="src/App/App.csproj" />
     <Project Path="src/Features/Storage/Storage.csproj" />
+    <Project Path="src/Features/Diagnostics/Diagnostics.csproj" />
     <Project Path="src/Features/Gateway/Gateway.csproj" />
     <Project Path="src/Features/Session/Session.csproj" />
     <Project Path="src/Features/Sync/Sync.csproj" />
@@ -10,6 +11,7 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/E2E/E2E.csproj" />
+    <Project Path="tests/Features/Diagnostics.Tests/Diagnostics.Tests.csproj" />
     <Project Path="tests/Features/Gateway.Tests/Gateway.Tests.csproj" />
     <Project Path="tests/Features/Session.Tests/Session.Tests.csproj" />
     <Project Path="tests/Shared.Tests/Shared.Tests.csproj" />

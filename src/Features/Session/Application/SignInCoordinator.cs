@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Shared.Contracts;
 
 namespace Session.Application;
@@ -8,12 +10,19 @@ public sealed class SignInCoordinator(
     IAocGateway gateway,
     Action? clearBrowserProfile = null,
     TimeProvider? time = null,
-    TimeSpan? browserTimeout = null)
+    TimeSpan? browserTimeout = null,
+    ILogger? logger = null)
 {
+    private readonly ILogger _log = logger ?? NullLogger.Instance;
+
     public static readonly TimeSpan DefaultBrowserTimeout = TimeSpan.FromMinutes(10);
 
-    public async Task<SignInResult> SignInWithBrowserAsync(ISignInBrowser browser, CancellationToken cancellationToken)
+    public async Task<SignInResult> SignInWithBrowserAsync(ISignInBrowser browser, CancellationToken cancellationToken) =>
+        Logged(await BrowserSignInAsync(browser, cancellationToken));
+
+    private async Task<SignInResult> BrowserSignInAsync(ISignInBrowser browser, CancellationToken cancellationToken)
     {
+        _log.BrowserSignInStarted();
         if (await StoreProblemAsync(cancellationToken) is { } problem)
         {
             return problem;
@@ -26,6 +35,7 @@ public sealed class SignInCoordinator(
             async (candidate, ct) =>
             {
                 var verdict = ToVerdict(await gateway.CheckTokenAsync(candidate, ct));
+                _log.CandidateChecked(verdict);
                 if (verdict == CandidateVerdict.Accepted)
                 {
                     accepted = candidate;
@@ -44,6 +54,27 @@ public sealed class SignInCoordinator(
         };
     }
 
+    private SignInResult Logged(SignInResult result)
+    {
+        switch (result)
+        {
+            case SignInResult.BrowserUnsupported u:
+                _log.BrowserUnsupported(u.Reason);
+                break;
+            case SignInResult.StoreUnavailable u:
+                _log.StoreUnavailable(u.Reason);
+                break;
+            case SignInResult.NetworkError n:
+                _log.NetworkFailed(n.Reason ?? "unknown");
+                break;
+            default:
+                _log.Outcome(result.GetType().Name);
+                break;
+        }
+
+        return result;
+    }
+
     private static CandidateVerdict ToVerdict(GatewayResult result) => result switch
     {
         GatewayResult.Ok => CandidateVerdict.Accepted,
@@ -52,6 +83,12 @@ public sealed class SignInCoordinator(
     };
 
     public async Task<SignInResult> SignInWithPastedTokenAsync(string pasted, CancellationToken cancellationToken)
+    {
+        _log.PasteSignInStarted();
+        return Logged(await PasteSignInAsync(pasted, cancellationToken));
+    }
+
+    private async Task<SignInResult> PasteSignInAsync(string pasted, CancellationToken cancellationToken)
     {
         if (await StoreProblemAsync(cancellationToken) is { } problem)
         {
@@ -64,6 +101,7 @@ public sealed class SignInCoordinator(
     public async Task<SecretResult> SignOutAsync(CancellationToken cancellationToken)
     {
         var result = await tokens.ClearAsync(cancellationToken);
+        _log.SignedOut();
         clearBrowserProfile?.Invoke();
         return result;
     }
@@ -94,8 +132,8 @@ public sealed class SignInCoordinator(
                     break;
                 case GatewayResult.NotSignedIn:
                     return new SignInResult.InvalidToken();
-                default:
-                    return new SignInResult.NetworkError();
+                case var other:
+                    return new SignInResult.NetworkError((other as GatewayResult.NetworkError)?.Reason ?? other.GetType().Name);
             }
         }
 

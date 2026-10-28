@@ -12,6 +12,7 @@
     <PackageReference Include="Avalonia.Themes.Fluent" />
     <ProjectReference Include="../Shared/Shared.csproj" />
     <ProjectReference Include="../Features/Session/Session.csproj" />
+    <ProjectReference Include="../Features/Diagnostics/Diagnostics.csproj" />
     <ProjectReference Include="../Features/Gateway/Gateway.csproj" />
     <ProjectReference Include="../Features/Storage/Storage.csproj" />
     <ProjectReference Include="../Features/Sync/Sync.csproj" />

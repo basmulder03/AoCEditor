@@ -9,6 +9,11 @@
     <ComboBox x:Name="ThemeBox" MinWidth="200" SelectedIndex="0"
               AutomationProperties.Name="Theme" SelectionChanged="OnThemeChanged" />
 
+    <CheckBox x:Name="DebugModeBox" Content="Debug mode" AutomationProperties.Name="Debug mode"
+              IsCheckedChanged="OnDebugModeChanged" />
+    <TextBlock x:Name="DebugModeNote" Classes="muted" TextWrapping="Wrap" IsVisible="False"
+               Text="Debug mode is on for this run (--debug or AOCEDITOR_DEBUG)." />
+
     <StackPanel x:Name="AccountPanel" Spacing="{DynamicResource Space2}" Margin="{DynamicResource InsetTopMd}">
       <TextBlock Classes="heading" Text="Account" />
       <TextBlock x:Name="StatusText" AutomationProperties.Name="Sign-in status" />

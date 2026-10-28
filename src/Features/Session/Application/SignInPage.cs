@@ -12,4 +12,7 @@ public static class SignInPage
         && sessionCookie is { Length: > 0 }
             ? sessionCookie
             : null;
+
+    /// <summary>What may be logged about a page address: host and path only, never query, fragment or credentials.</summary>
+    public static string HostAndPath(Uri? uri) => uri is null ? "(none)" : uri.Host + uri.AbsolutePath;
 }

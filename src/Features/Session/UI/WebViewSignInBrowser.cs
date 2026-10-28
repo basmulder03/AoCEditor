@@ -3,6 +3,8 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform;
 using Avalonia.Threading;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Session.Application;
 
 namespace Session.UI;
@@ -11,9 +13,13 @@ namespace Session.UI;
 /// Signs in through the site's own login page in an embedded browser and reads the HttpOnly session cookie from its cookie store.
 /// The profile folder keeps provider logins between sign-ins.
 /// </summary>
-public sealed class WebViewSignInBrowser(Uri loginUrl, string profileFolder) : ISignInBrowser
+public sealed class WebViewSignInBrowser(Uri loginUrl, string profileFolder, ILogger? logger = null) : ISignInBrowser
 {
+    private readonly ILogger _log = logger ?? NullLogger.Instance;
+    private readonly string _loginPage = SignInPage.HostAndPath(loginUrl);
     private const string CookieName = "session";
+    private const string NoCookieAccess = "The embedded browser on this system does not give access to its cookies, so the session cannot be read from it.";
+    private const string BlankPage = "data:text/html,<title>Sign in</title>";
     private const string WaitingText = "Sign in to Advent of Code. This window closes by itself when you are signed in.";
 
     public Task<BrowserOutcome> AcquireTokenAsync(TokenValidator validate, CancellationToken cancellationToken) =>
@@ -28,7 +34,16 @@ public sealed class WebViewSignInBrowser(Uri loginUrl, string profileFolder) : I
             var owner = (Avalonia.Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
             window = new SignInWindow { Status = WaitingText };
             window.Browser.EnvironmentRequested += (_, e) => UseProfile(e);
-            window.Closed += (_, _) => done.TrySetResult(new BrowserOutcome.Cancelled());
+            window.Closed += (_, _) =>
+            {
+                if (!done.Task.IsCompleted)
+                {
+                    _log.WindowClosed();
+                }
+
+                done.TrySetResult(new BrowserOutcome.Cancelled());
+            };
+            var preflightDone = false;
             var busy = false;
             window.Browser.NavigationCompleted += async (_, e) =>
             {
@@ -40,10 +55,18 @@ public sealed class WebViewSignInBrowser(Uri loginUrl, string profileFolder) : I
                 busy = true;
                 try
                 {
+                    if (!preflightDone)
+                    {
+                        preflightDone = true;
+                        Preflight(window, done);
+                        return;
+                    }
+
                     await OnNavigatedAsync(window, e, validate, done, cancellationToken);
                 }
                 catch (Exception ex) when (ex is not OperationCanceledException)
                 {
+                    _log.BrowserFailure(ex, "navigation");
                     done.TrySetResult(new BrowserOutcome.Unsupported(ex.Message));
                 }
                 finally
@@ -51,7 +74,8 @@ public sealed class WebViewSignInBrowser(Uri loginUrl, string profileFolder) : I
                     busy = false;
                 }
             };
-            window.Browser.Source = loginUrl;
+            _log.WindowOpening(_loginPage);
+            window.Browser.Source = new Uri(BlankPage);
             window.PlaceOver(owner);
             if (owner is null)
             {
@@ -65,6 +89,7 @@ public sealed class WebViewSignInBrowser(Uri loginUrl, string profileFolder) : I
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
             // Missing runtime libraries surface as assorted platform, DLL-load or COM exceptions.
+            _log.BrowserFailure(ex, "open");
             return new BrowserOutcome.Unsupported(ex.Message);
         }
 
@@ -74,6 +99,19 @@ public sealed class WebViewSignInBrowser(Uri loginUrl, string profileFolder) : I
             window.Close();
             return outcome;
         }
+    }
+
+    // Without cookie access the session can never be read, so the site is not even loaded.
+    private void Preflight(SignInWindow window, TaskCompletionSource<BrowserOutcome> done)
+    {
+        if (window.Browser.TryGetCookieManager() is null)
+        {
+            _log.CookiesRead(false, 0, false);
+            done.TrySetResult(new BrowserOutcome.Unsupported(NoCookieAccess));
+            return;
+        }
+
+        window.Browser.Source = loginUrl;
     }
 
     /// <summary>Forgets cookies and provider logins; false when files are still in use.</summary>
@@ -97,6 +135,9 @@ public sealed class WebViewSignInBrowser(Uri loginUrl, string profileFolder) : I
     private async Task OnNavigatedAsync(SignInWindow window, WebViewNavigationCompletedEventArgs e, TokenValidator validate, TaskCompletionSource<BrowserOutcome> done, CancellationToken cancellationToken)
     {
         var current = e.Request ?? window.Browser.Source;
+        var page = SignInPage.HostAndPath(current);
+        _log.Navigated(page, e.IsSuccess);
+
         if (e.IsSuccess)
         {
             await FitToWidthAsync(window.Browser);
@@ -105,14 +146,19 @@ public sealed class WebViewSignInBrowser(Uri loginUrl, string profileFolder) : I
         var cookies = window.Browser.TryGetCookieManager();
         if (cookies is null)
         {
-            done.TrySetResult(new BrowserOutcome.Unsupported("The embedded browser cannot give access to cookies."));
+            _log.CookiesRead(false, 0, false);
+            done.TrySetResult(new BrowserOutcome.Unsupported(NoCookieAccess));
             return;
         }
 
-        var session = (await cookies.GetCookiesAsync())
+        var all = await cookies.GetCookiesAsync();
+        var session = all
             .FirstOrDefault(c => c.Name == CookieName && loginUrl.Host.EndsWith(c.Domain.TrimStart('.'), StringComparison.OrdinalIgnoreCase));
+        var found = session is { Value.Length: > 0 };
+        _log.CookiesRead(true, all.Count, found);
         if (SignInPage.Candidate(current, e.IsSuccess, session?.Value, loginUrl.Host) is not { } candidate)
         {
+            _log.NoCandidate(page);
             window.Status = WaitingText;
             return;
         }

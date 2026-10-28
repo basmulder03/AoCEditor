@@ -21,6 +21,14 @@ public partial class SettingsPage : UserControl
         ThemeBox.ItemsSource = ThemeChoice.Names;
         ThemeBox.SelectedItem = ThemeChoice.Names.FirstOrDefault(n => ThemeChoice.Resolve(n) == Application.Current!.RequestedThemeVariant) ?? "System";
         AccountPanel.IsVisible = services is not null;
+        DebugModeBox.IsVisible = services is not null;
+        if (services is not null)
+        {
+            DebugModeBox.IsChecked = services.Diagnostics.Debug.IsEnabled;
+            DebugModeBox.IsEnabled = !services.Diagnostics.Debug.IsForced;
+            DebugModeNote.IsVisible = services.Diagnostics.Debug.IsForced;
+        }
+
         if (services is not null)
         {
             AttachedToVisualTree += async (_, _) => await RefreshAsync();
@@ -47,6 +55,14 @@ public partial class SettingsPage : UserControl
         if (ThemeBox?.SelectedItem is string name)
         {
             ThemeChoice.Apply(Application.Current!, name);
+        }
+    }
+
+    async void OnDebugModeChanged(object? sender, RoutedEventArgs e)
+    {
+        if (_services is not null && DebugModeBox.IsChecked is { } on && on != _services.Diagnostics.Debug.IsEnabled)
+        {
+            await _services.Diagnostics.Debug.SetAsync(on, CancellationToken.None);
         }
     }
 
@@ -101,17 +117,7 @@ public partial class SettingsPage : UserControl
 
     void Show(SignInResult result)
     {
-        MessageText.Text = result switch
-        {
-            SignInResult.SignedIn => "Signed in.",
-            SignInResult.Cancelled => "Sign-in was cancelled. You can paste your session token instead.",
-            SignInResult.TimedOut => "Sign-in took too long and was stopped. You can paste your session token instead.",
-            SignInResult.InvalidToken => "Advent of Code did not accept that token. Check that you copied the whole session value.",
-            SignInResult.StoreUnavailable u => $"Secure storage is unavailable: {u.Reason}",
-            SignInResult.NetworkError => "Could not reach Advent of Code. Try again in a moment.",
-            SignInResult.BrowserUnsupported => "The sign-in window is not available on this system. Paste your session token instead.",
-            _ => string.Empty,
-        };
+        MessageText.Text = SignInResultText.For(result);
         if (result is SignInResult.BrowserUnsupported or SignInResult.Cancelled or SignInResult.TimedOut)
         {
             PastePanel.IsVisible = true;

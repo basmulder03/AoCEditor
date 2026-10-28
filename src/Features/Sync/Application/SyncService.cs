@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Shared.Contracts;
 using Sync.Domain;
 
@@ -18,7 +20,7 @@ public enum SyncError
     NetworkError,
 }
 
-public sealed record YearError(int Year, SyncError Error);
+public sealed record YearError(int Year, SyncError Error, string? Reason = null);
 
 /// <summary>Reported just before a year's request: the year in progress, years queued after it and the wait before the request may go out.</summary>
 public sealed record SyncProgress(int Year, int YearsRemaining, int SecondsUntilNextRequest);
@@ -26,8 +28,10 @@ public sealed record SyncProgress(int Year, int YearsRemaining, int SecondsUntil
 public sealed record SyncSummary(SyncOutcome Outcome, IReadOnlyList<int> YearsSynced, int DaysUpdated, IReadOnlyList<YearError> Errors, IReadOnlyList<int> YearsSkipped);
 
 /// <summary>Fetches the event list and calendar pages on explicit user request, saving progress per year.</summary>
-public sealed class SyncService(IAocGateway gateway, ISyncStateStore store, TimeProvider time)
+public sealed class SyncService(IAocGateway gateway, ISyncStateStore store, TimeProvider time, ILogger? logger = null)
 {
+    private readonly ILogger _log = logger ?? NullLogger.Instance;
+
     /// <summary>Syncs one year; an already synced year is left alone unless <paramref name="refresh"/> is set.</summary>
     public async Task<SyncSummary> SyncYearAsync(int year, bool refresh, IProgress<SyncProgress> progress, CancellationToken cancellationToken)
     {
@@ -36,6 +40,7 @@ public sealed class SyncService(IAocGateway gateway, ISyncStateStore store, Time
         if (!refresh && synced.Contains(year))
         {
             run.Skipped.Add(year);
+            _log.YearSkipped(year);
             return run.Summary(SyncOutcome.Completed);
         }
 
@@ -46,14 +51,17 @@ public sealed class SyncService(IAocGateway gateway, ISyncStateStore store, Time
     public async Task<SyncSummary> SyncAllAsync(IReadOnlyCollection<int> refreshYears, IProgress<SyncProgress> progress, CancellationToken cancellationToken)
     {
         var run = new Run();
+        _log.SyncAllStarted();
         var events = await gateway.GetAsync("/events", RequestKind.Statistics, FetchPolicy.Refresh, cancellationToken);
         if (events is not GatewayResult.Ok eventsPage)
         {
+            _log.EventsUnavailable(Describe(events));
             return run.Summary(Abort(events) ?? SyncOutcome.EventsUnavailable);
         }
 
         if (CalendarParser.ParseEvents(eventsPage.Content, time.GetUtcNow()) is not { } eventYears)
         {
+            _log.EventsUnreadable();
             return run.Summary(SyncOutcome.EventsUnavailable);
         }
 
@@ -75,6 +83,7 @@ public sealed class SyncService(IAocGateway gateway, ISyncStateStore store, Time
             var wait = gateway.NextAllowedAt(RequestKind.Statistics) - time.GetUtcNow();
             progress.Report(new SyncProgress(year, queue.Count - i - 1, (int)Math.Ceiling(Math.Max(0, wait.TotalSeconds))));
 
+            _log.YearStarted(year, queue.Count - i - 1);
             var page = await gateway.GetAsync($"/{year}", RequestKind.Statistics, FetchPolicy.Refresh, cancellationToken);
             if (page is GatewayResult.Ok ok)
             {
@@ -82,19 +91,23 @@ public sealed class SyncService(IAocGateway gateway, ISyncStateStore store, Time
                 {
                     run.Updated += await SaveAsync(year, days, cancellationToken);
                     run.Years.Add(year);
+                    _log.YearSynced(year, days.Count);
                 }
                 else
                 {
+                    _log.YearUnreadable(year);
                     run.Errors.Add(new YearError(year, SyncError.ParseError));
                 }
             }
             else if (Abort(page) is { } outcome)
             {
+                _log.SyncAborted(year, outcome);
                 return run.Summary(outcome);
             }
             else
             {
-                run.Errors.Add(new YearError(year, page is GatewayResult.NotFound ? SyncError.NotFound : SyncError.NetworkError));
+                _log.YearFailed(year, Describe(page));
+                run.Errors.Add(new YearError(year, page is GatewayResult.NotFound ? SyncError.NotFound : SyncError.NetworkError, (page as GatewayResult.NetworkError)?.Reason));
             }
         }
 
@@ -113,6 +126,9 @@ public sealed class SyncService(IAocGateway gateway, ISyncStateStore store, Time
 
         public SyncSummary Summary(SyncOutcome outcome) => new(outcome, Years, Updated, Errors, Skipped);
     }
+
+    private static string Describe(GatewayResult result) =>
+        result is GatewayResult.NetworkError { Reason: { } reason } ? $"NetworkError ({reason})" : result.GetType().Name;
 
     private static SyncOutcome? Abort(GatewayResult result) => result switch
     {

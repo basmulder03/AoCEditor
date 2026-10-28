@@ -1,0 +1,38 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:AoCEditor"
+             x:Class="AoCEditor.DebugPage"
+             x:DataType="local:DebugPage">
+  <ScrollViewer>
+    <StackPanel Spacing="{DynamicResource Space2}" MaxWidth="900" HorizontalAlignment="Left">
+      <TextBlock Classes="heading" Text="Debug" />
+
+      <TextBlock Classes="heading" FontSize="{DynamicResource FontSizeTitle}" Text="Environment" />
+      <TextBlock x:Name="DebugVersions" TextWrapping="Wrap" AutomationProperties.Name="App, OS and runtime versions" />
+      <TextBlock x:Name="DebugSessionText" TextWrapping="Wrap" AutomationProperties.Name="Session state" />
+      <TextBlock x:Name="DebugStorageText" TextWrapping="Wrap" AutomationProperties.Name="Storage and migration status" />
+
+      <TextBlock Classes="heading" FontSize="{DynamicResource FontSizeTitle}" Margin="{DynamicResource InsetTopMd}" Text="Recent gateway requests" />
+      <ListBox x:Name="DebugRequests" Focusable="True" MaxHeight="160" AutomationProperties.Name="Recent gateway requests" />
+
+      <TextBlock Classes="heading" FontSize="{DynamicResource FontSizeTitle}" Margin="{DynamicResource InsetTopMd}" Text="Log" />
+      <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Space2}">
+        <ComboBox x:Name="DebugLevel" MinWidth="140" SelectedIndex="0" AutomationProperties.Name="Minimum log level" SelectionChanged="OnFilterChanged" />
+        <ComboBox x:Name="DebugSource" MinWidth="160" SelectedIndex="0" AutomationProperties.Name="Log source" SelectionChanged="OnFilterChanged" />
+        <Button x:Name="DebugCopyLog" Content="Copy log" AutomationProperties.Name="Copy shown log lines" Click="OnCopyLogClick" />
+      </StackPanel>
+      <ListBox x:Name="DebugLog" Focusable="True" Height="260" AutomationProperties.Name="Log entries" />
+
+      <Button x:Name="DebugCopyDiagnostics" Content="Copy diagnostics" Margin="{DynamicResource InsetTopMd}"
+              AutomationProperties.Name="Copy diagnostics" Click="OnCopyDiagnosticsClick" />
+      <StackPanel x:Name="DebugPreviewPanel" IsVisible="False" Spacing="{DynamicResource Space2}">
+        <TextBlock Classes="muted" TextWrapping="Wrap" Text="Preview of what will be copied. Secrets and your home folder are already removed." />
+        <TextBox x:Name="DebugPreview" IsReadOnly="True" AcceptsReturn="True" Height="240" AutomationProperties.Name="Diagnostics preview" />
+        <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Space2}">
+          <Button x:Name="DebugConfirmCopy" Content="Copy to clipboard" AutomationProperties.Name="Copy diagnostics to clipboard" Click="OnConfirmCopyClick" />
+          <Button x:Name="DebugCancelCopy" Content="Cancel" AutomationProperties.Name="Cancel copying diagnostics" Click="OnCancelCopyClick" />
+        </StackPanel>
+      </StackPanel>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

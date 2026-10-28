@@ -62,10 +62,10 @@ public class AccountTests
         controls.OfType<Button>().Single(b => b.Name == "SignInButton").IsEnabled.ShouldBeFalse();
     }
 
-    private static AppServices Create(Store store) =>
-        new(store, new AppDataPaths(Path.Combine(Path.GetTempPath(), "aoceditor-ui-" + Guid.NewGuid().ToString("N"))));
+    internal static AppServices Create(Store store, Diagnostics.Application.DebugMode? debug = null) =>
+        new(store, new AppDataPaths(Path.Combine(Path.GetTempPath(), "aoceditor-ui-" + Guid.NewGuid().ToString("N"))), debug ?? Diagnostics.Application.DebugMode.FromLaunch([], _ => null));
 
-    private sealed class Store : ISecretStore
+    internal sealed class Store : ISecretStore
     {
         public bool Down { get; init; }
 

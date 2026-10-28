@@ -1,4 +1,6 @@
+using Diagnostics.Application;
 using Gateway;
+using Microsoft.Extensions.Logging;
 using Session.Application;
 using Session.Infrastructure;
 using Session.UI;
@@ -16,16 +18,26 @@ public sealed class AppServices : IDisposable
     private readonly SignInCoordinator _signIn;
     private readonly SqliteConnectionFactory _connections;
 
-    public AppServices(ISecretStore? secrets = null, IAppDataPaths? paths = null)
+    public AppServices(ISecretStore? secrets = null, IAppDataPaths? paths = null, DebugMode? debug = null)
     {
         Paths = paths ?? new AppDataPaths();
-        _connections = new SqliteConnectionFactory(Paths);
+        Diagnostics = DiagnosticsServices.Create(
+            Paths.Root,
+            debug ?? DebugMode.FromLaunch(Environment.GetCommandLineArgs(), Environment.GetEnvironmentVariable),
+            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+            TimeProvider.System);
+        var logs = Diagnostics.LoggerFactory;
+        _connections = new SqliteConnectionFactory(Paths, logs.CreateLogger("Storage.Connection"));
         SyncState = new SqliteSyncStateStore(_connections);
+        Settings = new SqliteKeyValueStore(_connections);
+        Diagnostics.Debug.AttachStore(Settings);
+        StorageStatus = new SqliteStorageStatus(_connections, Paths);
         var tokens = new SessionTokenProvider(secrets ?? SecretStores.CreateForCurrentOs());
-        _gateway = new AocGateway(tokens, new FileResponseCache(Paths.Cache), events: Events);
-        _browser = new WebViewSignInBrowser(new Uri(new GatewayOptions().BaseAddress, "auth/login"), Path.Combine(Paths.Root, "webview"));
-        _signIn = new SignInCoordinator(tokens, _gateway, () => _browser.TryClearProfile());
-        Sync = new SyncService(_gateway, SyncState, TimeProvider.System);
+        _gateway = new AocGateway(tokens, new FileResponseCache(Paths.Cache), events: Events, logger: logs.CreateLogger("Gateway.AocGateway"), requests: Diagnostics.Requests);
+        _browser = new WebViewSignInBrowser(new Uri(new GatewayOptions().BaseAddress, "auth/login"), Path.Combine(Paths.Root, "webview"), logs.CreateLogger("Session.WebView"));
+        _signIn = new SignInCoordinator(tokens, _gateway, () => _browser.TryClearProfile(), logger: logs.CreateLogger("Session.SignIn"));
+        Sync = new SyncService(_gateway, SyncState, TimeProvider.System, logs.CreateLogger("Sync.SyncService"));
+        logs.CreateLogger("App").AppStarted(Shared.AppInfo.Version, Diagnostics.Debug.IsEnabled);
     }
 
     public event EventHandler? SignedIn;
@@ -36,12 +48,32 @@ public sealed class AppServices : IDisposable
 
     public ISyncStateStore SyncState { get; }
 
+    public DiagnosticsServices Diagnostics { get; }
+
+    public IKeyValueStore Settings { get; }
+
+    public IStorageStatus StorageStatus { get; }
+
     public SyncService Sync { get; }
 
     /// <summary>Opens (and so migrates) the database.</summary>
     public async Task InitializeAsync(CancellationToken cancellationToken)
     {
         await using var connection = await _connections.OpenAsync(cancellationToken);
+        await Diagnostics.Debug.LoadAsync(Settings, cancellationToken);
+    }
+
+    public async Task<DiagnosticsSnapshot> SnapshotAsync(CancellationToken cancellationToken)
+    {
+        var session = await GetStatusAsync(cancellationToken);
+        return new DiagnosticsSnapshot(
+            Shared.AppInfo.Version,
+            System.Runtime.InteropServices.RuntimeInformation.OSDescription + " " + System.Runtime.InteropServices.RuntimeInformation.OSArchitecture,
+            System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription,
+            session.State == SessionState.SignedIn ? "Signed in" : "Signed out",
+            await StorageStatus.GetAsync(cancellationToken),
+            Diagnostics.Requests.Recent,
+            Diagnostics.Buffer.Snapshot());
     }
 
     public Task<SessionStatus> GetStatusAsync(CancellationToken cancellationToken) => _signIn.GetStatusAsync(cancellationToken);
@@ -54,7 +86,11 @@ public sealed class AppServices : IDisposable
 
     public Task<SecretResult> SignOutAsync(CancellationToken cancellationToken) => _signIn.SignOutAsync(cancellationToken);
 
-    public void Dispose() => _gateway.Dispose();
+    public void Dispose()
+    {
+        _gateway.Dispose();
+        Diagnostics.Dispose();
+    }
 
     private async Task<SignInResult> Announce(Task<SignInResult> signIn)
     {
@@ -66,4 +102,10 @@ public sealed class AppServices : IDisposable
 
         return result;
     }
+}
+
+internal static partial class AppLog
+{
+    [LoggerMessage(Level = LogLevel.Information, Message = "AoCEditor {Version} started, debug mode {Debug}")]
+    public static partial void AppStarted(this ILogger logger, string version, bool debug);
 }

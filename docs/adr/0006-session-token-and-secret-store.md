@@ -22,5 +22,5 @@ AoC has no API keys. Requests authenticate with the `session` cookie, obtained b
 
 ## Open questions
 - Which library wraps libsecret / Credential Manager under AoT is unverified.
-- Spike result: WebView 12.1.1 exposes cookie access on both platforms (found by inspecting the package; no sign-in was attempted). Unverified: OAuth sign-in inside the WebView (Google is known to block embedded browsers; Reddit and Twitter untested), AoT build on Windows, Wayland-native behaviour, per-user install of the WebView2 runtime on Windows 10.
+- Correction after running it on Linux (Ubuntu, libwebkit2gtk-4.1, X11): `Avalonia.Controls.WebView` 12.1.1 returns null from `TryGetCookieManager()` for both `NativeWebView` and `NativeWebDialog`, because its WebKitGTK adapter only looks for the WebKitGTK 6 session API. Embedded sign-in therefore cannot read the cookie on this setup and the paste-token fallback is the working Linux path. The earlier spike claimed cookie access from a string scan of the package, which was wrong. Windows (WebView2) is unverified. Unverified: OAuth sign-in inside the WebView (Google is known to block embedded browsers; Reddit and Twitter untested), AoT build on Windows, Wayland-native behaviour, per-user install of the WebView2 runtime on Windows 10.
 - Behaviour when no Secret Service is available (refuse vs encrypted file) is not decided.

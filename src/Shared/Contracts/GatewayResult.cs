@@ -14,5 +14,6 @@ public abstract record GatewayResult
 
     public sealed record NotFound : GatewayResult;
 
-    public sealed record NetworkError : GatewayResult;
+    /// <summary>The request failed; <paramref name="Reason"/> says how, without any secret.</summary>
+    public sealed record NetworkError(string? Reason = null) : GatewayResult;
 }

@@ -19,7 +19,7 @@ public abstract record SignInResult
     /// <summary>There is nowhere safe to keep the token, so nothing was attempted.</summary>
     public sealed record StoreUnavailable(string Reason) : SignInResult;
 
-    public sealed record NetworkError : SignInResult;
+    public sealed record NetworkError(string? Reason = null) : SignInResult;
 
     public sealed record BrowserUnsupported(string Reason) : SignInResult;
 }
