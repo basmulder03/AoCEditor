@@ -37,3 +37,5 @@ Status: `Accepted` = decided with the owner, `Proposed` = default chosen by the 
 | 0028 | Code documentation standard | Accepted | Comment density, no ADR references |
 | 0029 | Agents, skills, orchestration | Accepted | Token-lean agents/skills, orchestrator rules |
 | 0030 | In-app issue reporting | Accepted | Report button, prefilled issue, GDPR-safe redaction |
+| 0031 | Puzzle examples | Proposed | Select from puzzle, custom examples, expected answers |
+| 0032 | Diagnostics and observability | Proposed | Logging, tracing, metrics, debug mode and view |
