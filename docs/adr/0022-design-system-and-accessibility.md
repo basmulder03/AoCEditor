@@ -1,7 +1,7 @@
 # 0022 Design system and accessibility
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 The UI is Avalonia with an own design system (ADR 0002). Users solve puzzles for long sessions, so contrast, keyboard use and screen-reader support matter.

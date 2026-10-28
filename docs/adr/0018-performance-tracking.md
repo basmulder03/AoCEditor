@@ -1,7 +1,7 @@
 # 0018 Performance tracking
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 After the first correct answer the app knows the expected answer (0015) and can verify locally. The owner wants solution performance tracked over time.
