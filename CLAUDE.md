@@ -11,3 +11,4 @@ Local AoT desktop editor for Advent of Code (.NET 10, Avalonia). Orchestrate; de
 - Always apply best practices by default. Before reporting done, run the `validate-practices` skill (it runs `scripts/check-practices.sh`; CI runs it too).
 - Tests: Shouldly only, Reqnroll per `tests/README.md`.
 - Wrap test and build commands in `timeout` (e.g. `timeout 600 dotnet test ...`) so a hung test host cannot linger in the background.
+- UI screenshots on the dev machine (X11): run the published app with DISPLAY=:0, focus it with `wmctrl -i -a <id>` (id from `wmctrl -l`), then `gnome-screenshot -w -f <file>`. Whole-desktop and root-window grabs show only the wallpaper.
