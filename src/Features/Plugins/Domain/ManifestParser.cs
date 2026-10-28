@@ -1,3 +1,4 @@
+using Shared;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -87,10 +88,10 @@ public static class ManifestParser
             errors.Add("The plugin needs at least one template file.");
         }
 
-        errors.AddRange(templates.Keys.Where(n => !IsPlainFileName(n)).Select(n => $"The template file name '{n}' must be a plain file name."));
+        errors.AddRange(templates.Keys.Where(n => !FileNames.IsPlain(n)).Select(n => $"The template file name '{n}' must be a plain file name."));
 
         var executables = dto.Toolchain?.Executables ?? [];
-        if (executables.Length == 0 || executables.Any(e => !IsPlainFileName(e)))
+        if (executables.Length == 0 || executables.Any(e => !FileNames.IsPlain(e)))
         {
             errors.Add("The toolchain needs at least one executable name without a path.");
         }
@@ -143,7 +144,4 @@ public static class ManifestParser
 
     private static bool IsLanguageId(string? id) =>
         !string.IsNullOrEmpty(id) && id.All(c => c is (>= 'a' and <= 'z') or (>= '0' and <= '9') or '_' or '-') && id[0] is not ('-' or '_');
-
-    private static bool IsPlainFileName(string name) =>
-        name.Length > 0 && name is not ("." or "..") && name.IndexOfAny(['/', '\\', '\0']) < 0;
 }

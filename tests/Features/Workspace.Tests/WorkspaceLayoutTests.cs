@@ -34,17 +34,4 @@ public class WorkspaceLayoutTests
     {
         Should.Throw<ArgumentException>(() => WorkspaceLayout.DayFolder(Root, year, day, language));
     }
-
-    [Theory]
-    [InlineData("main.py", true)]
-    [InlineData("Solution.csproj", true)]
-    [InlineData("../main.py", false)]
-    [InlineData("sub/main.py", false)]
-    [InlineData("sub\\main.py", false)]
-    [InlineData("", false)]
-    [InlineData("..", false)]
-    public void TemplateFilesAreOnlyPlainFileNames(string name, bool valid)
-    {
-        WorkspaceLayout.IsPlainFileName(name).ShouldBe(valid);
-    }
 }

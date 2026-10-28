@@ -118,6 +118,28 @@ public sealed class ProcessRunnerTests : IDisposable
         await Should.ThrowAsync<ArgumentException>(() => RunAsync(Request([])));
     }
 
+    [Fact(Skip = "Uses sh", SkipUnless = nameof(RunsHere), SkipType = typeof(ProcessRunnerTests))]
+    public async Task AHugeLineWithoutNewlineIsTruncatedWithAnEllipsis()
+    {
+        var result = await RunAsync(Request(["sh", "-c", "head -c 5000000 /dev/zero | tr '\\0' x"]));
+
+        result.Status.ShouldBe(RunStatus.Completed);
+        var line = _lines.First(l => l.Text.StartsWith('x'));
+        line.Text.Length.ShouldBeLessThanOrEqualTo(8 * 1024 + 1);
+        line.Text.ShouldEndWith("\u2026");
+        _lines.Sum(l => l.Text.Length).ShouldBeLessThan(64 * 1024);
+    }
+
+    [Fact(Skip = "Uses sh", SkipUnless = nameof(RunsHere), SkipType = typeof(ProcessRunnerTests))]
+    public async Task EndlessOutputStopsBeingReportedAtTheByteCapWithOneNote()
+    {
+        var result = await RunAsync(Request(["yes"], timeout: TimeSpan.FromSeconds(3)));
+
+        result.Status.ShouldBe(RunStatus.TimedOut);
+        _lines.Sum(l => l.Text.Length).ShouldBeLessThan(5 * 1024 * 1024);
+        _lines.Count(l => l.Stream == OutputChannel.Stderr && l.Text.Contains("limit", StringComparison.OrdinalIgnoreCase)).ShouldBe(1);
+    }
+
     private sealed class SyncProgress(List<OutputLine> sink) : IProgress<OutputLine>
     {
         public void Report(OutputLine value)

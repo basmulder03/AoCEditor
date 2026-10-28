@@ -10,6 +10,8 @@ public sealed record ConsoleLine(string Text, bool IsError);
 /// <summary>Output of the latest run plus a one-line status; the line count is capped so a program that prints forever cannot exhaust memory.</summary>
 public sealed class ConsoleViewModel(int maxLines = 10_000) : ObservableBase
 {
+    public int MaxLines => maxLines;
+
     private string _status = string.Empty;
     private bool _running;
     private bool _truncated;

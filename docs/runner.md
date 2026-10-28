@@ -3,7 +3,7 @@
 `IRunner` / `ProcessRunner` (`src/Features/Runner`) starts the expanded run command of a language plugin (`docs/plugins.md`) and reports a `RunResult`.
 
 - **No shell.** The command is a program plus an argument list, so quotes, `;` or `$(...)` in a path or value reach the program as plain text.
-- **Output** is reported line by line as `OutputLine(Stdout | Stderr, text)` through `IProgress`, which the console panel will consume.
+- **Output** is reported line by line as `OutputLine(Stdout | Stderr, text)` through `IProgress`, which the console panel consumes. Output is read in chunks: a single line is cut at 8 KB and ends in an ellipsis, and after 4 MB per run nothing more is reported except one stderr note (the pipes are still drained so the program is not blocked; the timeout still applies). The day page also stops posting lines to the UI thread once the console holds its maximum.
 - **Input** is piped to stdin from the cached input file when `InputPath` is set; the program may exit without reading it.
 - **Timeout and cancel** kill the whole process tree (`Process.Kill(entireProcessTree: true)`). The pipes are drained for at most two seconds afterwards, so a surviving grandchild cannot hang the run. The status says which of `Completed`, `TimedOut` or `Cancelled` happened.
 - **Timing** is the wall-clock `Elapsed` measured by the runner, not by the user's code.

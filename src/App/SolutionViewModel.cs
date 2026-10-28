@@ -92,7 +92,15 @@ public sealed class SolutionViewModel : ObservableBase
     private Task<DayRunResult> RunOnceAsync(bool allowUnsandboxed, CancellationToken cancellationToken)
     {
         Console.Begin();
-        return _run(SelectedPlugin!, allowUnsandboxed, new Sink(line => _post(() => Console.Append(line))), cancellationToken);
+        // One line past the cap is enough for the console to flag truncation; the rest never reaches the UI thread.
+        var remaining = Console.MaxLines + 1;
+        return _run(SelectedPlugin!, allowUnsandboxed, new Sink(line =>
+        {
+            if (Interlocked.Decrement(ref remaining) >= 0)
+            {
+                _post(() => Console.Append(line));
+            }
+        }), cancellationToken);
     }
 
     private void Show(DayRunResult result)

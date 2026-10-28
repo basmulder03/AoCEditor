@@ -130,4 +130,17 @@ public sealed class WorkspaceServiceTests : IDisposable
 
         public string Database => Path.Combine(root, "aoc.db");
     }
+
+    [Theory]
+    [InlineData("C:evil.cs")]
+    [InlineData("name:stream")]
+    [InlineData("CON")]
+    [InlineData("aux.txt")]
+    [InlineData("../escape.py")]
+    public async Task ScaffoldingRefusesUnsafeNames(string name)
+    {
+        await _service.SetRootAsync(Solutions, Ct);
+
+        await Should.ThrowAsync<ArgumentException>(() => _service.ScaffoldDayAsync(2024, 3, "python", new Dictionary<string, string> { [name] = "x" }, Ct));
+    }
 }

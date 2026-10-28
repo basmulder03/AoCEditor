@@ -119,4 +119,24 @@ public class SolutionViewModelTests
         model.IsRunning.ShouldBeFalse();
         model.Console.Status.ShouldBe("Cancelled.");
     }
+
+    [Fact]
+    public async Task NoLinesAreSentToTheUiOnceTheConsoleIsFull()
+    {
+        var posts = 0;
+        var model = new SolutionViewModel([Python], (_, _, output, _) =>
+        {
+            for (var i = 0; i < 50_000; i++)
+            {
+                output.Report(new OutputLine(OutputChannel.Stdout, "x"));
+            }
+
+            return Task.FromResult(_next);
+        }, () => Task.FromResult(true), a => { posts++; a(); });
+
+        await model.RunAsync(Ct);
+
+        model.Console.IsTruncated.ShouldBeTrue();
+        posts.ShouldBeLessThanOrEqualTo(model.Console.MaxLines + 1);
+    }
 }

@@ -62,4 +62,20 @@ public class ManifestParserTests
         result.Manifest.ShouldBeNull();
         result.Errors.ShouldContain(e => e.Contains(reason, StringComparison.OrdinalIgnoreCase));
     }
+
+    [Theory]
+    [InlineData("C:evil.cs")]
+    [InlineData("name:stream")]
+    [InlineData("CON")]
+    [InlineData("nul.txt")]
+    public void UnsafeTemplateAndExecutableNamesAreRejected(string name)
+    {
+        var template = ManifestParser.Parse(Valid.Replace("\"main.py\":", $"\"{name}\":"));
+        var executable = ManifestParser.Parse(Valid.Replace("\"python3\"", $"\"{name}\""));
+
+        template.Manifest.ShouldBeNull();
+        template.Errors.ShouldNotBeEmpty();
+        executable.Manifest.ShouldBeNull();
+        executable.Errors.ShouldNotBeEmpty();
+    }
 }

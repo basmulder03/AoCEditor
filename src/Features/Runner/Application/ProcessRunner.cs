@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Text;
 
 namespace Runner.Application;
 
@@ -10,6 +11,9 @@ public sealed class ProcessRunner : IRunner
     [
         "PATH", "HOME", "USER", "USERPROFILE", "TEMP", "TMP", "TMPDIR", "SystemRoot", "LANG", "LC_ALL", "DOTNET_ROOT", "DOTNET_CLI_HOME",
     ];
+
+    private const int MaxLineLength = 8 * 1024;
+    private const long MaxTotalBytes = 4 * 1024 * 1024;
 
     private static readonly TimeSpan DrainLimit = TimeSpan.FromSeconds(2);
 
@@ -38,9 +42,10 @@ public sealed class ProcessRunner : IRunner
             return new RunResult(RunStatus.FailedToStart, null, clock.Elapsed, ex.Message);
         }
 
+        var budget = new OutputBudget();
         var pumps = Task.WhenAll(
-            Pump(process.StandardOutput, OutputChannel.Stdout, output),
-            Pump(process.StandardError, OutputChannel.Stderr, output),
+            Pump(process.StandardOutput, OutputChannel.Stdout, output, budget),
+            Pump(process.StandardError, OutputChannel.Stderr, output, budget),
             Feed(process, request.InputPath));
         using var timeout = new CancellationTokenSource(request.Timeout);
         using var stop = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeout.Token);
@@ -91,11 +96,72 @@ public sealed class ProcessRunner : IRunner
         return info;
     }
 
-    private static async Task Pump(StreamReader reader, OutputChannel stream, IProgress<OutputLine> output)
+    // Output is read in chunks so a program printing a huge line or endless output cannot exhaust memory;
+    // past the total cap the pipe is still drained (so the program is not blocked) but nothing is reported.
+    private static async Task Pump(StreamReader reader, OutputChannel stream, IProgress<OutputLine> output, OutputBudget budget)
     {
-        while (await reader.ReadLineAsync() is { } line)
+        var buffer = new char[4096];
+        var line = new StringBuilder();
+        var clipped = false;
+        int read;
+        while ((read = await reader.ReadAsync(buffer)) > 0)
         {
-            output.Report(new OutputLine(stream, line));
+            foreach (var c in buffer.AsSpan(0, read))
+            {
+                if (c == '\n')
+                {
+                    if (line.Length > 0 && line[^1] == '\r' && !clipped)
+                    {
+                        line.Length--;
+                    }
+
+                    Emit(line, clipped);
+                    clipped = false;
+                }
+                else if (line.Length < MaxLineLength)
+                {
+                    line.Append(c);
+                }
+                else
+                {
+                    clipped = true;
+                }
+            }
+        }
+
+        if (line.Length > 0)
+        {
+            Emit(line, clipped);
+        }
+
+        void Emit(StringBuilder text, bool wasClipped)
+        {
+            var length = text.Length + 1;
+            text.Append(wasClipped ? "\u2026" : string.Empty);
+            var verdict = budget.Take(length);
+            if (verdict == Budget.Within)
+            {
+                output.Report(new OutputLine(stream, text.ToString()));
+            }
+            else if (verdict == Budget.JustExceeded)
+            {
+                output.Report(new OutputLine(OutputChannel.Stderr, "Output limit reached; further output is not shown."));
+            }
+
+            text.Clear();
+        }
+    }
+
+    private enum Budget { Within, JustExceeded, Over }
+
+    private sealed class OutputBudget
+    {
+        private long _used;
+
+        public Budget Take(int length)
+        {
+            var before = Interlocked.Add(ref _used, length) - length;
+            return before >= MaxTotalBytes ? Budget.Over : before + length >= MaxTotalBytes ? Budget.JustExceeded : Budget.Within;
         }
     }
 

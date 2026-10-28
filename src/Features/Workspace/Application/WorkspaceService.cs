@@ -36,7 +36,7 @@ public sealed class WorkspaceService(IKeyValueStore settings, IAppDataPaths appD
     {
         var root = await RootAsync(cancellationToken) ?? throw new InvalidOperationException("No solutions folder is chosen yet.");
         var folder = WorkspaceLayout.DayFolder(root, year, day, language);
-        if (files.Keys.FirstOrDefault(n => !WorkspaceLayout.IsPlainFileName(n)) is { } bad)
+        if (files.Keys.FirstOrDefault(n => !Shared.FileNames.IsPlain(n)) is { } bad)
         {
             throw new ArgumentException($"'{bad}' is not a plain file name.", nameof(files));
         }
@@ -45,7 +45,12 @@ public sealed class WorkspaceService(IKeyValueStore settings, IAppDataPaths appD
         var created = new List<string>();
         foreach (var (name, content) in files)
         {
-            var path = Path.Combine(folder, name);
+            var path = Path.GetFullPath(Path.Combine(folder, name));
+            if (!path.StartsWith(Path.GetFullPath(folder) + Path.DirectorySeparatorChar, StringComparison.Ordinal))
+            {
+                throw new ArgumentException($"'{name}' would leave the day folder.", nameof(files));
+            }
+
             if (!File.Exists(path))
             {
                 await File.WriteAllTextAsync(path, content, cancellationToken);

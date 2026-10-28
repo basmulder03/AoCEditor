@@ -16,7 +16,7 @@ A language plugin is a `plugin.json` (schema version 1) read by `ManifestParser`
 ```
 
 - `id`: lowercase letters, digits, `-` and `_`; it is also the folder name in the workspace (`docs/workspace.md`).
-- `templateFiles`: at least one; written into a new day's folder; names must be plain file names. The first one with one of the plugin's extensions is the `{source}` file.
+- `templateFiles`: at least one; written into a new day's folder; names must be plain file names (`Shared.FileNames.IsPlain`: no separators, colons, Windows device names or trailing dot/space); toolchain executable names follow the same rule. The first one with one of the plugin's extensions is the `{source}` file.
 - `toolchain.executables`: names searched on `PATH`, in order; never paths.
 - `compile` is optional. `run.input` is `stdin` (the input is piped in) or `file` (the input path is passed as `{input}`).
 - Commands are argument lists, never shell strings. `CommandTemplate.Expand` fills `{toolchain}`, `{source}`, `{input}` and `{workdir}` in one pass per argument, so a value with spaces stays one argument and a value that looks like a placeholder or shell syntax is not interpreted. Any other placeholder is a manifest error.

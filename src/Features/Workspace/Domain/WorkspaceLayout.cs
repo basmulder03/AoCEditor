@@ -18,10 +18,6 @@ public static class WorkspaceLayout
 
     public static string SharedFolder(string root, string language) => Path.Combine(root, "shared", CheckLanguage(language));
 
-    /// <summary>Template files are written straight into the day folder, so a name must not reach out of it.</summary>
-    public static bool IsPlainFileName(string name) =>
-        name.Length > 0 && name is not ("." or "..") && name.IndexOfAny(['/', '\\', '\0']) < 0;
-
     private static string CheckLanguage(string language)
     {
         var ok = language.Length > 0
