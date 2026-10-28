@@ -14,6 +14,9 @@ The product is a small, low-memory, cross-platform (Linux and Windows first) des
 - Bindings are compiled (`x:DataType`), no runtime XAML loading, no reflection-based binding.
 - The app uses its own design system with tokens and themes (see 0022).
 
+- Validated (linux-x64, net10, PublishAot): Avalonia 12.1.x with Avalonia.AvaloniaEdit and AvaloniaEdit.TextMate 12.0.0 publish with zero trim/AOT warnings. Compiled bindings are required (`x:DataType` on windows and views); `x:Class` types must be in a namespace.
+- Measured baseline: about 32 MB executable plus about 15 MB native libraries (SkiaSharp, HarfBuzzSharp, Oniguruma), and about 215 MB peak RSS for an empty editor window. Windows is not yet verified and is checked in CI.
+
 ## Consequences
 - Low memory and fast startup; no Chromium dependency in the app process.
 - A WebView runtime is still needed on the machine for sign-in (WebView2 on Windows, WebKitGTK on Linux).

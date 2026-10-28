@@ -21,4 +21,4 @@ The day page needs a native editor with syntax highlighting, completion, diagnos
 
 ## Open questions
 - Whether an existing LSP client library is AoT-compatible (unverified).
-- AvaloniaEdit version compatibility with current Avalonia and AoT trimming (unverified).
+- AvaloniaEdit 12.0.0 with Avalonia 12.1.x is AoT-clean on linux-x64; Windows and highlight rendering for non-C# grammars are unverified.
