@@ -17,6 +17,9 @@
     <ProjectReference Include="../Features/Storage/Storage.csproj" />
     <ProjectReference Include="../Features/Puzzle/Puzzle.csproj" />
     <ProjectReference Include="../Features/Sync/Sync.csproj" />
+    <ProjectReference Include="../Features/Workspace/Workspace.csproj" />
+    <ProjectReference Include="../Features/Plugins/Plugins.csproj" />
+    <ProjectReference Include="../Features/Runner/Runner.csproj" />
     <ProjectReference Include="../UiKit/UiKit.csproj" />
   </ItemGroup>
 </Project>

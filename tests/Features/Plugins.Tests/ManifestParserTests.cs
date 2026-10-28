@@ -52,6 +52,7 @@ public class ManifestParserTests
     [InlineData("""{ "schemaVersion": 1, "id": "p", "name": "P", "extensions": [".py"], "toolchain": { "executables": ["p"] }, "run": { "command": ["{source}"], "input": "pipe" } }""", "input")]
     [InlineData("""{ "schemaVersion": 1, "id": "p", "name": "P", "extensions": [".py"], "templateFiles": { "../x": "" }, "toolchain": { "executables": ["p"] }, "run": { "command": ["{source}"], "input": "stdin" } }""", "template file")]
     [InlineData("""{ "schemaVersion": 1, "id": "p", "name": "P", "extensions": [".py"], "toolchain": { "executables": ["a/b"] }, "run": { "command": ["{source}"], "input": "stdin" } }""", "executable")]
+    [InlineData("""{ "schemaVersion": 1, "id": "p", "name": "P", "extensions": [".py"], "toolchain": { "executables": ["p"] }, "run": { "command": ["{source}"], "input": "stdin" } }""", "template file")]
     [InlineData("not json", "JSON")]
     [InlineData("", "JSON")]
     public void InvalidManifestsAreRejectedWithAReadableReason(string json, string reason)

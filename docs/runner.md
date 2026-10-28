@@ -15,3 +15,14 @@
 The OS sandboxes of ADR 0011 (Landlock, seccomp and cgroups on Linux; Job Object and restricted token on Windows) are not built yet (issues for the Linux and Windows sandboxed runners). Until then `Level` is `SandboxLevel.None`, and `RunAsync` returns `SandboxUnavailable` without starting anything unless the caller sets `AllowUnsandboxed`, which the UI may only do after asking the user. Memory and CPU limits are not enforced yet either.
 
 The tests start real processes through `sh` and run on Linux only; the Windows behaviour (tree kill, environment) is untested until the Windows runner work.
+
+## Run coordination
+
+`DayRunCoordinator` (`src/App`) is the only place that ties the slices together, since slices never reference each other. For one run it:
+
+1. needs a solutions folder (`NoWorkspace` otherwise) and a toolchain on PATH (`NoToolchain`, with the names to install);
+2. loads the puzzle input through the puzzle service (`InputUnavailable` when that fails);
+3. scaffolds the day in the solutions folder (never overwriting) and saves the input as `<app data>/inputs/<year>/<dd>.txt`, outside the solutions folder, then pipes it to stdin or passes it as `{input}` depending on the plugin;
+4. runs the compile command when the plugin has one (`CompileFailed` when it does not exit 0), then the run command.
+
+`SandboxRefused` means the runner would not start without the user's consent; the UI asks and calls again with `allowUnsandboxed`. Timeouts are fixed at 2 minutes for a build and 1 minute for a run until they become settings.

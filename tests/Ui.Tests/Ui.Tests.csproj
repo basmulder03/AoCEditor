@@ -9,6 +9,9 @@
     <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" />
     <ProjectReference Include="../../src/UiKit/UiKit.csproj" />
     <ProjectReference Include="../../src/Features/Puzzle/Puzzle.csproj" />
+    <ProjectReference Include="../../src/Features/Workspace/Workspace.csproj" />
+    <ProjectReference Include="../../src/Features/Plugins/Plugins.csproj" />
+    <ProjectReference Include="../../src/Features/Runner/Runner.csproj" />
     <ProjectReference Include="../../src/App/App.csproj" />
     <!-- The contrast test reads the same token files the app compiles in. -->
     <Content Include="../../src/UiKit/Tokens/Colors.axaml" Link="Tokens/Colors.axaml" CopyToOutputDirectory="PreserveNewest" />

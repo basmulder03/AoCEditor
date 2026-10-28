@@ -82,6 +82,11 @@ public static class ManifestParser
         }
 
         var templates = dto.TemplateFiles ?? [];
+        if (templates.Count == 0)
+        {
+            errors.Add("The plugin needs at least one template file.");
+        }
+
         errors.AddRange(templates.Keys.Where(n => !IsPlainFileName(n)).Select(n => $"The template file name '{n}' must be a plain file name."));
 
         var executables = dto.Toolchain?.Executables ?? [];
