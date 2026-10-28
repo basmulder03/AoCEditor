@@ -44,6 +44,7 @@ public sealed class WebViewSignInBrowser(Uri loginUrl, string profileFolder, ILo
                 done.TrySetResult(new BrowserOutcome.Cancelled());
             };
             var preflightDone = false;
+            ICookieSource? cookies = null;
             var busy = false;
             window.Browser.NavigationCompleted += async (_, e) =>
             {
@@ -58,11 +59,11 @@ public sealed class WebViewSignInBrowser(Uri loginUrl, string profileFolder, ILo
                     if (!preflightDone)
                     {
                         preflightDone = true;
-                        Preflight(window, done);
+                        cookies = await PreflightAsync(window, done, cancellationToken);
                         return;
                     }
 
-                    await OnNavigatedAsync(window, e, validate, done, cancellationToken);
+                    await OnNavigatedAsync(window, cookies!, e, validate, done, cancellationToken);
                 }
                 catch (Exception ex) when (ex is not OperationCanceledException)
                 {
@@ -102,16 +103,21 @@ public sealed class WebViewSignInBrowser(Uri loginUrl, string profileFolder, ILo
     }
 
     // Without cookie access the session can never be read, so the site is not even loaded.
-    private void Preflight(SignInWindow window, TaskCompletionSource<BrowserOutcome> done)
+    private async Task<ICookieSource?> PreflightAsync(SignInWindow window, TaskCompletionSource<BrowserOutcome> done, CancellationToken cancellationToken)
     {
-        if (window.Browser.TryGetCookieManager() is null)
+        var source = CookieSources.For(window.Browser);
+        var reason = source is null
+            ? NoCookieAccess
+            : await source.ReadAsync(loginUrl, cancellationToken) is CookieRead.Unsupported unsupported ? unsupported.Reason : null;
+        if (reason is not null)
         {
             _log.CookiesRead(false, 0, false);
-            done.TrySetResult(new BrowserOutcome.Unsupported(NoCookieAccess));
-            return;
+            done.TrySetResult(new BrowserOutcome.Unsupported(reason));
+            return null;
         }
 
         window.Browser.Source = loginUrl;
+        return source;
     }
 
     /// <summary>Forgets cookies and provider logins; false when files are still in use.</summary>
@@ -132,7 +138,7 @@ public sealed class WebViewSignInBrowser(Uri loginUrl, string profileFolder, ILo
         }
     }
 
-    private async Task OnNavigatedAsync(SignInWindow window, WebViewNavigationCompletedEventArgs e, TokenValidator validate, TaskCompletionSource<BrowserOutcome> done, CancellationToken cancellationToken)
+    private async Task OnNavigatedAsync(SignInWindow window, ICookieSource cookies, WebViewNavigationCompletedEventArgs e, TokenValidator validate, TaskCompletionSource<BrowserOutcome> done, CancellationToken cancellationToken)
     {
         var current = e.Request ?? window.Browser.Source;
         var page = SignInPage.HostAndPath(current);
@@ -143,17 +149,15 @@ public sealed class WebViewSignInBrowser(Uri loginUrl, string profileFolder, ILo
             await FitToWidthAsync(window.Browser);
         }
 
-        var cookies = window.Browser.TryGetCookieManager();
-        if (cookies is null)
+        if (await cookies.ReadAsync(loginUrl, cancellationToken) is not CookieRead.Cookies read)
         {
             _log.CookiesRead(false, 0, false);
             done.TrySetResult(new BrowserOutcome.Unsupported(NoCookieAccess));
             return;
         }
 
-        var all = await cookies.GetCookiesAsync();
-        var session = all
-            .FirstOrDefault(c => c.Name == CookieName && loginUrl.Host.EndsWith(c.Domain.TrimStart('.'), StringComparison.OrdinalIgnoreCase));
+        var all = read.Items;
+        var session = CookieSources.Find(all, CookieName, loginUrl.Host);
         var found = session is { Value.Length: > 0 };
         _log.CookiesRead(true, all.Count, found);
         if (SignInPage.Candidate(current, e.IsSuccess, session?.Value, loginUrl.Host) is not { } candidate)
@@ -170,7 +174,7 @@ public sealed class WebViewSignInBrowser(Uri loginUrl, string profileFolder, ILo
                 done.TrySetResult(new BrowserOutcome.Token(candidate));
                 break;
             case CandidateVerdict.Rejected:
-                cookies.DeleteCookie(session!);
+                await cookies.DeleteAsync(loginUrl, CookieName, cancellationToken);
                 window.Status = "Advent of Code did not accept that sign-in. Sign in again to continue.";
                 window.Browser.Source = loginUrl;
                 break;
