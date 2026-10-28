@@ -1,6 +1,6 @@
 # Puzzle parsing
 
-`PuzzleParser.Parse(html)` (`src/Features/Puzzle`) turns a puzzle page into a `PuzzleDocument`: the title, one `PuzzlePart` per `article.day-desc` and the "Your puzzle answer was" values found outside the articles. It returns null when the page has no puzzle article (login page, error page), so the caller can treat that as a fetch problem.
+`PuzzleParser.Parse(html)` (`src/Core/Puzzle`) turns a puzzle page into a `PuzzleDocument`: the title, one `PuzzlePart` per `article.day-desc` and the "Your puzzle answer was" values found outside the articles. It returns null when the page has no puzzle article (login page, error page), so the caller can treat that as a fetch problem.
 
 The HTML reader is hand-written and forgiving (no parser library, so it stays AoT-safe): unmatched end tags are ignored, void tags are recognised and entities are decoded.
 
@@ -18,7 +18,7 @@ Rendering with Avalonia controls and fetching through the gateway come in later 
 
 ## PuzzleService
 
-`PuzzleService` (`Puzzle.Application`) wraps the gateway for one day. Every call is `RequestKind.Interactive`, and every request follows a user action:
+`PuzzleService` (`AoCEditor.Core.Puzzle.Application`) wraps the gateway for one day. Every call is `RequestKind.Interactive`, and every request follows a user action:
 
 - `LoadPuzzleAsync(year, day, refresh)`: `GET /{year}/day/{day}`, parsed with `PuzzleParser`.
 - `LoadInputAsync(year, day, refresh)`: `GET /{year}/day/{day}/input`, returned as raw text. The input stays in the gateway cache (app data) and never reaches the solutions folder.
@@ -28,7 +28,7 @@ Results are `Fetched<T>` with a `FetchStatus` (`Ok`, `NotSignedIn`, `RateLimited
 
 ## PuzzleView
 
-`PuzzleView` (`Puzzle.UI`) renders one `PuzzlePart` (`Part` property) with native controls: selectable wrapped text for paragraphs and list items (`• ` prefix), a monospace boxed block for code, italic for emphasis, monospace for inline code and and a clickable link for web links. A click raises `LinkRequested` with the resolved address; `LinkResolver` resolves relative links against adventofcode.com and accepts only http and https, so other schemes are shown as underlined text and never opened. `DayView` asks for confirmation before opening a link in the system browser (ADR 0008).
+`PuzzleView` (`AoCEditor.UI.Puzzle`) renders one `PuzzlePart` (`Part` property) with native controls: selectable wrapped text for paragraphs and list items (`• ` prefix), a monospace boxed block for code, italic for emphasis, monospace for inline code and and a clickable link for web links. A click raises `LinkRequested` with the resolved address; `LinkResolver` resolves relative links against adventofcode.com and accepts only http and https, so other schemes are shown as underlined text and never opened. `DayView` asks for confirmation before opening a link in the system browser (ADR 0008).
 
 ## Attempts, cooldowns and known answers
 
@@ -40,7 +40,7 @@ Results are `Fetched<T>` with a `FetchStatus` (`Ok`, `NotSignedIn`, `RateLimited
 
 ## Day page
 
-Selecting an unlocked calendar tile opens `DayPage` (`src/App`), which hosts `DayView` (`Puzzle.UI`) bound to `DayViewModel`:
+Selecting an unlocked calendar tile opens `DayPage` (`src/App`), which hosts `DayView` (`AoCEditor.UI.Puzzle`) bound to `DayViewModel`:
 
 - Tabs: one per unlocked part plus Input. The input is downloaded the first time the Input tab is opened.
 - The answer box submits for the last unlocked part. Submit is disabled while a request is in flight, the box is empty, the day is complete or a cooldown runs; Enter in the box submits too.

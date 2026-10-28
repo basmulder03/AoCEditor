@@ -1,6 +1,6 @@
 # Year calendar
 
-The Calendar page (`src/Features/Sync/UI`, hosted by `src/App/CalendarPage`) shows one year at a time. Opening it reads only the local database; AoC is contacted solely when the user presses a sync button.
+The Calendar page (`src/UI/Sync`, hosted by `src/App/CalendarPage`) shows one year at a time. Opening it reads only the local database; AoC is contacted solely when the user presses a sync button.
 
 ## Years
 

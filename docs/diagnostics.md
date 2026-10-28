@@ -1,6 +1,6 @@
 # Diagnostics
 
-The `Diagnostics` slice (`src/Features/Diagnostics`) owns logging. Other slices depend only on `Microsoft.Extensions.Logging.Abstractions` and log through `[LoggerMessage]` source-generated methods (no reflection, AoT safe).
+The `Diagnostics` slice (`src/Core/Diagnostics`, sinks and wiring in `src/Infrastructure/Diagnostics`) owns logging. Other slices depend only on `Microsoft.Extensions.Logging.Abstractions` and log through `[LoggerMessage]` source-generated methods (no reflection, AoT safe).
 
 ## Sinks
 

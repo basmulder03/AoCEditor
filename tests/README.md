@@ -31,7 +31,7 @@ Filter by category in a mixed run: `dotnet test --solution AoCEditor.slnx --filt
 
 ## Layout
 
-`tests/Features/<Slice>.Tests` holds each slice's unit tests (mirrors `src/Features`). `tests/Specs` holds all Reqnroll scenarios, `tests/E2E` the process-level tests, `tests/Ui.Tests` and `tests/Shared.Tests` the UI kit and shared code.
+`tests/Core.Tests` and `tests/Infrastructure.Tests` hold the unit tests of the Core and Infrastructure layers in one folder per slice (namespace `AoCEditor.<Layer>.Tests.<Slice>`); tests of view models and views are in `tests/Ui.Tests`. The architecture tests (slice isolation, layer references) are in `tests/Shared.Tests/Architecture`. `tests/Specs` holds all Reqnroll scenarios, `tests/E2E` the process-level tests, `tests/Ui.Tests` and `tests/Shared.Tests` the UI kit and shared code.
 
 ## One top-level type per file
 

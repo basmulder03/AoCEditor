@@ -1,6 +1,6 @@
 # Calendar sync
 
-`SyncService` (`src/Features/Sync`) runs only on user action; nothing triggers it automatically and nothing polls. All its requests are `RequestKind.Statistics` with `FetchPolicy.Refresh`. The owner's reading of the AoC community guidelines: "Please throttle your requests to at least once every few minutes" for tools scraping statistics. The gateway therefore spaces these requests at least 3 minutes apart (see `docs/gateway.md`), so waiting is expected.
+`SyncService` (`src/Core/Sync`) runs only on user action; nothing triggers it automatically and nothing polls. All its requests are `RequestKind.Statistics` with `FetchPolicy.Refresh`. The owner's reading of the AoC community guidelines: "Please throttle your requests to at least once every few minutes" for tools scraping statistics. The gateway therefore spaces these requests at least 3 minutes apart (see `docs/gateway.md`), so waiting is expected.
 
 - `SyncYearAsync(year, refresh, progress, ct)`: used when the user opens a year. Fetches only `/{year}`. A year already synced is skipped unless `refresh` is true.
 - `SyncAllAsync(refreshYears, progress, ct)`: fetches `/events`, then queues the listed years not yet synced one after another. Years in `refreshYears` are fetched again; no other synced year is refreshed, so past years only refresh on explicit request.

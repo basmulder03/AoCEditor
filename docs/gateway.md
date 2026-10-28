@@ -1,6 +1,6 @@
 # AoC gateway
 
-`AocGateway` (`src/Features/Gateway`) is the only code that talks to adventofcode.com. `scripts/check-practices.sh` fails the build if an HTTP client or the AoC host name appears anywhere else in `src`.
+`AocGateway` (`src/Infrastructure/Gateway`; `GatewayOptions` and `IResponseCache` are in `src/Core/Gateway`) is the only code that talks to adventofcode.com. `scripts/check-practices.sh` fails the build if an HTTP client or the AoC host name appears anywhere else in `src`.
 
 ## What the site asks
 

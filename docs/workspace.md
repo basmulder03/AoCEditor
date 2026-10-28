@@ -1,6 +1,6 @@
 # Solutions workspace
 
-`WorkspaceService` (`src/Features/Workspace`) owns the folder where the user's solutions live. Layout (ADR 0016):
+`WorkspaceService` (`src/Infrastructure/Workspace`; `WorkspaceLayout` is in `src/Core/Workspace`) owns the folder where the user's solutions live. Layout (ADR 0016):
 
 ```
 <root>/<year>/<dd>/<language>/   a day's solution files

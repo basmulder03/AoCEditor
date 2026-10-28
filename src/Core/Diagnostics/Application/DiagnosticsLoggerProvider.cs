@@ -14,7 +14,7 @@ public sealed class DiagnosticsLoggerProvider(Redactor redactor, DebugMode debug
     {
     }
 
-    // "AoCEditor.Core.Session.Application.SignInCoordinator" -> "Session"; other categories keep their first segment.
+    // The slice segment after the layer names the source; other categories keep their first segment.
     private static string ShortSource(string category)
     {
         var parts = category.Split('.');

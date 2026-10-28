@@ -1,6 +1,6 @@
 # Language plugins
 
-A language plugin is a `plugin.json` (schema version 1) read by `ManifestParser` (`src/Features/Plugins`). No code from a plugin runs inside the app. A manifest with any error is rejected whole, and the errors are listed in plain words so the user can see why.
+A language plugin is a `plugin.json` (schema version 1) read by `ManifestParser` (`src/Core/Plugins`; `ToolchainLocator` is in `src/Infrastructure/Plugins`). No code from a plugin runs inside the app. A manifest with any error is rejected whole, and the errors are listed in plain words so the user can see why.
 
 ```json
 {

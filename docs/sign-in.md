@@ -1,6 +1,6 @@
 # Signing in
 
-`SignInCoordinator` (`src/Features/Session`) obtains a session token, proves it and only then stores it.
+`SignInCoordinator` (`src/Core/Session`; secret stores in `src/Infrastructure/Session`, browser and cookie sources in `src/UI/Session`) obtains a session token, proves it and only then stores it.
 
 1. If secure storage is unavailable the result is `StoreUnavailable(reason)` and nothing else happens (no fallback storage).
 2. The token comes from an `ISignInBrowser` or from the user's paste. A pasted token is trimmed and stripped of quotes and a `session=` prefix; anything that is not a plain cookie value is `InvalidToken` without a request.

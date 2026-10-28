@@ -6,5 +6,9 @@
   <ItemGroup>
     <PackageReference Include="xunit.v3" />
     <ProjectReference Include="../../src/Shared/Shared.csproj" />
+    <!-- Architecture tests read the built layer assemblies. -->
+    <ProjectReference Include="../../src/Core/Core.csproj" />
+    <ProjectReference Include="../../src/Infrastructure/Infrastructure.csproj" />
+    <ProjectReference Include="../../src/UI/UI.csproj" />
   </ItemGroup>
 </Project>

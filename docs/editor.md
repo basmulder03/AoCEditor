@@ -1,6 +1,6 @@
 # Code editor
 
-`EditorViewModel` and `EditorView` (`src/Features/Editor`) edit one solution file with AvaloniaEdit.
+`EditorViewModel` and `EditorView` (`src/UI/Editor`) edit one solution file with AvaloniaEdit.
 
 - **Folder rule.** The view model is created with a root folder (the solutions workspace). `Load(path)` throws `ArgumentException` for any path that resolves outside it, including `..` segments. Symbolic links inside the folder are not resolved.
 - **Encoding and line endings.** Files are read and written as UTF-8 without BOM. A BOM present on load is kept, and a CRLF file stays CRLF on save (otherwise LF). A missing file starts an empty buffer and is created on save.

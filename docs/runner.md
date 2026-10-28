@@ -1,6 +1,6 @@
 # Running solutions
 
-`IRunner` / `ProcessRunner` (`src/Features/Runner`) starts the expanded run command of a language plugin (`docs/plugins.md`) and reports a `RunResult`.
+`IRunner` / `ProcessRunner` (`src/Infrastructure/Runner`; the contracts are in `src/Core/Runner`) starts the expanded run command of a language plugin (`docs/plugins.md`) and reports a `RunResult`.
 
 - **No shell.** The command is a program plus an argument list, so quotes, `;` or `$(...)` in a path or value reach the program as plain text.
 - **Output** is reported line by line as `OutputLine(Stdout | Stderr, text)` through `IProgress`, which the console panel consumes. Output is read in chunks: a single line is cut at 8 KB and ends in an ellipsis, and after 4 MB per run nothing more is reported except one stderr note (the pipes are still drained so the program is not blocked; the timeout still applies). The day page also stops posting lines to the UI thread once the console holds its maximum.
@@ -57,7 +57,7 @@ The tests start real processes through `sh`/`python3` and run on Linux only; san
 
 ## Console
 
-`ConsoleView` and `ConsoleViewModel` (`Runner.UI`) show the output of the latest run: `Begin()` clears the old output, `Append` adds a line (stderr lines are italic, so the difference is not colour alone), `End(result)` writes a one-line status such as "Finished with exit code 0 in 1.50 s", and `Fail(message)` covers problems before a run starts. At most 10,000 lines are kept; after that output is dropped and a note says so, so a program that prints forever cannot exhaust memory.
+`ConsoleView` and `ConsoleViewModel` (`AoCEditor.UI.Runner`) show the output of the latest run: `Begin()` clears the old output, `Append` adds a line (stderr lines are italic, so the difference is not colour alone), `End(result)` writes a one-line status such as "Finished with exit code 0 in 1.50 s", and `Fail(message)` covers problems before a run starts. At most 10,000 lines are kept; after that output is dropped and a note says so, so a program that prints forever cannot exhaust memory.
 
 ## Day page
 

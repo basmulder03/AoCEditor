@@ -17,7 +17,7 @@ One csproj per slice (0003) produced many projects in the IDE and many test proj
 - A layer test requires that Core does not reference Avalonia, Infrastructure or UI.
 - Tests: unit tests of Core and Infrastructure consolidate into `tests/Core.Tests` and `tests/Infrastructure.Tests`. UI tests stay in `Ui.Tests`; Specs and E2E are unchanged.
 - File conventions: one top-level type per file, the file named after the type. Partial classes and nested types are excepted. `scripts/check-practices.sh` enforces this.
-- Namespaces stay slice-based (for example `Sync.Domain`) to keep the diff reviewable.
+- Namespaces mirror the folders: `AoCEditor.<Layer>.<Slice>[.<Folder>]`, for example `AoCEditor.Core.Sync.Domain`, `AoCEditor.Infrastructure.Storage`, `AoCEditor.UI.Sync`. Tests mirror the same way (`AoCEditor.Core.Tests.Sync`). `Shared`, `UiKit` and the App namespace `AoCEditor` keep their names. The architecture test checks that each namespace matches its folder.
 
 ## Consequences
 - Fewer csproj files in the IDE and fewer test projects.
@@ -25,5 +25,6 @@ One csproj per slice (0003) produced many projects in the IDE and many test proj
 - One-time large move done with `git mv` to keep history.
 - Supersedes the one-project-per-slice rule of 0003.
 
-## Open questions
-- Whether the architecture test uses a library or a small reflection-free check over project sources.
+## Resolved questions
+- The architecture test uses no library. Slice isolation scans the sources of `src/Core`, `src/Infrastructure` and `src/UI` for `AoCEditor.<Layer>.<OtherSlice>` (usings, fully qualified names, XAML `using:`). The layer rules read the assembly references of the built `AoCEditor.Core`, `AoCEditor.Infrastructure` and `AoCEditor.UI` with `System.Reflection.Metadata`. Both live in `tests/Shared.Tests/Architecture`.
+- Placement of types that mix layers: Core may use plain `System.IO` but no Avalonia, SQLite, HTTP, process or secret-store code. `WorkspaceService`, `ToolchainLocator` and `DiagnosticsServices` (which creates the file and console sinks) are in Infrastructure. `EditorViewModel` does file I/O but is a view model used by the UI, so it lives in `src/UI/Editor`.
