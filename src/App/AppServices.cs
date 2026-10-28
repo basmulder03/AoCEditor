@@ -29,6 +29,7 @@ public sealed class AppServices : IDisposable
         var logs = Diagnostics.LoggerFactory;
         _connections = new SqliteConnectionFactory(Paths, logs.CreateLogger("Storage.Connection"));
         SyncState = new SqliteSyncStateStore(_connections);
+        Answers = new SqliteAnswerStore(_connections);
         Settings = new SqliteKeyValueStore(_connections);
         Diagnostics.Debug.AttachStore(Settings);
         StorageStatus = new SqliteStorageStatus(_connections, Paths);
@@ -49,6 +50,8 @@ public sealed class AppServices : IDisposable
     public SessionEvents Events { get; } = new();
 
     public ISyncStateStore SyncState { get; }
+
+    public IAnswerStore Answers { get; }
 
     public DiagnosticsServices Diagnostics { get; }
 

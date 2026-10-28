@@ -29,8 +29,8 @@ public class KeyValueStoreTests
 
         var status = await new SqliteStorageStatus(new SqliteConnectionFactory(paths), paths).GetAsync(Ct);
 
-        status.SchemaVersion.ShouldBe(1);
-        status.MigrationsApplied.ShouldBe(1);
+        status.SchemaVersion.ShouldBe(2);
+        status.MigrationsApplied.ShouldBe(2);
         status.Error.ShouldBeNull();
         status.DatabasePath.ShouldBe(paths.Database);
     }

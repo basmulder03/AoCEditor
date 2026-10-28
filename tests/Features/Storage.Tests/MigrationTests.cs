@@ -31,7 +31,7 @@ public class MigrationTests
         await using (await factory.OpenAsync(ct)) { }
         await using var conn = await factory.OpenAsync(ct);
 
-        (await Scalar(conn, "SELECT COUNT(*) FROM schema_migrations")).ShouldBe(1);
+        (await Scalar(conn, "SELECT COUNT(*) FROM schema_migrations")).ShouldBe(2);
         (await Scalar(conn, "SELECT COUNT(*) FROM sqlite_master WHERE name IN ('sync_state','kv')")).ShouldBe(2);
         (await Scalar(conn, "PRAGMA foreign_keys")).ShouldBe(1);
         await using var cmd = conn.CreateCommand();
