@@ -4,10 +4,10 @@ using Shared.Contracts;
 namespace AoCEditor.Core.Session.Application;
 
 /// <summary>Obtains a session token, proves it with one request and only then stores it.</summary>
-public sealed class SignInCoordinator(
+public sealed class SignInService(
     SessionTokenProvider tokens,
     IAocGateway gateway,
-    ILogger<SignInCoordinator> log,
+    ILogger<SignInService> log,
     Action? clearBrowserProfile = null,
     TimeProvider? time = null,
     TimeSpan? browserTimeout = null)

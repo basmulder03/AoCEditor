@@ -4,7 +4,7 @@ using Xunit;
 
 namespace AoCEditor.Core.Tests.Session;
 
-public sealed class SignInPageLogTests
+public sealed class SignInPageClassifierLoggingTests
 {
     [Theory]
     [InlineData("https://adventofcode.com/auth/github/callback?code=SECRET&state=x#frag", "adventofcode.com/auth/github/callback")]
@@ -12,12 +12,12 @@ public sealed class SignInPageLogTests
     [InlineData("https://adventofcode.com", "adventofcode.com/")]
     public void LoggedUrlsCarryOnlyHostAndPath(string url, string expected)
     {
-        SignInPage.HostAndPath(new Uri(url)).ShouldBe(expected);
+        SignInPageClassifier.HostAndPath(new Uri(url)).ShouldBe(expected);
     }
 
     [Fact]
     public void MissingUrlIsNamed()
     {
-        SignInPage.HostAndPath(null).ShouldBe("(none)");
+        SignInPageClassifier.HostAndPath(null).ShouldBe("(none)");
     }
 }

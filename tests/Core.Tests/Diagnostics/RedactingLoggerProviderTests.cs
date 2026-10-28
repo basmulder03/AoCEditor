@@ -13,7 +13,7 @@ public sealed class RedactingLoggerProviderTests : IDisposable
     public void Dispose() => _inner.Dispose();
 
     private ILogger Logger(string? home = "/home/alice") =>
-        new RedactingLoggerProvider(new Redactor(home), _inner).CreateLogger("AoCEditor.Core.Session.Application.SignInCoordinator");
+        new RedactingLoggerProvider(new Redactor(home), _inner).CreateLogger("AoCEditor.Core.Session.Application.SignInService");
 
     [Fact]
     public void EveryMessageIsRedactedBeforeItReachesTheInnerProvider()

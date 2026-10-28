@@ -5,14 +5,14 @@ using Xunit;
 
 namespace AoCEditor.Core.Tests.Diagnostics;
 
-public sealed class RequestLogTests
+public sealed class GatewayRequestHistoryTests
 {
     private static GatewayRequestEntry Entry(string path) => new(DateTimeOffset.UnixEpoch, "GET", path, 200, TimeSpan.FromMilliseconds(12), TimeSpan.Zero);
 
     [Fact]
     public void KeepsNewestFirstAndBounded()
     {
-        var log = new RequestLog(2);
+        var log = new GatewayRequestHistory(2);
 
         log.Record(Entry("/1"));
         log.Record(Entry("/2"));
@@ -24,7 +24,7 @@ public sealed class RequestLogTests
     [Fact]
     public void RaisesChanged()
     {
-        var log = new RequestLog(2);
+        var log = new GatewayRequestHistory(2);
         var raised = 0;
         log.Changed += (_, _) => raised++;
 

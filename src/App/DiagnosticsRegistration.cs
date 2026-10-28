@@ -25,10 +25,10 @@ public static class DiagnosticsRegistration
         services
             .AddSingleton(mode)
             .AddSingleton(new Redactor(homeDirectory ?? Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)))
-            .AddSingleton(new RequestLog(RequestCapacity))
+            .AddSingleton(new GatewayRequestHistory(RequestCapacity))
             .AddSingleton(sp => new BufferLoggerProvider(BufferCapacity, sp.GetRequiredService<TimeProvider>()))
             .AddSingleton(sp => new DiagnosticsView(
-                sp.GetRequiredService<BufferLoggerProvider>(), sp.GetRequiredService<RequestLog>(), sp.GetRequiredService<Redactor>(), mode))
+                sp.GetRequiredService<BufferLoggerProvider>(), sp.GetRequiredService<GatewayRequestHistory>(), sp.GetRequiredService<Redactor>(), mode))
             .AddSingleton<ILoggerProvider>(sp => Redacting(sp, sp.GetRequiredService<BufferLoggerProvider>()))
             .AddSingleton<ILoggerProvider>(sp => Redacting(sp, new FileLoggerProvider(
                 Path.Combine(sp.GetRequiredService<IAppDataPaths>().Root, "logs"), sp.GetRequiredService<TimeProvider>(), MaxFileBytes, MaxFiles, MaxAge)))

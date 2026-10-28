@@ -2,7 +2,7 @@ using Shared.Contracts;
 
 namespace AoCEditor.Core.Diagnostics.Application;
 
-public sealed class RequestLog(int capacity) : IRequestLog
+public sealed class GatewayRequestHistory(int capacity) : IGatewayRequestHistory
 {
     private readonly LinkedList<GatewayRequestEntry> _entries = new();
     private readonly Lock _lock = new();

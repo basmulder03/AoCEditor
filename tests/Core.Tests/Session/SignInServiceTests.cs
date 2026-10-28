@@ -7,7 +7,7 @@ using Xunit;
 
 namespace AoCEditor.Core.Tests.Session;
 
-public sealed class SignInCoordinatorTests
+public sealed class SignInServiceTests
 {
     private const string Token = "0123abcdef";
     private readonly FakeSecretStore _store = new();
@@ -16,10 +16,10 @@ public sealed class SignInCoordinatorTests
     private bool _profileCleared;
     private static CancellationToken Ct => TestContext.Current.CancellationToken;
 
-    public SignInCoordinatorTests() => _tokens = new SessionTokenProvider(_store);
+    public SignInServiceTests() => _tokens = new SessionTokenProvider(_store);
 
-    private SignInCoordinator Create(FakeSecretStore? store = null) =>
-        new(store is null ? _tokens : new SessionTokenProvider(store), _gateway, NullLogger<SignInCoordinator>.Instance, () => _profileCleared = true);
+    private SignInService Create(FakeSecretStore? store = null) =>
+        new(store is null ? _tokens : new SessionTokenProvider(store), _gateway, NullLogger<SignInService>.Instance, () => _profileCleared = true);
 
     [Fact]
     public async Task BrowserTokenThatTheSiteAcceptsIsSaved()
@@ -72,9 +72,9 @@ public sealed class SignInCoordinatorTests
     {
         var time = new FakeTimeProvider();
         var browser = new FakeBrowser(new BrowserOutcome.Cancelled()) { WaitsForCancel = true };
-        var coordinator = new SignInCoordinator(_tokens, _gateway, NullLogger<SignInCoordinator>.Instance, null, time, TimeSpan.FromMinutes(10));
+        var signIn = new SignInService(_tokens, _gateway, NullLogger<SignInService>.Instance, null, time, TimeSpan.FromMinutes(10));
 
-        var pending = coordinator.SignInWithBrowserAsync(browser, Ct);
+        var pending = signIn.SignInWithBrowserAsync(browser, Ct);
         while (!browser.Opened)
         {
             await Task.Yield();
@@ -201,11 +201,11 @@ public sealed class SignInCoordinatorTests
     [Fact]
     public async Task StatusFollowsTheStore()
     {
-        var coordinator = Create();
-        (await coordinator.GetStatusAsync(Ct)).State.ShouldBe(SessionState.SignedOut);
+        var signIn = Create();
+        (await signIn.GetStatusAsync(Ct)).State.ShouldBe(SessionState.SignedOut);
 
-        await coordinator.SignInWithPastedTokenAsync(Token, Ct);
-        (await coordinator.GetStatusAsync(Ct)).State.ShouldBe(SessionState.SignedIn);
+        await signIn.SignInWithPastedTokenAsync(Token, Ct);
+        (await signIn.GetStatusAsync(Ct)).State.ShouldBe(SessionState.SignedIn);
 
         var down = await Create(new FakeSecretStore { Unavailable = true }).GetStatusAsync(Ct);
         down.State.ShouldBe(SessionState.StoreUnavailable);

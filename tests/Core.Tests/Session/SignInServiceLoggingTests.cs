@@ -6,14 +6,14 @@ using Xunit;
 
 namespace AoCEditor.Core.Tests.Session;
 
-public sealed class SignInCoordinatorLoggingTests
+public sealed class SignInServiceLoggingTests
 {
     private const string Token = "0123abcdef-secret";
-    private readonly CapturingLogger<SignInCoordinator> _log = new();
+    private readonly CapturingLogger<SignInService> _log = new();
     private readonly FakeGateway _gateway = new();
     private static CancellationToken Ct => TestContext.Current.CancellationToken;
 
-    private SignInCoordinator Create() => new(new SessionTokenProvider(new FakeSecretStore()), _gateway, _log);
+    private SignInService Create() => new(new SessionTokenProvider(new FakeSecretStore()), _gateway, _log);
 
     [Fact]
     public async Task UnsupportedBrowserIsLoggedWithItsReason()

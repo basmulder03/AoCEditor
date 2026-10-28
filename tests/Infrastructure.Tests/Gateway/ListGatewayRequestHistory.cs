@@ -3,7 +3,7 @@ using Shared.Contracts;
 
 namespace AoCEditor.Infrastructure.Tests.Gateway;
 
-internal sealed class ListRequestLog : IRequestLog
+internal sealed class ListGatewayRequestHistory : IGatewayRequestHistory
 {
     private readonly List<GatewayRequestEntry> _all = [];
 

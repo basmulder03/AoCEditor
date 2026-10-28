@@ -9,7 +9,7 @@ using Xunit;
 
 namespace AoCEditor.UI.Tests;
 
-public sealed class DayRunCoordinatorTests : IDisposable
+public sealed class DayRunServiceTests : IDisposable
 {
     private readonly string _temp = Path.Combine(Path.GetTempPath(), "aoc-coord-" + Guid.NewGuid().ToString("N"));
     private readonly Settings _settings = new();
@@ -19,7 +19,7 @@ public sealed class DayRunCoordinatorTests : IDisposable
     private Fetched<string> _input = new(FetchStatus.Ok, "1 2 3\n");
     private string? _toolchain = "/usr/bin/tool";
 
-    public DayRunCoordinatorTests()
+    public DayRunServiceTests()
     {
         _paths = new Paths(Path.Combine(_temp, "appdata"));
         _workspace = new WorkspaceService(_settings, _paths);
@@ -44,7 +44,7 @@ public sealed class DayRunCoordinatorTests : IDisposable
 
     private string Solutions => Path.Combine(_temp, "solutions");
 
-    private DayRunCoordinator Create() =>
+    private DayRunService Create() =>
         new(_workspace, (_, _, _) => Task.FromResult(_input), _runner, _paths, _ => _toolchain);
 
     public void Dispose()

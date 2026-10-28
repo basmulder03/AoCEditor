@@ -10,18 +10,18 @@ using Xunit;
 
 namespace AoCEditor.UI.Tests;
 
-public sealed class SolutionPanelTests : IDisposable
+public sealed class SolutionViewTests : IDisposable
 {
     private readonly string _folder = Directory.CreateTempSubdirectory("panel").FullName;
 
     public void Dispose() => Directory.Delete(_folder, true);
 
-    private async Task<(TestApp App, SolutionPanel Panel, Window Window)> OpenAsync()
+    private async Task<(TestApp App, SolutionView Panel, Window Window)> OpenAsync()
     {
         var app = AccountTests.Create(new AccountTests.Store());
         var services = app.Services;
         await services.Workspace.SetRootAsync(_folder, TestContext.Current.CancellationToken);
-        var panel = new SolutionPanel(services, 2024, 3);
+        var panel = new SolutionView(services, 2024, 3);
         var window = new Window { Content = panel, Width = 800, Height = 600 };
         window.Show();
         for (var i = 0; i < 50 && panel.Editor is null; i++)
@@ -74,7 +74,7 @@ public sealed class SolutionPanelTests : IDisposable
         panel.Editor.ChangedOnDisk.ShouldBeTrue();
     }
 
-    private static ComboBox Language(SolutionPanel panel) => panel.GetVisualDescendants().OfType<ComboBox>().Single();
+    private static ComboBox Language(SolutionView panel) => panel.GetVisualDescendants().OfType<ComboBox>().Single();
 
     private static async Task SettleAsync()
     {

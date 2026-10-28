@@ -15,7 +15,7 @@ namespace AoCEditor.UI.Session;
 public sealed class WebViewSignInBrowser(Uri loginUrl, string profileFolder, ILogger<WebViewSignInBrowser> log) : ISignInBrowser
 {
     private readonly ILogger _log = log;
-    private readonly string _loginPage = SignInPage.HostAndPath(loginUrl);
+    private readonly string _loginPage = SignInPageClassifier.HostAndPath(loginUrl);
     private const string CookieName = "session";
     private const string NoCookieAccess = "The embedded browser on this system does not give access to its cookies, so the session cannot be read from it.";
     private const string BlankPage = "data:text/html,<title>Sign in</title>";
@@ -140,7 +140,7 @@ public sealed class WebViewSignInBrowser(Uri loginUrl, string profileFolder, ILo
     private async Task OnNavigatedAsync(SignInWindow window, ICookieSource cookies, WebViewNavigationCompletedEventArgs e, TokenValidator validate, TaskCompletionSource<BrowserOutcome> done, CancellationToken cancellationToken)
     {
         var current = e.Request ?? window.Browser.Source;
-        var page = SignInPage.HostAndPath(current);
+        var page = SignInPageClassifier.HostAndPath(current);
         _log.Navigated(page, e.IsSuccess);
 
         if (e.IsSuccess)
@@ -159,7 +159,7 @@ public sealed class WebViewSignInBrowser(Uri loginUrl, string profileFolder, ILo
         var session = CookieSources.Find(all, CookieName, loginUrl.Host);
         var found = session is { Value.Length: > 0 };
         _log.CookiesRead(true, all.Count, found);
-        if (SignInPage.Candidate(current, e.IsSuccess, session?.Value, loginUrl.Host) is not { } candidate)
+        if (SignInPageClassifier.Candidate(current, e.IsSuccess, session?.Value, loginUrl.Host) is not { } candidate)
         {
             _log.NoCandidate(page);
             window.Status = WaitingText;

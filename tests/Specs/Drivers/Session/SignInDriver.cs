@@ -17,7 +17,7 @@ public sealed class SignInDriver : IDisposable
     private readonly SessionEvents _events = new();
     private readonly SessionTokenProvider _tokens;
     private readonly AocGateway _gateway;
-    private readonly SignInCoordinator _coordinator;
+    private readonly SignInService _signIn;
     private BrowserOutcome _outcome = new BrowserOutcome.Token(BrowserToken);
     private string[] _offered = [];
     private bool _opensForever;
@@ -27,7 +27,7 @@ public sealed class SignInDriver : IDisposable
     {
         _tokens = new SessionTokenProvider(_store);
         _gateway = new AocGateway(_handler, _tokens, new NoCache(), NullLogger<AocGateway>.Instance, new GatewayOptions { InteractiveInterval = TimeSpan.FromSeconds(1) }, _time, _events);
-        _coordinator = new SignInCoordinator(_tokens, _gateway, NullLogger<SignInCoordinator>.Instance, () => ProfileCleared = true, _time, TimeSpan.FromMinutes(10));
+        _signIn = new SignInService(_tokens, _gateway, NullLogger<SignInService>.Instance, () => ProfileCleared = true, _time, TimeSpan.FromMinutes(10));
         _events.SignInRequired += (_, _) => _prompts++;
     }
 
@@ -60,21 +60,21 @@ public sealed class SignInDriver : IDisposable
     public void BrowserStaysOpen() => _opensForever = true;
 
     public async Task SignInWithBrowserAsync() =>
-        Result = await _coordinator.SignInWithBrowserAsync(new Browser(_outcome, _offered, _opensForever, () => _time.Advance(TimeSpan.FromSeconds(1)), null), CancellationToken.None);
+        Result = await _signIn.SignInWithBrowserAsync(new Browser(_outcome, _offered, _opensForever, () => _time.Advance(TimeSpan.FromSeconds(1)), null), CancellationToken.None);
 
     public async Task LeaveBrowserOpenForMinutesAsync(int minutes)
     {
         var opened = new TaskCompletionSource();
-        var pending = _coordinator.SignInWithBrowserAsync(new Browser(_outcome, _offered, true, () => { }, opened), CancellationToken.None);
+        var pending = _signIn.SignInWithBrowserAsync(new Browser(_outcome, _offered, true, () => { }, opened), CancellationToken.None);
         await opened.Task;
         _time.Advance(TimeSpan.FromMinutes(minutes));
         Result = await pending;
     }
 
     public async Task SignInWithTokenAsync(string token) =>
-        Result = await _coordinator.SignInWithPastedTokenAsync(token, CancellationToken.None);
+        Result = await _signIn.SignInWithPastedTokenAsync(token, CancellationToken.None);
 
-    public Task SignOutAsync() => _coordinator.SignOutAsync(CancellationToken.None);
+    public Task SignOutAsync() => _signIn.SignOutAsync(CancellationToken.None);
 
     public async Task<bool> HasTokenAsync() => await _tokens.GetAsync(CancellationToken.None) is not null;
 

@@ -29,7 +29,7 @@ Turned on by the `--debug` flag, `AOCEDITOR_DEBUG=1` (or `true`), or the **Debug
 ## Debug page
 
 - Log list, newest first, with a minimum-level filter, a source filter (the slice name) and **Copy log** (redacted).
-- Recent gateway requests: method, path, status, duration and throttle wait (`IRequestLog`, fed by the gateway; never headers, bodies or tokens).
+- Recent gateway requests: method, path, status, duration and throttle wait (`IGatewayRequestHistory`, fed by the gateway; never headers, bodies or tokens).
 - Environment: app, OS and runtime versions, session state (signed in or out only), database path, schema version and migrations applied.
 - **Copy diagnostics** shows a redacted preview first; the clipboard is only written after **Copy to clipboard**.
 

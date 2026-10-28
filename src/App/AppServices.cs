@@ -17,7 +17,7 @@ namespace AoCEditor;
 public sealed class AppServices
 {
     private readonly WebViewSignInBrowser _browser;
-    private readonly SignInCoordinator _signIn;
+    private readonly SignInService _signIn;
     private readonly IConnectionFactory _connections;
 
     public AppServices(
@@ -31,12 +31,12 @@ public sealed class AppServices
         IKeyValueStore settings,
         IStorageStatus storageStatus,
         WebViewSignInBrowser browser,
-        SignInCoordinator signIn,
+        SignInService signIn,
         SyncService sync,
         PuzzleService puzzle,
         WorkspaceService workspace,
         IReadOnlyList<PluginManifest> plugins,
-        DayRunCoordinator coordinator)
+        DayRunService dayRun)
     {
         Paths = paths;
         Events = events;
@@ -53,7 +53,7 @@ public sealed class AppServices
         Puzzle = puzzle;
         Workspace = workspace;
         Plugins = plugins;
-        Coordinator = coordinator;
+        DayRunService = dayRun;
         LoggerFactory.CreateLogger("App").AppStarted(Shared.AppInfo.Version, Diagnostics.Debug.IsEnabled);
     }
 
@@ -85,7 +85,7 @@ public sealed class AppServices
 
     public IReadOnlyList<PluginManifest> Plugins { get; }
 
-    public DayRunCoordinator Coordinator { get; }
+    public DayRunService DayRunService { get; }
 
     /// <summary>Opens (and so migrates) the database.</summary>
     public async Task InitializeAsync(CancellationToken cancellationToken)

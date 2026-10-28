@@ -75,7 +75,7 @@ public sealed class BufferLoggerProviderTests
     {
         var buffer = Create(3);
 
-        buffer.CreateLogger("AoCEditor.Core.Session.Application.SignInCoordinator").Say(LogLevel.Warning, "careful");
+        buffer.CreateLogger("AoCEditor.Core.Session.Application.SignInService").Say(LogLevel.Warning, "careful");
 
         var entry = buffer.Snapshot().Single();
         entry.Time.ShouldBe(Now);
@@ -84,7 +84,7 @@ public sealed class BufferLoggerProviderTests
     }
 
     [Theory]
-    [InlineData("AoCEditor.Core.Session.Application.SignInCoordinator", "Session")]
+    [InlineData("AoCEditor.Core.Session.Application.SignInService", "Session")]
     [InlineData("AoCEditor.Infrastructure.Gateway.AocGateway", "Gateway")]
     [InlineData("AoCEditor.UI.Sync.Calendar", "Sync")]
     [InlineData("Gateway.AocGateway", "Gateway")]

@@ -4,7 +4,7 @@ using Xunit;
 
 namespace AoCEditor.Core.Tests.Session;
 
-public sealed class SignInPageTests
+public sealed class SignInPageClassifierTests
 {
     private const string Host = "adventofcode.com";
 
@@ -20,7 +20,7 @@ public sealed class SignInPageTests
     [InlineData(null, true, "abc", null)]
     public void OnlyAFinishedPageOutsideAuthWithACookieIsACandidate(string? url, bool finished, string? cookie, string? expected)
     {
-        var candidate = SignInPage.Candidate(url is null ? null : new Uri(url), finished, cookie, Host);
+        var candidate = SignInPageClassifier.Candidate(url is null ? null : new Uri(url), finished, cookie, Host);
 
         candidate.ShouldBe(expected);
     }

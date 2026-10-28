@@ -14,7 +14,7 @@ public sealed class ObservabilityTests : IDisposable
     private readonly FakeHandler _handler = new();
     private readonly FakeTimeProvider _time = new();
     private readonly CapturingLogger<AocGateway> _log = new();
-    private readonly ListRequestLog _requests = new();
+    private readonly ListGatewayRequestHistory _requests = new();
     private static CancellationToken Ct => TestContext.Current.CancellationToken;
 
     public void Dispose() => _handler.Dispose();

@@ -9,7 +9,7 @@ using Shared.Contracts;
 namespace AoCEditor;
 
 /// <summary>Ties the slices together for one run: scaffold the day, find the toolchain, store the input in app data, compile, run.</summary>
-public sealed class DayRunCoordinator(
+public sealed class DayRunService(
     WorkspaceService workspace,
     Func<int, int, CancellationToken, Task<Fetched<string>>> loadInput,
     IRunner runner,

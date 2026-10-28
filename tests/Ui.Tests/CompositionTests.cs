@@ -32,8 +32,8 @@ public sealed class CompositionTests : IDisposable
         typeof(TimeProvider), typeof(IAppDataPaths), typeof(DebugMode), typeof(DiagnosticsView), typeof(ILoggerFactory),
         typeof(IConnectionFactory), typeof(ISyncStateStore), typeof(IAnswerStore), typeof(IKeyValueStore), typeof(IStorageStatus),
         typeof(SessionTokenProvider), typeof(SessionEvents), typeof(AocGateway), typeof(IAocGateway), typeof(WebViewSignInBrowser),
-        typeof(SignInCoordinator), typeof(SyncService), typeof(PuzzleService), typeof(WorkspaceService),
-        typeof(IReadOnlyList<PluginManifest>), typeof(DayRunCoordinator), typeof(AppServices),
+        typeof(SignInService), typeof(SyncService), typeof(PuzzleService), typeof(WorkspaceService),
+        typeof(IReadOnlyList<PluginManifest>), typeof(DayRunService), typeof(AppServices),
     ];
 
     [Theory]

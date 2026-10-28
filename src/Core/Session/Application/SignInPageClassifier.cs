@@ -1,7 +1,7 @@
 namespace AoCEditor.Core.Session.Application;
 
 /// <summary>Decides from what the embedded browser shows whether a session token may be ready.</summary>
-public static class SignInPage
+public static class SignInPageClassifier
 {
     /// <summary>The session cookie value once a finished page outside the login hops is shown; otherwise null (keep waiting).</summary>
     public static string? Candidate(Uri? current, bool navigationFinished, string? sessionCookie, string siteHost) =>

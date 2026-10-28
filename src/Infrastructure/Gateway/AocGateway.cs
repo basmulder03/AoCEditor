@@ -19,15 +19,15 @@ public sealed class AocGateway : IAocGateway, IDisposable
     private readonly Dictionary<RequestKind, long> _lastRequest = [];
     private readonly ISessionEvents? _events;
     private readonly ILogger _log;
-    private readonly IRequestLog? _requests;
+    private readonly IGatewayRequestHistory? _requests;
     private long? _lastPrompt;
 
-    public AocGateway(ISessionTokenProvider tokens, IResponseCache cache, ILogger<AocGateway> logger, GatewayOptions? options = null, TimeProvider? time = null, ISessionEvents? events = null, IRequestLog? requests = null)
+    public AocGateway(ISessionTokenProvider tokens, IResponseCache cache, ILogger<AocGateway> logger, GatewayOptions? options = null, TimeProvider? time = null, ISessionEvents? events = null, IGatewayRequestHistory? requests = null)
         : this(new SocketsHttpHandler { AllowAutoRedirect = false, UseCookies = false }, tokens, cache, logger, options, time, events, requests)
     {
     }
 
-    public AocGateway(HttpMessageHandler handler, ISessionTokenProvider tokens, IResponseCache cache, ILogger<AocGateway> logger, GatewayOptions? options = null, TimeProvider? time = null, ISessionEvents? events = null, IRequestLog? requests = null)
+    public AocGateway(HttpMessageHandler handler, ISessionTokenProvider tokens, IResponseCache cache, ILogger<AocGateway> logger, GatewayOptions? options = null, TimeProvider? time = null, ISessionEvents? events = null, IGatewayRequestHistory? requests = null)
     {
         _log = logger;
         _requests = requests;

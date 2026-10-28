@@ -53,7 +53,7 @@ public static class AppServiceRegistration
             new FileResponseCache(sp.GetRequiredService<IAppDataPaths>().Cache),
             sp.GetRequiredService<ILogger<AocGateway>>(),
             events: sp.GetRequiredService<SessionEvents>(),
-            requests: sp.GetRequiredService<RequestLog>()))
+            requests: sp.GetRequiredService<GatewayRequestHistory>()))
         .AddSingleton<IAocGateway>(sp => sp.GetRequiredService<AocGateway>())
         .AddSingleton(sp => new WebViewSignInBrowser(
             new Uri(new GatewayOptions().BaseAddress, "auth/login"),
@@ -62,10 +62,10 @@ public static class AppServiceRegistration
         .AddSingleton(sp =>
         {
             var browser = sp.GetRequiredService<WebViewSignInBrowser>();
-            return new SignInCoordinator(
+            return new SignInService(
                 sp.GetRequiredService<SessionTokenProvider>(),
                 sp.GetRequiredService<IAocGateway>(),
-                sp.GetRequiredService<ILogger<SignInCoordinator>>(),
+                sp.GetRequiredService<ILogger<SignInService>>(),
                 () => browser.TryClearProfile());
         });
 
@@ -82,7 +82,7 @@ public static class AppServiceRegistration
         {
             var paths = sp.GetRequiredService<IAppDataPaths>();
             var puzzle = sp.GetRequiredService<PuzzleService>();
-            return new DayRunCoordinator(
+            return new DayRunService(
                 sp.GetRequiredService<WorkspaceService>(),
                 (year, day, cancellationToken) => puzzle.LoadInputAsync(year, day, false, cancellationToken),
                 new ProcessRunner([paths.Root]),
@@ -102,11 +102,11 @@ public static class AppServiceRegistration
             sp.GetRequiredService<IKeyValueStore>(),
             sp.GetRequiredService<IStorageStatus>(),
             sp.GetRequiredService<WebViewSignInBrowser>(),
-            sp.GetRequiredService<SignInCoordinator>(),
+            sp.GetRequiredService<SignInService>(),
             sp.GetRequiredService<SyncService>(),
             sp.GetRequiredService<PuzzleService>(),
             sp.GetRequiredService<WorkspaceService>(),
             sp.GetRequiredService<IReadOnlyList<PluginManifest>>(),
-            sp.GetRequiredService<DayRunCoordinator>()))
+            sp.GetRequiredService<DayRunService>()))
         .AddTransient(sp => new ShellWindow(sp.GetRequiredService<AppServices>()));
 }

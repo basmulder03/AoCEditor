@@ -3,7 +3,7 @@
              xmlns:local="using:AoCEditor"
              xmlns:runner="using:AoCEditor.UI.Runner"
              xmlns:editor="using:AoCEditor.UI.Editor"
-             x:Class="AoCEditor.SolutionPanel"
+             x:Class="AoCEditor.SolutionView"
              x:DataType="local:SolutionViewModel">
   <Grid RowDefinitions="Auto,*,*">
     <StackPanel Grid.Row="0" Spacing="{DynamicResource Space2}">
