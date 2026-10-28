@@ -19,6 +19,10 @@ The project is developed test-first, with human-readable behavior specs, and shi
 - Assertions use Shouldly only. `Xunit.Assert` is banned in `tests/` through BannedApiAnalyzers (`tests/BannedSymbols.txt`), so the build fails on violations. Guidelines are in `tests/README.md`.
 - Reqnroll features follow the practices in `tests/README.md` (declarative scenarios, thin steps over per-slice drivers (`Steps/<Slice>`, `Drivers/<Slice>`), parallel-safe).
 - Reqnroll code-behind (`*.feature.cs`) is generated at build and not committed.
+- Unit tests follow Arrange-Act-Assert: three phases separated by blank lines, with `// Arrange`, `// Act`, `// Assert` comments when a test is non-trivial. Exactly one Act; assertions only in the Assert phase. Reqnroll step classes keep the Given/When/Then rules from `tests/README.md`.
+- Fixtures, when setup is needed: used by one test class, a private nested class of it; used by several classes, shared at the lowest scope covering all users (same folder/namespace, `internal`). Use the least visibility possible: private nested, then `internal` in the lowest shared place, `public` only when another test project needs it (such as `tests/TestSupport`).
+- Shared setup and cleanup use xUnit fixture mechanisms (`IClassFixture`, collection fixtures, `IAsyncLifetime`), not ad-hoc statics.
+- Existing tests are migrated to these rules under the tracked "AAA and fixtures" issue; new tests follow them from now on.
 
 ## Consequences
 - More up-front work per slice; regressions caught early.

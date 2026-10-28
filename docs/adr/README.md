@@ -29,7 +29,7 @@ Status: `Accepted` = decided with the owner, `Proposed` = default chosen by the 
 | 0020 | External IDE mode | Accepted | App as controller, IDE edits files |
 | 0021 | MCP server | Accepted | App-in-the-loop, configurable tools, AoC-rule notice |
 | 0022 | Design system and accessibility | Accepted | Tokens, themes, WCAG, keyboard |
-| 0023 | Testing strategy | Accepted | xUnit v3, Reqnroll BDD, E2E, TDD flow |
+| 0023 | Testing strategy | Accepted | xUnit v3, Reqnroll BDD, E2E, TDD flow, Arrange-Act-Assert, fixture scoping and visibility |
 | 0024 | Installer and self-update | Accepted | Velopack, per-user, unsigned at first |
 | 0025 | CI/CD and release automation | Accepted | Build/test matrix, release, gh-pages |
 | 0026 | Documentation and gh-pages | Accepted | DocFX, docs folder, publish on release |
