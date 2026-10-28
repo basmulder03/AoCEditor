@@ -28,3 +28,7 @@ Filter by category in a mixed run: `dotnet test --solution AoCEditor.slnx --filt
 - Tags classify scenarios (`@e2e`, `@ui`, `@slow`); hooks (`[BeforeScenario]`) are scoped with tags, not global.
 - Never put puzzle text, inputs or real answers in features; use synthetic data.
 - Generated `*.feature.cs` files are not committed.
+
+## Layout
+
+`tests/Features/<Slice>.Tests` holds each slice's unit tests (mirrors `src/Features`). `tests/Specs` holds all Reqnroll scenarios, `tests/E2E` the process-level tests, `tests/Ui.Tests` and `tests/Shared.Tests` the UI kit and shared code.

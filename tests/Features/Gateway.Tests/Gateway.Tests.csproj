@@ -6,6 +6,6 @@
   <ItemGroup>
     <PackageReference Include="xunit.v3" />
     <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" />
-    <ProjectReference Include="../../src/Features/Sync/Sync.csproj" />
+    <ProjectReference Include="../../../src/Features/Gateway/Gateway.csproj" />
   </ItemGroup>
 </Project>

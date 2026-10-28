@@ -10,12 +10,12 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/E2E/E2E.csproj" />
-    <Project Path="tests/Gateway.Tests/Gateway.Tests.csproj" />
-    <Project Path="tests/Session.Tests/Session.Tests.csproj" />
+    <Project Path="tests/Features/Gateway.Tests/Gateway.Tests.csproj" />
+    <Project Path="tests/Features/Session.Tests/Session.Tests.csproj" />
     <Project Path="tests/Shared.Tests/Shared.Tests.csproj" />
     <Project Path="tests/Specs/Specs.csproj" />
-    <Project Path="tests/Storage.Tests/Storage.Tests.csproj" />
-    <Project Path="tests/Sync.Tests/Sync.Tests.csproj" />
+    <Project Path="tests/Features/Storage.Tests/Storage.Tests.csproj" />
+    <Project Path="tests/Features/Sync.Tests/Sync.Tests.csproj" />
     <Project Path="tests/Ui.Tests/Ui.Tests.csproj" />
   </Folder>
 </Solution>

@@ -5,6 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="xunit.v3" />
-    <ProjectReference Include="../../src/Features/Session/Session.csproj" />
+    <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" />
+    <ProjectReference Include="../../../src/Features/Sync/Sync.csproj" />
   </ItemGroup>
 </Project>
