@@ -63,7 +63,8 @@ public partial class SolutionPanel : UserControl
         return await _services!.Coordinator.RunAsync(year, day, plugin, output, allow, ct);
     }
 
-    // shortcut: switching language discards unsaved edits when the file also changed on disk, revisit with a prompt.
+    bool CanLeaveFile() => Editor is not { IsDirty: true } editor || editor.Save() != SaveResult.ChangedOnDisk;
+
     async Task OpenSourceAsync()
     {
         if (_services is null || Model?.SelectedPlugin is not { } plugin)
@@ -71,7 +72,6 @@ public partial class SolutionPanel : UserControl
             return;
         }
 
-        Editor?.Save();
         var scaffold = await _services.Coordinator.ScaffoldAsync(_year, _day, plugin, CancellationToken.None);
         if (scaffold is { Kind: DayScaffoldKind.Scaffolded, Folder: { } folder, SourcePath: { } source })
         {
@@ -99,6 +99,17 @@ public partial class SolutionPanel : UserControl
     {
         if (Model is { } model && LanguageBox.SelectedIndex is >= 0 and var i && _services is { } services)
         {
+            if (services.Plugins[i] == model.SelectedPlugin)
+            {
+                return;
+            }
+
+            if (!CanLeaveFile())
+            {
+                LanguageBox.SelectedIndex = services.Plugins.ToList().IndexOf(model.SelectedPlugin!);
+                return;
+            }
+
             model.SelectedPlugin = services.Plugins[i];
             _ = OpenSourceAsync();
         }
@@ -127,7 +138,17 @@ public partial class SolutionPanel : UserControl
             return;
         }
 
-        var result = await _services.Workspace.SetRootAsync(path, CancellationToken.None);
+        await ApplyFolderAsync(path);
+    }
+
+    public async Task ApplyFolderAsync(string path)
+    {
+        if (!CanLeaveFile())
+        {
+            return;
+        }
+
+        var result = await _services!.Workspace.SetRootAsync(path, CancellationToken.None);
         if (result == SetRootResult.Ok)
         {
             await OpenSourceAsync();

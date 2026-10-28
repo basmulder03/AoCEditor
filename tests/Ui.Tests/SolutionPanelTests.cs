@@ -69,4 +69,58 @@ public sealed class SolutionPanelTests : IDisposable
 
         panel.Editor.ChangedOnDisk.ShouldBeTrue();
     }
+
+    private static ComboBox Language(SolutionPanel panel) => panel.GetVisualDescendants().OfType<ComboBox>().Single();
+
+    private static async Task SettleAsync()
+    {
+        await Task.Delay(300, TestContext.Current.CancellationToken);
+        Dispatcher.UIThread.RunJobs();
+    }
+
+    [AvaloniaFact]
+    public async Task SwitchingLanguageWithAConflictingUnsavedEditKeepsTheFileAndLanguage()
+    {
+        var (services, panel, _) = await OpenAsync();
+        using var _ = services;
+        var editor = panel.Editor!;
+        var path = editor.FilePath!;
+        editor.Text = "my unsaved work";
+        File.WriteAllText(path, "changed elsewhere");
+
+        Language(panel).SelectedIndex = 1;
+        await SettleAsync();
+
+        Language(panel).SelectedIndex.ShouldBe(0);
+        panel.Editor.ShouldBeSameAs(editor);
+        editor.Text.ShouldBe("my unsaved work");
+        editor.ChangedOnDisk.ShouldBeTrue();
+        File.ReadAllText(path).ShouldBe("changed elsewhere");
+    }
+
+    [AvaloniaFact]
+    public async Task ChoosingAFolderWithAConflictingUnsavedEditKeepsTheFile()
+    {
+        var (services, panel, _) = await OpenAsync();
+        using var _ = services;
+        var editor = panel.Editor!;
+        editor.Text = "my unsaved work";
+        File.WriteAllText(editor.FilePath!, "changed elsewhere");
+        var other = Directory.CreateTempSubdirectory("panel-other").FullName;
+
+        try
+        {
+            await panel.ApplyFolderAsync(other);
+            await SettleAsync();
+
+            panel.Editor.ShouldBeSameAs(editor);
+            editor.Text.ShouldBe("my unsaved work");
+            editor.ChangedOnDisk.ShouldBeTrue();
+            (await services.Workspace.RootAsync(TestContext.Current.CancellationToken)).ShouldBe(_folder);
+        }
+        finally
+        {
+            Directory.Delete(other, true);
+        }
+    }
 }
