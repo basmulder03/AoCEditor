@@ -48,7 +48,7 @@ public class ContrastTests
     static Dictionary<string, string> Load(string theme)
     {
         var doc = XDocument.Load(Path.Combine(AppContext.BaseDirectory, "Tokens", "Colors.axaml"));
-        var dict = doc.Descendants().Single(e => (string?)e.Attribute(X + "Key") == theme && e.Name.LocalName == "ResourceDictionary");
+        var dict = doc.Descendants().Single(e => ((string?)e.Attribute(X + "Key") is { } k && (k == theme || k == $"{{x:Static ui:ThemeChoice.{theme}}}")) && e.Name.LocalName == "ResourceDictionary");
         return dict.Elements().Where(e => e.Name.LocalName == "Color")
             .ToDictionary(e => (string)e.Attribute(X + "Key")!, e => e.Value.Trim());
     }

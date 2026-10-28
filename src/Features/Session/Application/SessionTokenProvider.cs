@@ -6,11 +6,11 @@ public sealed class SessionTokenProvider(ISecretStore store) : ISessionTokenProv
 {
     internal const string SecretName = "session-token";
 
-    public async ValueTask<string?> GetAsync(CancellationToken cancellationToken)
-    {
-        var result = await store.GetAsync(SecretName, cancellationToken).ConfigureAwait(false);
-        return (result as SecretResult.Ok)?.Value;
-    }
+    public async ValueTask<string?> GetAsync(CancellationToken cancellationToken) =>
+        (await ReadAsync(cancellationToken).ConfigureAwait(false) as SecretResult.Ok)?.Value;
+
+    /// <summary>The store's own answer, so callers can tell a missing token from an unavailable store.</summary>
+    public Task<SecretResult> ReadAsync(CancellationToken cancellationToken) => store.GetAsync(SecretName, cancellationToken);
 
     public async Task<SecretResult> SaveAsync(string token, CancellationToken cancellationToken)
     {

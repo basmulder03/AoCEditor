@@ -78,6 +78,9 @@ public sealed class CalendarSyncDriver
 
         public DateTimeOffset NextAllowedAt(RequestKind kind) => owner._time.GetUtcNow();
 
+        public Task<GatewayResult> CheckTokenAsync(string token, CancellationToken cancellationToken) =>
+            throw new NotSupportedException();
+
         public Task<GatewayResult> PostFormAsync(string path, IReadOnlyDictionary<string, string> form, CancellationToken cancellationToken) =>
             throw new NotSupportedException();
     }

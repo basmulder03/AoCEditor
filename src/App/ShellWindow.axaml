@@ -7,10 +7,22 @@
         AutomationProperties.Name="AoCEditor">
   <Grid ColumnDefinitions="200,*">
     <ListBox x:Name="Nav" SelectedIndex="0" SelectionChanged="OnNavChanged"
-             AutomationProperties.Name="Navigation" Margin="{DynamicResource Space2}">
+             AutomationProperties.Name="Navigation" Margin="{DynamicResource InsetSm}">
       <ListBoxItem Tag="Calendar" AutomationProperties.Name="Calendar">Calendar</ListBoxItem>
       <ListBoxItem Tag="Settings" AutomationProperties.Name="Settings">Settings</ListBoxItem>
     </ListBox>
-    <ContentControl x:Name="Host" Grid.Column="1" Margin="{DynamicResource Space4}" IsTabStop="False" />
+    <Grid Grid.Column="1" RowDefinitions="Auto,*">
+      <Border x:Name="SignInPrompt" IsVisible="False" Background="{DynamicResource SurfaceBrush}"
+              BorderBrush="{DynamicResource BorderBrush}" BorderThickness="{DynamicResource BorderWidth}"
+              CornerRadius="{DynamicResource RadiusMd}" Margin="{DynamicResource InsetMd}"
+              Padding="{DynamicResource PadControl}" AutomationProperties.Name="Sign-in required">
+        <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Space2}">
+          <TextBlock VerticalAlignment="Center" Text="You are not signed in to Advent of Code." />
+          <Button x:Name="PromptSignIn" Content="Sign in" AutomationProperties.Name="Sign in" Click="OnPromptSignInClick" />
+          <Button x:Name="PromptDismiss" Content="Dismiss" AutomationProperties.Name="Dismiss sign-in prompt" Click="OnPromptDismissClick" />
+        </StackPanel>
+      </Border>
+      <ContentControl x:Name="Host" Grid.Row="1" Margin="{DynamicResource InsetMd}" IsTabStop="False" />
+    </Grid>
   </Grid>
 </Window>

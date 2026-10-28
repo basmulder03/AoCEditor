@@ -12,7 +12,9 @@ public partial class App : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            desktop.MainWindow = new ShellWindow();
+            var services = new AppServices();
+            desktop.MainWindow = new ShellWindow(services);
+            desktop.Exit += (_, _) => services.Dispose();
         }
         base.OnFrameworkInitializationCompleted();
     }

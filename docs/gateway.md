@@ -37,6 +37,11 @@ A configured value below its floor is raised to the floor. Cache hits send nothi
 
 `GetAsync(path, kind, policy, ct)` and `PostFormAsync(path, form, ct)` return `GatewayResult`: `Ok(Content)`, `NotSignedIn` (3xx, 400, 401, 403 or no token), `RateLimited` (429), `NotFound` (404), `NetworkError` (anything else, including 5xx and timeouts). Parsing is left to feature slices. `IAocGateway`, `FetchPolicy` and `GatewayResult` live in `Shared.Contracts` so other slices can use the gateway without referencing it.
 
+## Sign-in support
+
+- `CheckTokenAsync(token)` sends one uncached interactive request for `/settings` with a token that is not stored yet. A rejected token is `NotSignedIn`.
+- When a normal request ends in `NotSignedIn` (including "no token"), the gateway calls `ISessionEvents.NotifySignInRequired()`. Prompts are at least `SignInPromptInterval` (30 s) apart, so a burst of failures raises one prompt. Token checks never raise it.
+
 ## Wiring
 
-The app does not use dependency injection yet, so there is no registration extension: construct `new AocGateway(tokens, new FileResponseCache(paths.Cache))` once and share it.
+The app does not use dependency injection yet, so there is no registration extension: `AppServices` in `src/App` is the composition root: it constructs `new AocGateway(tokens, new FileResponseCache(paths.Cache), events: sessionEvents)` once and shares it.

@@ -6,6 +6,9 @@
   <x:Double x:Key="Space4">16</x:Double>
   <x:Double x:Key="Space6">24</x:Double>
   <Thickness x:Key="PadControl">12,8</Thickness>
+  <Thickness x:Key="InsetSm">8</Thickness>
+  <Thickness x:Key="InsetMd">16</Thickness>
+  <Thickness x:Key="InsetTopMd">0,16,0,0</Thickness>
   <CornerRadius x:Key="RadiusSm">2</CornerRadius>
   <CornerRadius x:Key="RadiusMd">4</CornerRadius>
   <CornerRadius x:Key="RadiusLg">8</CornerRadius>
@@ -13,8 +16,8 @@
   <x:Double x:Key="FontSizeBody">14</x:Double>
   <x:Double x:Key="FontSizeTitle">20</x:Double>
   <x:Double x:Key="FontSizeHeading">28</x:Double>
-  <x:Double x:Key="BorderWidth">1</x:Double>
-  <x:Double x:Key="FocusWidth">2</x:Double>
+  <Thickness x:Key="BorderWidth">1</Thickness>
+  <Thickness x:Key="FocusWidth">2</Thickness>
   <x:Double x:Key="MotionFastMs">100</x:Double>
   <x:Double x:Key="MotionNormalMs">200</x:Double>
 </ResourceDictionary>

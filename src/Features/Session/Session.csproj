@@ -5,6 +5,8 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.Controls.WebView" />
     <ProjectReference Include="../../Shared/Shared.csproj" />
   </ItemGroup>
 </Project>

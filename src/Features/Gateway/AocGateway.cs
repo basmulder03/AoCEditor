@@ -15,14 +15,17 @@ public sealed class AocGateway : IAocGateway, IDisposable
     private readonly TimeProvider _time;
     private readonly SemaphoreSlim _gate = new(1, 1);
     private readonly Dictionary<RequestKind, long> _lastRequest = [];
+    private readonly ISessionEvents? _events;
+    private long? _lastPrompt;
 
-    public AocGateway(ISessionTokenProvider tokens, IResponseCache cache, GatewayOptions? options = null, TimeProvider? time = null)
-        : this(new SocketsHttpHandler { AllowAutoRedirect = false, UseCookies = false }, tokens, cache, options, time)
+    public AocGateway(ISessionTokenProvider tokens, IResponseCache cache, GatewayOptions? options = null, TimeProvider? time = null, ISessionEvents? events = null)
+        : this(new SocketsHttpHandler { AllowAutoRedirect = false, UseCookies = false }, tokens, cache, options, time, events)
     {
     }
 
-    public AocGateway(HttpMessageHandler handler, ISessionTokenProvider tokens, IResponseCache cache, GatewayOptions? options = null, TimeProvider? time = null)
+    public AocGateway(HttpMessageHandler handler, ISessionTokenProvider tokens, IResponseCache cache, GatewayOptions? options = null, TimeProvider? time = null, ISessionEvents? events = null)
     {
+        _events = events;
         _options = options ?? new GatewayOptions();
         _tokens = tokens;
         _cache = cache;
@@ -49,18 +52,21 @@ public sealed class AocGateway : IAocGateway, IDisposable
     public Task<GatewayResult> PostFormAsync(string path, IReadOnlyDictionary<string, string> form, CancellationToken cancellationToken) =>
         SendAsync(HttpMethod.Post, RequestKind.Interactive, path, form, cancellationToken);
 
+    public Task<GatewayResult> CheckTokenAsync(string token, CancellationToken cancellationToken) =>
+        SendAsync(HttpMethod.Get, RequestKind.Interactive, "/settings", null, cancellationToken, token);
+
     public void Dispose()
     {
         _http.Dispose();
         _gate.Dispose();
     }
 
-    private async Task<GatewayResult> SendAsync(HttpMethod method, RequestKind kind, string path, IReadOnlyDictionary<string, string>? form, CancellationToken cancellationToken)
+    private async Task<GatewayResult> SendAsync(HttpMethod method, RequestKind kind, string path, IReadOnlyDictionary<string, string>? form, CancellationToken cancellationToken, string? candidateToken = null)
     {
-        var token = await _tokens.GetAsync(cancellationToken);
+        var token = candidateToken ?? await _tokens.GetAsync(cancellationToken);
         if (string.IsNullOrEmpty(token))
         {
-            return new GatewayResult.NotSignedIn();
+            return SignInRequired();
         }
 
         await AcquireAsync(kind, cancellationToken);
@@ -78,7 +84,8 @@ public sealed class AocGateway : IAocGateway, IDisposable
             try
             {
                 using var response = await _http.SendAsync(request, cancellationToken);
-                return await MapAsync(response, cancellationToken);
+                var result = await MapAsync(response, cancellationToken);
+                return result is GatewayResult.NotSignedIn && candidateToken is null ? SignInRequired() : result;
             }
             catch (HttpRequestException)
             {
@@ -100,6 +107,27 @@ public sealed class AocGateway : IAocGateway, IDisposable
         {
             _gate.Release();
         }
+    }
+
+    // One prompt per window so a burst of rejected requests shows one sign-in invitation.
+    private GatewayResult.NotSignedIn SignInRequired()
+    {
+        var raise = false;
+        lock (_lastRequest)
+        {
+            if (_lastPrompt is not { } last || _time.GetElapsedTime(last) >= _options.SignInPromptInterval)
+            {
+                _lastPrompt = _time.GetTimestamp();
+                raise = true;
+            }
+        }
+
+        if (raise)
+        {
+            _events?.NotifySignInRequired();
+        }
+
+        return new GatewayResult.NotSignedIn();
     }
 
     public DateTimeOffset NextAllowedAt(RequestKind kind) => _time.GetUtcNow() + Remaining(kind);

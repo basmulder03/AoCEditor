@@ -46,6 +46,9 @@ internal sealed class FakeGateway : IAocGateway
 
     public Task<GatewayResult> PostFormAsync(string path, IReadOnlyDictionary<string, string> form, CancellationToken cancellationToken) =>
         throw new NotSupportedException();
+
+    public Task<GatewayResult> CheckTokenAsync(string token, CancellationToken cancellationToken) =>
+        throw new NotSupportedException();
 }
 
 internal sealed class MemoryStore : ISyncStateStore
