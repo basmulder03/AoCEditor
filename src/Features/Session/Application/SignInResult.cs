@@ -10,6 +10,9 @@ public abstract record SignInResult
 
     public sealed record Cancelled : SignInResult;
 
+    /// <summary>The browser stayed open without a valid sign-in until the time limit.</summary>
+    public sealed record TimedOut : SignInResult;
+
     /// <summary>The site did not accept the token, or it is not shaped like a session token.</summary>
     public sealed record InvalidToken : SignInResult;
 

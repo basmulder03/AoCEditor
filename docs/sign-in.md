@@ -11,7 +11,11 @@ Tokens never appear in results, `ToString` output or logs.
 
 ## Embedded browser
 
-`WebViewSignInBrowser` (`Session/UI`) opens the site's login page in Avalonia's `NativeWebDialog`. After a navigation back to the site outside `/auth/` it reads the HttpOnly `session` cookie from the dialog's cookie manager and closes the dialog. Closing the dialog yields `Cancelled`; a missing WebView runtime yields `Unsupported`, and the Settings page then shows the paste form.
+`WebViewSignInBrowser` (`Session/UI`) hosts Avalonia's `NativeWebView` in our own `SignInWindow` instead of `NativeWebDialog`: the dialog has no owner, status line or Cancel button, and could not be centred on the app window. The window is owned by the shell, opens centred on it, stays on the owner's screen and fully inside that screen's working area (`SignInWindowPlacement`, 520x720 by default, never larger than the working area, minimum 360x480), and can be moved and resized. The browser stretches to fill it. A status line and an always-visible Cancel sit below the page.
+
+The window waits until the user is really signed in. After every finished navigation the HttpOnly `session` cookie is read again; `SignInPage.Candidate` turns (URL, finished, cookie) into a candidate only when the page is on the site, outside `/auth/` and a cookie exists. A candidate goes through the coordinator to the gateway (`CheckTokenAsync`). Only an accepted token closes the window. A rejected one (for example a stale cookie from the profile) is deleted, the status line says so and the login page is shown again; an unreachable site keeps the window open with a note. Closing the window or pressing Cancel yields `Cancelled`; after 10 minutes (`SignInCoordinator.DefaultBrowserTimeout`) the result is `TimedOut`. Both, and a missing WebView runtime (`Unsupported`), make Settings show the paste form.
+
+After each finished page a script adds `<meta name="viewport" content="width=device-width, initial-scale=1">` when the page has none (`NativeWebView.InvokeScript`); DPI scaling is left to Avalonia and the placement helper converts between pixels and DIPs with the screen's scaling.
 
 The browser profile (cookies, remembered provider logins) lives in `<app data>/webview` (WebKitGTK base data directory, WebView2 user data folder) and is deleted on sign out.
 
@@ -27,4 +31,4 @@ Sign in at the site in a normal browser, open the developer tools (F12), Applica
 
 ## Unverified
 
-Windows, OAuth providers inside the embedded browser (some, such as Google, block embedded browsers; use the paste fallback), and the browser dialog itself on a real login were not exercised.
+Windows, OAuth providers inside the embedded browser (some, such as Google, block embedded browsers; use the paste fallback), and the sign-in window on a real login (placement on a second monitor, page fit) were not exercised by tests; only the pure decision, placement and coordinator logic are.

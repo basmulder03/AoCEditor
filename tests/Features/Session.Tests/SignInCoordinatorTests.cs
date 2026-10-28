@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Time.Testing;
 using Session.Application;
 using Shared.Contracts;
 using Shouldly;
@@ -27,6 +28,75 @@ public sealed class SignInCoordinatorTests
         result.ShouldBeOfType<SignInResult.SignedIn>();
         (await _tokens.GetAsync(Ct)).ShouldBe(Token);
         _gateway.Checked.ShouldBe([Token]);
+    }
+
+    [Fact]
+    public async Task RejectedCandidateKeepsTheBrowserOpenUntilAValidOneArrives()
+    {
+        _gateway.Answers.Enqueue(new GatewayResult.NotSignedIn());
+        var browser = new FakeBrowser(new BrowserOutcome.Cancelled()) { Candidates = ["stale", Token] };
+
+        var result = await Create().SignInWithBrowserAsync(browser, Ct);
+
+        result.ShouldBeOfType<SignInResult.SignedIn>();
+        browser.Verdicts.ShouldBe([CandidateVerdict.Rejected, CandidateVerdict.Accepted]);
+        _gateway.Checked.ShouldBe(["stale", Token]);
+        (await _tokens.GetAsync(Ct)).ShouldBe(Token);
+    }
+
+    [Fact]
+    public async Task UnreachableSiteDuringCandidateCheckKeepsWaiting()
+    {
+        _gateway.Answers.Enqueue(new GatewayResult.NetworkError());
+        var browser = new FakeBrowser(new BrowserOutcome.Cancelled()) { Candidates = [Token, Token] };
+
+        var result = await Create().SignInWithBrowserAsync(browser, Ct);
+
+        result.ShouldBeOfType<SignInResult.SignedIn>();
+        browser.Verdicts.ShouldBe([CandidateVerdict.Unreachable, CandidateVerdict.Accepted]);
+    }
+
+    [Fact]
+    public async Task AcceptedCandidateIsCheckedOnlyOnce()
+    {
+        var browser = new FakeBrowser(new BrowserOutcome.Cancelled()) { Candidates = [Token] };
+
+        await Create().SignInWithBrowserAsync(browser, Ct);
+
+        _gateway.Checked.ShouldBe([Token]);
+    }
+
+    [Fact]
+    public async Task BrowserThatNeverFinishesTimesOut()
+    {
+        var time = new FakeTimeProvider();
+        var browser = new FakeBrowser(new BrowserOutcome.Cancelled()) { WaitsForCancel = true };
+        var coordinator = new SignInCoordinator(_tokens, _gateway, null, time, TimeSpan.FromMinutes(10));
+
+        var pending = coordinator.SignInWithBrowserAsync(browser, Ct);
+        while (!browser.Opened)
+        {
+            await Task.Yield();
+        }
+
+        time.Advance(TimeSpan.FromMinutes(9));
+        pending.IsCompleted.ShouldBeFalse();
+        time.Advance(TimeSpan.FromMinutes(2));
+
+        (await pending).ShouldBeOfType<SignInResult.TimedOut>();
+        (await _tokens.GetAsync(Ct)).ShouldBeNull();
+    }
+
+    [Fact]
+    public async Task CancellingTheCallIsCancelledNotTimedOut()
+    {
+        using var cts = CancellationTokenSource.CreateLinkedTokenSource(Ct);
+        var browser = new FakeBrowser(new BrowserOutcome.Cancelled()) { WaitsForCancel = true };
+
+        var pending = Create().SignInWithBrowserAsync(browser, cts.Token);
+        await cts.CancelAsync();
+
+        (await pending).ShouldBeOfType<SignInResult.Cancelled>();
     }
 
     [Fact]
@@ -158,10 +228,31 @@ internal sealed class FakeBrowser(BrowserOutcome outcome) : ISignInBrowser
 {
     public bool Opened { get; private set; }
 
-    public Task<BrowserOutcome> AcquireTokenAsync(CancellationToken cancellationToken)
+    public string[] Candidates { get; init; } = [];
+
+    public bool WaitsForCancel { get; init; }
+
+    public List<CandidateVerdict> Verdicts { get; } = [];
+
+    public async Task<BrowserOutcome> AcquireTokenAsync(TokenValidator validate, CancellationToken cancellationToken)
     {
         Opened = true;
-        return Task.FromResult(outcome);
+        foreach (var candidate in Candidates)
+        {
+            var verdict = await validate(candidate, cancellationToken);
+            Verdicts.Add(verdict);
+            if (verdict == CandidateVerdict.Accepted)
+            {
+                return new BrowserOutcome.Token(candidate);
+            }
+        }
+
+        if (WaitsForCancel)
+        {
+            await Task.Delay(Timeout.Infinite, cancellationToken).ContinueWith(_ => { }, TaskScheduler.Default);
+        }
+
+        return outcome;
     }
 }
 
@@ -169,12 +260,14 @@ internal sealed class FakeGateway : IAocGateway
 {
     public GatewayResult Answer { get; set; } = new GatewayResult.Ok("page");
 
+    public Queue<GatewayResult> Answers { get; } = new();
+
     public List<string> Checked { get; } = [];
 
     public Task<GatewayResult> CheckTokenAsync(string token, CancellationToken cancellationToken)
     {
         Checked.Add(token);
-        return Task.FromResult(Answer);
+        return Task.FromResult(Answers.TryDequeue(out var next) ? next : Answer);
     }
 
     public Task<GatewayResult> GetAsync(string path, RequestKind kind, FetchPolicy policy, CancellationToken cancellationToken) =>

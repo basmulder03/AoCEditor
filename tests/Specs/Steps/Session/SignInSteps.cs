@@ -25,6 +25,15 @@ public sealed class SignInSteps(SignInDriver driver)
     [When("I sign in with the browser")]
     public Task SignInWithBrowser() => driver.SignInWithBrowserAsync();
 
+    [Given("the browser still remembers an old login that has expired")]
+    public void GivenStaleLogin() => driver.BrowserFindsRememberedLoginThenMine();
+
+    [Given("I do not finish signing in")]
+    public void GivenNeverFinish() => driver.BrowserStaysOpen();
+
+    [When("{int} minutes pass with the sign-in window open")]
+    public Task MinutesPass(int minutes) => driver.LeaveBrowserOpenForMinutesAsync(minutes);
+
     [When("I close the sign-in browser")]
     public async Task CloseBrowser()
     {
@@ -46,6 +55,9 @@ public sealed class SignInSteps(SignInDriver driver)
 
     [Then("the sign-in is cancelled")]
     public void ThenCancelled() => driver.Result.ShouldBeOfType<SignInResult.Cancelled>();
+
+    [Then("the sign-in timed out")]
+    public void ThenTimedOut() => driver.Result.ShouldBeOfType<SignInResult.TimedOut>();
 
     [Then("I am told the token is not valid")]
     public void ThenInvalid() => driver.Result.ShouldBeOfType<SignInResult.InvalidToken>();

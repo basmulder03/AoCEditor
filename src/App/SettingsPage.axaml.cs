@@ -104,14 +104,15 @@ public partial class SettingsPage : UserControl
         MessageText.Text = result switch
         {
             SignInResult.SignedIn => "Signed in.",
-            SignInResult.Cancelled => "Sign-in was cancelled.",
+            SignInResult.Cancelled => "Sign-in was cancelled. You can paste your session token instead.",
+            SignInResult.TimedOut => "Sign-in took too long and was stopped. You can paste your session token instead.",
             SignInResult.InvalidToken => "Advent of Code did not accept that token. Check that you copied the whole session value.",
             SignInResult.StoreUnavailable u => $"Secure storage is unavailable: {u.Reason}",
             SignInResult.NetworkError => "Could not reach Advent of Code. Try again in a moment.",
             SignInResult.BrowserUnsupported => "The sign-in window is not available on this system. Paste your session token instead.",
             _ => string.Empty,
         };
-        if (result is SignInResult.BrowserUnsupported)
+        if (result is SignInResult.BrowserUnsupported or SignInResult.Cancelled or SignInResult.TimedOut)
         {
             PastePanel.IsVisible = true;
             PasteBox.Focus();

@@ -17,13 +17,15 @@ public sealed class SignInDriver : IDisposable
     private readonly AocGateway _gateway;
     private readonly SignInCoordinator _coordinator;
     private BrowserOutcome _outcome = new BrowserOutcome.Token(BrowserToken);
+    private string[] _offered = [];
+    private bool _opensForever;
     private int _prompts;
 
     public SignInDriver()
     {
         _tokens = new SessionTokenProvider(_store);
         _gateway = new AocGateway(_handler, _tokens, new NoCache(), new GatewayOptions { InteractiveInterval = TimeSpan.FromSeconds(1) }, _time, _events);
-        _coordinator = new SignInCoordinator(_tokens, _gateway, () => ProfileCleared = true);
+        _coordinator = new SignInCoordinator(_tokens, _gateway, () => ProfileCleared = true, _time, TimeSpan.FromMinutes(10));
         _events.SignInRequired += (_, _) => _prompts++;
     }
 
@@ -45,8 +47,25 @@ public sealed class SignInDriver : IDisposable
 
     public void BrowserIsMissing() => _outcome = new BrowserOutcome.Unsupported("missing");
 
+    public void BrowserFindsRememberedLoginThenMine()
+    {
+        _offered = ["synthetic-stale-token", BrowserToken];
+        _handler.RejectedToken = "synthetic-stale-token";
+    }
+
+    public void BrowserStaysOpen() => _opensForever = true;
+
     public async Task SignInWithBrowserAsync() =>
-        Result = await _coordinator.SignInWithBrowserAsync(new Browser(_outcome), CancellationToken.None);
+        Result = await _coordinator.SignInWithBrowserAsync(new Browser(_outcome, _offered, _opensForever, () => _time.Advance(TimeSpan.FromSeconds(1)), null), CancellationToken.None);
+
+    public async Task LeaveBrowserOpenForMinutesAsync(int minutes)
+    {
+        var opened = new TaskCompletionSource();
+        var pending = _coordinator.SignInWithBrowserAsync(new Browser(_outcome, _offered, true, () => { }, opened), CancellationToken.None);
+        await opened.Task;
+        _time.Advance(TimeSpan.FromMinutes(minutes));
+        Result = await pending;
+    }
 
     public async Task SignInWithTokenAsync(string token) =>
         Result = await _coordinator.SignInWithPastedTokenAsync(token, CancellationToken.None);
@@ -70,21 +89,46 @@ public sealed class SignInDriver : IDisposable
         _handler.Dispose();
     }
 
-    private sealed class Browser(BrowserOutcome outcome) : ISignInBrowser
+    private sealed class Browser(BrowserOutcome outcome, string[] offered, bool opensForever, Action afterCheck, TaskCompletionSource? opened) : ISignInBrowser
     {
-        public Task<BrowserOutcome> AcquireTokenAsync(CancellationToken cancellationToken) => Task.FromResult(outcome);
+        public async Task<BrowserOutcome> AcquireTokenAsync(TokenValidator validate, CancellationToken cancellationToken)
+        {
+            opened?.TrySetResult();
+            foreach (var candidate in offered)
+            {
+                if (await validate(candidate, cancellationToken) == CandidateVerdict.Accepted)
+                {
+                    return new BrowserOutcome.Token(candidate);
+                }
+
+                afterCheck();
+            }
+
+            if (opensForever)
+            {
+                await Task.Delay(Timeout.Infinite, cancellationToken).ContinueWith(_ => { }, TaskScheduler.Default);
+                return new BrowserOutcome.Cancelled();
+            }
+
+            return outcome;
+        }
     }
 
     private sealed class Handler : HttpMessageHandler
     {
         public HttpStatusCode Status { get; set; } = HttpStatusCode.Found;
 
+        public string? RejectedToken { get; set; }
+
         public int Requests { get; private set; }
 
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             Requests++;
-            return Task.FromResult(new HttpResponseMessage(Status) { Content = new StringContent("page") });
+            var status = RejectedToken is not null && request.Headers.TryGetValues("Cookie", out var cookie) && cookie.Single() == $"session={RejectedToken}"
+                ? HttpStatusCode.Found
+                : Status;
+            return Task.FromResult(new HttpResponseMessage(status) { Content = new StringContent("page") });
         }
     }
 

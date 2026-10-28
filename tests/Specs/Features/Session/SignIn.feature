@@ -9,6 +9,19 @@ Feature: Signing in to Advent of Code
     Then I am signed in
     And a token is stored
 
+  Scenario: An expired remembered login does not end the sign-in
+    Given Advent of Code accepts my login
+    And the browser still remembers an old login that has expired
+    When I sign in with the browser
+    Then I am signed in
+    And a token is stored
+
+  Scenario: Leaving the sign-in window open for too long
+    Given I do not finish signing in
+    When 11 minutes pass with the sign-in window open
+    Then the sign-in timed out
+    And no token is stored
+
   Scenario: Closing the browser window
     When I close the sign-in browser
     Then the sign-in is cancelled
