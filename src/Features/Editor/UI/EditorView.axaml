@@ -1,0 +1,23 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Editor.Application"
+             xmlns:ae="using:AvaloniaEdit"
+             x:Class="Editor.UI.EditorView"
+             x:DataType="vm:EditorViewModel">
+  <UserControl.Styles>
+    <Style Selector="Border.frame:focus-within">
+      <Setter Property="BorderBrush" Value="{DynamicResource FocusBrush}" />
+    </Style>
+  </UserControl.Styles>
+  <DockPanel>
+    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="8" IsVisible="{Binding ChangedOnDisk}">
+      <TextBlock VerticalAlignment="Center" Text="This file changed on disk." AutomationProperties.Name="File changed on disk" />
+      <Button x:Name="ReloadButton" Content="Reload" />
+      <Button x:Name="OverwriteButton" Content="Save anyway" />
+    </StackPanel>
+    <Border Classes="frame" BorderThickness="2" BorderBrush="Transparent">
+      <ae:TextEditor x:Name="Editor" AutomationProperties.Name="Code editor" ShowLineNumbers="True" Focusable="True"
+                     FontFamily="Cascadia Mono, Consolas, DejaVu Sans Mono, monospace" />
+    </Border>
+  </DockPanel>
+</UserControl>

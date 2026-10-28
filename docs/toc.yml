@@ -24,6 +24,8 @@
   href: runner.md
 - name: Language plugins
   href: plugins.md
+- name: Code editor
+  href: editor.md
 - name: Solutions workspace
   href: workspace.md
 - name: Puzzle parsing
