@@ -20,6 +20,8 @@ Snapshot of the GitHub issues, which are the source of truth. Hierarchy: Epic > 
   - [x] TASK #64 [MUST] Create the .NET 10 solution and project structure
   - [x] TASK #65 [MUST] Add LICENSE headers policy, editorconfig and analyzers
   - [ ] TASK #123 [MUST] Adopt Microsoft.Extensions.DependencyInjection with explicit registrations
+  - [ ] TASK #124 [SHOULD] One top-level type per file
+  - [ ] TASK #125 [SHOULD] Consolidate slice projects into Core, Infrastructure and UI projects
 - [x] FEATURE #11 [MUST] Test infrastructure: xUnit v3, Reqnroll, E2E harness
 - [x] FEATURE #12 [MUST] CI: build and test matrix on Linux and Windows
 - [x] FEATURE #13 [SHOULD] DocFX documentation skeleton
