@@ -20,6 +20,8 @@
   href: sync.md
 - name: Year calendar
   href: calendar.md
+- name: Running solutions
+  href: runner.md
 - name: Language plugins
   href: plugins.md
 - name: Solutions workspace

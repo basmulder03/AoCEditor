@@ -4,6 +4,7 @@
     <Project Path="src/Features/Storage/Storage.csproj" />
     <Project Path="src/Features/Diagnostics/Diagnostics.csproj" />
     <Project Path="src/Features/Gateway/Gateway.csproj" />
+    <Project Path="src/Features/Runner/Runner.csproj" />
     <Project Path="src/Features/Session/Session.csproj" />
     <Project Path="src/Features/Plugins/Plugins.csproj" />
     <Project Path="src/Features/Puzzle/Puzzle.csproj" />
@@ -16,6 +17,7 @@
     <Project Path="tests/E2E/E2E.csproj" />
     <Project Path="tests/Features/Diagnostics.Tests/Diagnostics.Tests.csproj" />
     <Project Path="tests/Features/Gateway.Tests/Gateway.Tests.csproj" />
+    <Project Path="tests/Features/Runner.Tests/Runner.Tests.csproj" />
     <Project Path="tests/Features/Session.Tests/Session.Tests.csproj" />
     <Project Path="tests/Features/Plugins.Tests/Plugins.Tests.csproj" />
     <Project Path="tests/Features/Puzzle.Tests/Puzzle.Tests.csproj" />
