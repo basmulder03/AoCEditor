@@ -38,6 +38,7 @@ Status: `Accepted` = decided with the owner, `Proposed` = default chosen by the 
 | 0029 | Agents, skills, orchestration | Accepted | Token-lean agents/skills, orchestrator rules |
 | 0030 | In-app issue reporting | Accepted | Report button, prefilled issue, GDPR-safe redaction |
 | 0031 | Puzzle examples | Proposed | Select from puzzle, custom examples, expected answers |
-| 0032 | Diagnostics and observability | Proposed | Logging, tracing, metrics, debug mode and view |
+| 0032 | Diagnostics and observability | Proposed | Logging via plain ILoggerProviders with structural redaction, tracing, metrics, debug mode and view |
 | 0033 | Security practices | Accepted | Threat model, security agent and skill, CodeQL, dependency review |
 | 0034 | Project layout by layer and file conventions | Accepted | Core/Infrastructure/UI projects, architecture tests, consolidated test projects, one type per file |
+| 0035 | Naming conventions | Accepted | Suffix vocabulary (Service, Store, Cache, LoggerProvider), UI View naming, Async/cancellationToken, test naming, UI spelling |
