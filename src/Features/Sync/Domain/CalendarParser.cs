@@ -16,7 +16,7 @@ public static partial class CalendarParser
     [GeneratedRegex(@"<a\s[^>]*>", RegexOptions.CultureInvariant, matchTimeoutMilliseconds: 1000)]
     private static partial Regex Anchor();
 
-    [GeneratedRegex(@"href=""/(\d{4})/day/(\d{1,3})""", RegexOptions.CultureInvariant, matchTimeoutMilliseconds: 1000)]
+    [GeneratedRegex(@"href=""(?:https://adventofcode\.com)?/(\d{4})/day/(\d{1,3})""", RegexOptions.CultureInvariant, matchTimeoutMilliseconds: 1000)]
     private static partial Regex DayHref();
 
     [GeneratedRegex(@"class=""([^""]*)""", RegexOptions.CultureInvariant, matchTimeoutMilliseconds: 1000)]

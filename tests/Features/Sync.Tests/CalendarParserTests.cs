@@ -34,6 +34,17 @@ public class CalendarParserTests
         CalendarParser.ParseCalendar(html, 2024).ShouldBe([new SyncedDay(4, 2)]);
     }
 
+    [Fact]
+    public void StarMarksInsideEveryDayDoNotCountAsStars()
+    {
+        const string html = "<pre class=\"calendar\">"
+            + "<a aria-label=\"Day 1, two stars\" href=\"https://adventofcode.com/2020/day/1\" class=\"calendar-day1 calendar-verycomplete\"><span class=\"calendar-mark-complete\">*</span><span class=\"calendar-mark-verycomplete\">*</span></a>\n"
+            + "<a aria-label=\"Day 2\" href=\"https://adventofcode.com/2020/day/2\" class=\"calendar-day2\"><span class=\"calendar-mark-complete\">*</span><span class=\"calendar-mark-verycomplete\">*</span></a>\n"
+            + "<a aria-label=\"Day 17\" href=\"https://adventofcode.com/2020/day/17\" class=\"calendar-day17\">x</a></pre>";
+
+        CalendarParser.ParseCalendar(html, 2020).ShouldBe([new SyncedDay(1, 2), new SyncedDay(2, 0), new SyncedDay(17, 0)]);
+    }
+
     [Theory]
     [InlineData("")]
     [InlineData("<html>login page</html>")]
