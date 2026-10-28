@@ -6,6 +6,9 @@ namespace Shared.Tests;
 
 public sealed class PracticeRuleTests : IDisposable
 {
+    // The script runs in the Linux CI job; Windows runners resolve a different bash.
+    public static bool RunsHere => !OperatingSystem.IsWindows();
+
     private readonly string _root = Path.Combine(Path.GetTempPath(), "aoc-rules-" + Guid.NewGuid().ToString("N"));
 
     public void Dispose() => Directory.Delete(_root, recursive: true);
@@ -28,7 +31,7 @@ public sealed class PracticeRuleTests : IDisposable
         return (process.ExitCode, output);
     }
 
-    [Theory]
+    [Theory(Skip = "Practice script runs on Linux only", SkipUnless = nameof(RunsHere), SkipType = typeof(PracticeRuleTests))]
     [InlineData("_log.Attempt(token);")]
     [InlineData("logger.Attempt(request.Cookie);")]
     [InlineData("_log.Attempt(sessionValue, 1);")]
@@ -41,7 +44,7 @@ public sealed class PracticeRuleTests : IDisposable
         output.ShouldContain("Logging calls or log parameters named like secrets");
     }
 
-    [Theory]
+    [Theory(Skip = "Practice script runs on Linux only", SkipUnless = nameof(RunsHere), SkipType = typeof(PracticeRuleTests))]
     [InlineData("_log.Attempt(page, 1);")]
     [InlineData("_log.SignedOut();")]
     [InlineData("var factory = logs.CreateLogger(\"Session.SignIn\");")]
