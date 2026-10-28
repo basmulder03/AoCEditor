@@ -1,0 +1,24 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:AoCEditor"
+             xmlns:runner="using:Runner.UI"
+             x:Class="AoCEditor.SolutionPanel"
+             x:DataType="local:SolutionViewModel">
+  <DockPanel>
+    <StackPanel DockPanel.Dock="Top" Spacing="{DynamicResource Space2}">
+      <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Space2}">
+        <TextBlock VerticalAlignment="Center" Text="Language" />
+        <ComboBox x:Name="LanguageBox" MinWidth="160" ItemsSource="{Binding PluginNames}" SelectedIndex="0"
+                  AutomationProperties.Name="Language" SelectionChanged="OnLanguageChanged" />
+        <Button Content="Run" IsEnabled="{Binding CanRun}" Click="OnRunClick" AutomationProperties.Name="Run solution" />
+        <Button Content="Stop" IsEnabled="{Binding IsRunning}" Click="OnStopClick" AutomationProperties.Name="Stop solution" />
+      </StackPanel>
+      <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Space2}">
+        <Button Content="Choose solutions folder..." Click="OnChooseFolderClick" AutomationProperties.Name="Choose solutions folder" />
+        <TextBlock x:Name="FolderText" Classes="muted" VerticalAlignment="Center" TextWrapping="Wrap"
+                   AutomationProperties.Name="Solutions folder" />
+      </StackPanel>
+    </StackPanel>
+    <runner:ConsoleView x:Name="Console" DataContext="{Binding Console}" />
+  </DockPanel>
+</UserControl>

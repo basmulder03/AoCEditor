@@ -8,6 +8,10 @@
     <Button x:Name="BackButton" DockPanel.Dock="Top" Content="Back to calendar" AutomationProperties.Name="Back to calendar"
             HorizontalAlignment="Left" Click="OnBackClick" />
     <TextBlock x:Name="Title" DockPanel.Dock="Top" Classes="heading" AutomationProperties.Name="Selected day" IsVisible="False" />
-    <puzzle:DayView x:Name="View" />
+    <Grid x:Name="Split" ColumnDefinitions="*,Auto,*">
+      <puzzle:DayView x:Name="View" Grid.Column="0" />
+      <GridSplitter Grid.Column="1" Width="6" AutomationProperties.Name="Resize panels" />
+      <ContentControl x:Name="SolutionHost" Grid.Column="2" Margin="8,0,0,0" />
+    </Grid>
   </DockPanel>
 </UserControl>

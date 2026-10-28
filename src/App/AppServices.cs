@@ -1,13 +1,17 @@
 using Diagnostics.Application;
 using Gateway;
 using Microsoft.Extensions.Logging;
+using Plugins.Application;
+using Plugins.Domain;
 using Puzzle.Application;
+using Runner.Application;
 using Session.Application;
 using Session.Infrastructure;
 using Session.UI;
 using Shared.Contracts;
 using Storage.Infrastructure;
 using Sync.Application;
+using Workspace.Application;
 
 namespace AoCEditor;
 
@@ -40,6 +44,14 @@ public sealed class AppServices : IDisposable
         _signIn = new SignInCoordinator(tokens, _gateway, () => _browser.TryClearProfile(), logger: logs.CreateLogger("Session.SignIn"));
         Sync = new SyncService(_gateway, SyncState, TimeProvider.System, logs.CreateLogger("Sync.SyncService"));
         Puzzle = new PuzzleService(_gateway, Answers, TimeProvider.System);
+        Workspace = new WorkspaceService(Settings, Paths);
+        Plugins = BuiltInPlugins.Load();
+        Coordinator = new DayRunCoordinator(
+            Workspace,
+            (year, day, ct) => Puzzle.LoadInputAsync(year, day, false, ct),
+            new ProcessRunner(),
+            Paths,
+            plugin => ToolchainLocator.Find(plugin.ToolchainExecutables, Environment.GetEnvironmentVariable("PATH")));
         logs.CreateLogger("App").AppStarted(Shared.AppInfo.Version, Diagnostics.Debug.IsEnabled);
     }
 
@@ -64,6 +76,12 @@ public sealed class AppServices : IDisposable
     public SyncService Sync { get; }
 
     public PuzzleService Puzzle { get; }
+
+    public WorkspaceService Workspace { get; }
+
+    public IReadOnlyList<PluginManifest> Plugins { get; }
+
+    public DayRunCoordinator Coordinator { get; }
 
     /// <summary>Opens (and so migrates) the database.</summary>
     public async Task InitializeAsync(CancellationToken cancellationToken)

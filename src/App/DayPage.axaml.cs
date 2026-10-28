@@ -28,6 +28,7 @@ public partial class DayPage : UserControl
 
         var model = new DayViewModel(services.Puzzle, year, day, TimeProvider.System, new GatewayOptions().BaseAddress);
         View.DataContext = model;
+        SolutionHost.Content = new SolutionPanel(services, year, day);
         AttachedToVisualTree += async (_, _) => await model.LoadAsync(false, CancellationToken.None);
     }
 

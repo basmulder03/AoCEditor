@@ -30,3 +30,7 @@ The tests start real processes through `sh` and run on Linux only; the Windows b
 ## Console
 
 `ConsoleView` and `ConsoleViewModel` (`Runner.UI`) show the output of the latest run: `Begin()` clears the old output, `Append` adds a line (stderr lines are italic, so the difference is not colour alone), `End(result)` writes a one-line status such as "Finished with exit code 0 in 1.50 s", and `Fail(message)` covers problems before a run starts. At most 10,000 lines are kept; after that output is dropped and a note says so, so a program that prints forever cannot exhaust memory.
+
+## Day page
+
+The day page splits into the puzzle (left) and the solution panel (right, `SolutionPanel` in `src/App`): a language picker, Run and Stop, the solutions folder with a chooser, and the console. Run goes through `DayRunCoordinator`. While no sandbox exists, the first run asks for confirmation ("Run without a sandbox?") and only then runs with the user's normal rights. A solutions folder that overlaps the app-data folder is refused with a message.
