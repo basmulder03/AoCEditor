@@ -13,5 +13,6 @@
     <ProjectReference Include="../../src/Features/Gateway/Gateway.csproj" />
     <ProjectReference Include="../../src/Features/Storage/Storage.csproj" />
     <ProjectReference Include="../../src/Features/Sync/Sync.csproj" />
+    <ProjectReference Include="../../src/Features/Workspace/Workspace.csproj" />
   </ItemGroup>
 </Project>

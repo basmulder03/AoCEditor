@@ -1,4 +1,4 @@
-using Storage.Domain;
+using Shared;
 
 namespace Specs.Drivers.Storage;
 

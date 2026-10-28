@@ -1,5 +1,5 @@
 using Shouldly;
-using Storage.Domain;
+using Shared;
 using Xunit;
 
 namespace Storage.Tests;

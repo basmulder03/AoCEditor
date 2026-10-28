@@ -20,6 +20,8 @@
   href: sync.md
 - name: Year calendar
   href: calendar.md
+- name: Solutions workspace
+  href: workspace.md
 - name: Puzzle parsing
   href: puzzle.md
 - name: Diagnostics

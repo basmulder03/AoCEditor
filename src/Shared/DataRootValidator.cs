@@ -1,4 +1,4 @@
-namespace Storage.Domain;
+namespace Shared;
 
 public static class DataRootValidator
 {
